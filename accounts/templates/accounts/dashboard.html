@@ -1,0 +1,165 @@
+{% extends "movies/base.html" %}
+{% load static %}
+{% block title %}Dashboard - Dusa Films{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+  <!-- Welcome Header with Profile Picture -->
+  <div class="row mb-4 align-items-center">
+    <div class="col-auto">
+      {% if profile.profile_photo %}
+        <img src="{{ profile.profile_photo.url }}" class="rounded-circle" width="80" height="80" alt="Profile">
+      {% else %}
+        <img src="{% static 'img/user-default.png' %}" class="rounded-circle" width="80" height="80" alt="Profile">
+      {% endif %}
+
+      <!-- Profile Photo Upload Form -->
+      <form method="POST" enctype="multipart/form-data" class="mt-2">
+        {% csrf_token %}
+        {{ photo_form.profile_photo }}
+        <button type="submit" class="btn btn-sm btn-outline-light mt-1">Update Photo</button>
+      </form>
+    </div>
+
+    <div class="col">
+      <h2 class="fw-bold">Welcome back, {{ request.user.username }} 👋</h2>
+      <p class="text-muted">Manage your activity and explore more films</p>
+    </div>
+
+    <div class="col-auto">
+      <a class="btn btn-danger px-4" href="{% url 'accounts:logout' %}">Logout</a>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0 stats-card">
+        <div class="card-body">
+          <small class="text-muted">Total Comments</small>
+          <h2 class="fw-bold mt-1">{{ total_comments }}</h2>
+          <small class="text-muted">Your posted comments</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0 stats-card">
+        <div class="card-body">
+          <small class="text-muted">Movies Watched</small>
+          <h2 class="fw-bold mt-1">{{ movies_watched }}</h2>
+          <small class="text-muted">Your watch history</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0 stats-card">
+        <div class="card-body">
+          <small class="text-muted">Account Status</small>
+          <h2 class="fw-bold text-success mt-1">Active</h2>
+          <small class="text-muted">Logged in</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <a href="{% url 'movies:home' %}" class="btn btn-primary w-100 py-3">
+        🎬 Browse Movies
+      </a>
+    </div>
+    <div class="col-md-6 mb-2">
+      <a href="#" class="btn btn-outline-light w-100 py-3 disabled">
+        ⚙️ Edit Profile (Coming Soon)
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent Activity Row -->
+  <div class="row g-4">
+
+    <!-- Recent Comments -->
+    <div class="col-lg-6">
+      <div class="card p-3 shadow-sm border-0">
+        <h5 class="mb-3 fw-bold">Recent Comments</h5>
+        {% if recent_comments %}
+          <ul class="list-group list-group-flush">
+            {% for c in recent_comments %}
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-bold">{{ c.movie.title }}</div>
+                  <div class="text-muted small">{{ c.text|truncatechars:100 }}</div>
+                </div>
+                <div class="text-end small text-muted">{{ c.time_ago }} ago</div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">You haven't commented yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recently Watched -->
+    <div class="col-lg-6">
+      <div class="card p-3 shadow-sm border-0">
+        <h5 class="mb-3 fw-bold">Recently Watched</h5>
+        {% if recent_watched %}
+          <ul class="list-group list-group-flush">
+            {% for w in recent_watched %}
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                <div>
+                  <a href="{% url 'movies:detail' w.movie.slug %}" class="fw-bold">{{ w.movie.title }}</a>
+                  <div class="text-muted small">{{ w.watched_at|date:"M d, Y H:i" }}</div>
+                </div>
+                <span class="small text-muted">View</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">No watched activity.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Top Commented Movies -->
+  <div class="card mt-4 p-3 shadow-sm border-0">
+    <h5 class="mb-3 fw-bold">Movies You Commented On The Most</h5>
+    {% if top_commented %}
+      <div class="row row-cols-1 row-cols-md-3 g-3">
+        {% for t in top_commented %}
+          <div class="col">
+            <div class="card h-100 p-3 border-0 shadow-sm bg-transparent">
+              <div class="card-body">
+                <a href="{% url 'movies:detail' t.movie__slug %}" class="fw-bold">{{ t.movie__title }}</a>
+                <div class="text-muted small">{{ t.cnt }} comments</div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">No data yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Optional custom styles -->
+<style>
+  .stats-card { 
+    background: #0d1117; 
+    border-radius: 12px;
+  }
+  .stats-card h2 { font-size: 2.4rem; }
+  .list-group-item { border-color: rgba(255,255,255,0.08); }
+  img.rounded-circle { object-fit: cover; }
+</style>
+
+{% endblock %}

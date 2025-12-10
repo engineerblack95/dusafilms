@@ -1,0 +1,164 @@
+{% extends "movies/base.html" %}
+{% block title %}Dusa Films – Home{% endblock %}
+
+{% block content %}
+<style>
+/* HERO */
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1500&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+}
+.hero h1 { font-size: 3.2rem; font-weight: bold; letter-spacing: 2px; }
+.hero p { font-size: 1.2rem; margin-top: 10px; opacity: 0.9; }
+
+.search-box { margin-top: 25px; display: flex; justify-content: center; }
+.search-box input { width: 360px; height: 45px; border-radius: 30px 0 0 30px; border: none; padding: 0 20px; outline: none; }
+.search-box button { height: 45px; border-radius: 0 30px 30px 0; border: none; padding: 0 20px; font-weight: bold; background: #ff2b2b; color: white; transition: 0.3s; }
+.search-box button:hover { background: #d41919; }
+
+/* SECTION STYLES */
+.section-title { font-size: 1.8rem; font-weight: bold; border-left: 5px solid #ff2b2b; padding-left: 10px; margin: 40px 0 20px 0; }
+
+.movie-card { border-radius: 12px; overflow: hidden; background: #111; transition: 0.3s; }
+.movie-card:hover { transform: scale(1.03); }
+.movie-card img { width: 100%; height: 260px; object-fit: cover; }
+.movie-card-title { padding: 10px; font-size: 1rem; font-weight: bold; color: white; }
+.movie-card-footer { padding: 0 10px 10px 10px; color: #4aa3ff; font-size: 0.9rem; }
+
+.watch-btn {
+    display:inline-block;
+    margin-top:6px;
+    padding:6px 14px;
+    background:#ff2b2b;
+    color:white;
+    border-radius:6px;
+    font-weight:bold;
+    text-decoration:none;
+    transition:0.3s;
+}
+.watch-btn:hover { background:#d41919; }
+
+.footer { margin-top: 50px; padding: 30px 20px; background: #000; color: white; text-align: center; border-top: 1px solid #222; }
+</style>
+
+<!-- ==================== MAIN NAVBAR WITH AUTH LINKS ==================== -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background:#121212;">
+    <div class="container">
+        
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto">
+                
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{% url 'accounts:logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:otp_login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="{% url 'accounts:register' %}">Register</a>
+                    </li>
+                {% endif %}
+            
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== HERO SECTION ==================== -->
+<section class="hero">
+    <div>
+        <h1>Welcome to <span style="color:#ff2b2b;">Dusa Films</span></h1>
+        <p>Your home for short films, drama, cinema & storytelling excellence.</p>
+
+        <form class="search-box" method="GET" action="{% url 'movies:search' %}">
+            <input type="text" name="q" placeholder="Search movies, categories...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</section>
+
+<div class="container">
+
+    <!-- CATEGORIES -->
+    {% if categories %}
+    <h2 class="section-title">Categories</h2>
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-3 mb-4">
+            <div class="movie-card">
+                <a href="{% url 'movies:category' category.slug %}">
+                    {% if category.image %}
+                        <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x260?text={{ category.name|urlencode }}" alt="{{ category.name }}">
+                    {% endif %}
+                </a>
+                <div class="movie-card-title">{{ category.name }}</div>
+                <div class="movie-card-footer">{{ category.movies.count }} movies</div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-light ps-3">No categories yet.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- ==================== TRENDING SECTION ==================== -->
+<div class="container">
+    <h2 class="section-title">Trending Now</h2>
+    <div class="row">
+        {% with list_to_show=top|default:latest %}
+            {% if list_to_show %}
+                {% for movie in list_to_show %}
+                <div class="col-md-3 mb-4">
+                    <div class="movie-card">
+                        <a href="{% url 'movies:detail' movie.slug %}">
+                            {% if movie.thumbnail %}
+                                <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
+                            {% endif %}
+                        </a>
+                        <div class="movie-card-title">{{ movie.title }}</div>
+                        <div class="movie-card-footer">
+                            {% if movie.upload_time %}
+                                <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
+                            {% endif %}
+                            <span>{{ movie.category.name }}</span><br>
+                            <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-light ps-3">No movies available.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<div class="footer">
+    <p>© 2025 Dusa Films — All Rights Reserved</p>
+</div>
+
+{% endblock %}

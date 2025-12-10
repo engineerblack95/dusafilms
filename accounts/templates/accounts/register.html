@@ -1,0 +1,63 @@
+{% extends "movies/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}Register - Dusa Films{% endblock %}
+
+{% block content %}
+<style>
+  body { background: #0b0b12; color: white; }
+  
+  .register-card {
+      background: #111827;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 480px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .register-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+  }
+  .register-card h3 {
+      font-weight: bold;
+      color: #ff2b2b;
+      margin-bottom: 20px;
+      text-align: center;
+  }
+  .register-card .btn-blue {
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px 0;
+      transition: background 0.3s;
+  }
+  .register-card .btn-blue:hover {
+      background: #2563eb;
+  }
+  .register-card a {
+      color: #ff2b2b;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.2s;
+  }
+  .register-card a:hover {
+      color: #dc2626;
+  }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+  <div class="register-card">
+    <h3>Create Your Account</h3>
+    <form method="post">
+      {% csrf_token %}
+      {% bootstrap_form form layout='vertical' %}
+      <button class="btn btn-blue w-100 mt-3" type="submit">Create Account</button>
+    </form>
+    <div class="mt-3 text-center">
+      <small>Already have an account? <a href="{% url 'accounts:otp_login' %}">Login with OTP</a></small>
+    </div>
+  </div>
+</div>
+{% endblock %}

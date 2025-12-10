@@ -1,0 +1,330 @@
+  {% extends "movies/base.html" %}
+{% block title %}{{ movie.title }} • Dusa Films{% endblock %}
+
+{% block content %}
+<style>
+    body { background: #0b0b12; color: white; }
+
+    /* WRAPPER */
+    .movie-wrapper {
+        width: 92%;
+        max-width: 1300px;
+        margin: auto;
+        padding: 35px 0;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        max-width: 1300px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+    }
+    .nav-links a {
+        color: white;
+        font-weight: bold;
+        margin-left: 20px;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .nav-links a:hover { color: #3b82f6; }
+
+    /* MOVIE DETAILS */
+    .movie-title { font-size: 32px; font-weight: bold; margin-bottom: 10px; }
+    .movie-meta { font-size: 15px; color: #a3a3a3; margin-bottom: 20px; }
+
+    .video-box {
+        background: black;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        border: 1px solid #1f2937;
+    }
+    video { width: 100%; max-height: 70vh; background: black; }
+
+    .buttons { margin-top: 20px; display: flex; gap: 15px; }
+    .btn-primary-custom {
+        background: #3b82f6;
+        padding: 12px 22px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .btn-primary-custom:hover { background: #2563eb; }
+    .btn-download {
+        background: #ef4444;
+        padding: 12px 22px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .btn-download:hover { background: #dc2626; }
+
+    .section-title {
+        margin: 35px 0 15px;
+        font-size: 20px;
+        font-weight: bold;
+        border-left: 4px solid #ef4444;
+        padding-left: 10px;
+    }
+
+    .movie-description { font-size: 16px; line-height: 1.6; color: #d1d5db; margin-bottom: 25px; }
+
+    /* RELATED MOVIES */
+    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .movie-card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 8px;
+        overflow: hidden;
+        text-decoration: none;
+        color: white;
+        transition: 0.2s;
+    }
+    .movie-card:hover { transform: scale(1.04); border-color: #3b82f6; }
+    .movie-thumb { width: 100%; height: 220px; object-fit: cover; }
+    .movie-info { padding: 10px; }
+    .movie-title-small { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+    .movie-meta-small { font-size: 13px; color: #9ca3af; }
+
+    /* COMMENTS */
+    .comment-box {
+        background: #111827;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #1f2937;
+    }
+    .comment-author { font-weight: bold; font-size: 15px; }
+    .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+    .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+
+    textarea {
+        width: 100%;
+        background: #0f172a;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #1f2937;
+        resize: vertical;
+        min-height: 110px;
+    }
+    textarea:focus { outline: none; border-color: #3b82f6; }
+
+    .btn-submit {
+        background: #3b82f6;
+        padding: 10px 18px;
+        color: white;
+        border-radius: 6px;
+        margin-top: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .btn-submit:hover { background: #2563eb; }
+</style>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">
+        <a href="{% url 'movies:home' %}" style="color:white; font-weight:bold; font-size:18px;">Dusa Films</a>
+    </div>
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            <a href="{% url 'movies:home' %}">Home</a>
+            <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'accounts:otp_login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="movie-wrapper">
+
+    <!-- MOVIE INFO -->
+    <div class="movie-title">{{ movie.title }}</div>
+    <div class="movie-meta">
+        {{ movie.category.name }} • {{ movie.time_ago }} • <span id="commentsCount">{{ movie.comments_count }}</span> comments
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box">
+        {% if movie.video_url %}
+            <video id="mainPlayer" controls 
+                {% if movie.thumbnail %}
+                    poster="{{ movie.thumbnail.url }}"
+                {% else %}
+                    poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"
+                {% endif %}
+            >
+                <source src="{{ movie.video_url }}" type="video/mp4">
+                Your browser does not support HTML5 video.
+            </video>
+        {% else %}
+            <p style="padding:20px; color:#ccc; text-align:center;">Video not available.</p>
+        {% endif %}
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="buttons">
+        {% if movie.video_url %}
+            <a href="{{ movie.video_url }}" target="_blank" class="btn-primary-custom">Watch in Fullscreen</a>
+        {% endif %}
+        {% if movie.download_link %}
+            <a href="{{ movie.download_link }}" class="btn-download" download>Download</a>
+        {% endif %}
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="section-title">Description</div>
+    <div class="movie-description">{{ movie.description|linebreaks }}</div>
+
+    <!-- COMMENTS -->
+    <div class="section-title">Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)</div>
+
+    <!-- AJAX form: note id and action kept same -->
+    <form id="commentForm" method="POST" action="{% url 'movies:add_comment' movie.slug %}">
+        {% csrf_token %}
+        <textarea name="text" id="commentText" placeholder="Write your comment..."></textarea>
+        <button id="submitComment" class="btn-submit" type="submit">Post Comment</button>
+    </form>
+
+    <div id="commentsList">
+        {% for c in comments %}
+            <div class="comment-box">
+                <div class="comment-author">{{ c.name }}</div>
+                <div class="comment-time">{{ c.time_ago }}</div>
+                <div class="comment-text">{{ c.text }}</div>
+            </div>
+        {% empty %}
+            <p style="color:#9ca3af;">No comments yet. Be the first!</p>
+        {% endfor %}
+    </div>
+
+    <!-- RELATED MOVIES -->
+    <div class="section-title">Related Movies</div>
+    {% if related %}
+        <div class="grid">
+            {% for m in related %}
+                <a href="{% url 'movies:detail' m.slug %}" class="movie-card">
+                    {% if m.thumbnail %}
+                        <img src="{{ m.thumbnail.url }}" class="movie-thumb">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x400?text=No+Image" class="movie-thumb">
+                    {% endif %}
+                    <div class="movie-info">
+                        <div class="movie-title-small">{{ m.title }}</div>
+                        <div class="movie-meta-small">{{ m.time_ago }} • {{ m.comments_count }} comments</div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color:#9ca3af;">No related movies found.</p>
+    {% endif %}
+
+</div>
+
+<script>
+(function(){
+  const form = document.getElementById('commentForm');
+  const textarea = document.getElementById('commentText');
+  const commentsList = document.getElementById('commentsList');
+  const submitBtn = document.getElementById('submitComment');
+  const commentsCountSpan = document.getElementById('commentsCount');
+  const commentsCountInline = document.getElementById('commentsCountInline');
+
+  // current user name fallback (server-side rendered)
+  const currentUser = "{{ request.user.username|default:'Anonymous' }}";
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    // read csrf token from the form's hidden input
+    const csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
+    const csrfToken = csrfInput ? csrfInput.value : null;
+
+    // disable while sending
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+
+    try {
+      const formData = new FormData();
+      formData.append('text', text);
+      // fetch to the same action URL
+      const response = await fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        body: formData,
+        credentials: 'same-origin', // ensure cookies are included
+        redirect: 'follow'
+      });
+
+      // If server created the comment, response will be a redirect or 200
+      if (response.ok || response.redirected) {
+        // append comment locally so no reload required (video keeps playing)
+        const nowLabel = "just now";
+        const commentBox = document.createElement('div');
+        commentBox.className = 'comment-box';
+        commentBox.innerHTML = `
+            <div class="comment-author">${currentUser}</div>
+            <div class="comment-time">${nowLabel}</div>
+            <div class="comment-text">${escapeHtml(text)}</div>
+        `;
+        // insert at top
+        commentsList.insertBefore(commentBox, commentsList.firstChild);
+
+        // increment counters (two places)
+        incrementCount(commentsCountSpan);
+        incrementCount(commentsCountInline);
+
+        // clear textarea
+        textarea.value = '';
+        textarea.focus();
+      } else {
+        // fallback: if not ok, reload to let server show errors
+        console.warn('Comment post failed, reloading to get server-side state.');
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error('Error posting comment:', err);
+      window.location.reload();
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Post Comment';
+    }
+  });
+
+  function incrementCount(el){
+    if (!el) return;
+    const val = parseInt(el.textContent) || 0;
+    el.textContent = val + 1;
+  }
+
+  // Simple HTML escape to prevent XSS when appending text client-side
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+})();
+</script>
+
+{% endblock %}

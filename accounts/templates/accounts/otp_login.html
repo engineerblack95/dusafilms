@@ -1,0 +1,79 @@
+{% extends "movies/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}OTP Login - Dusa Films{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height:75vh;">
+  <div class="card shadow-lg p-4" style="max-width:480px; width: 100%;">
+    
+    <h3 class="text-center mb-4">Login with OTP</h3>
+
+    <!-- Display messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- OTP Form -->
+    <form method="post" action="{% url 'accounts:send_otp' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+      </div>
+      <button class="btn btn-primary w-100 mb-3" type="submit">Send OTP</button>
+    </form>
+
+    <div class="text-center">
+      <small>Don't have an account? <a href="{% url 'accounts:register' %}">Create one</a></small>
+    </div>
+  </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    background: #1f1f2b;
+    color: #fff;
+}
+
+.card h3 {
+    color: #3b82f6;
+}
+
+.form-control {
+    background: #2b2b3a;
+    border: 1px solid #3b3b4a;
+    color: #fff;
+}
+
+.form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.25);
+    background: #2b2b3a;
+    color: #fff;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

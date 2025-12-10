@@ -1,0 +1,126 @@
+{% extends "movies/base.html" %}
+{% block title %}{{ category.name }} • Dusa Films{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #0b0b12;
+        color: #fff;
+    }
+
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #111827;
+        font-size: 28px;
+        font-weight: bold;
+        border-bottom: 1px solid #1f2937;
+    }
+
+    .container-custom {
+        width: 92%;
+        max-width: 1400px;
+        margin: auto;
+        padding: 25px 0;
+    }
+
+    .count-text {
+        color: #a3a3a3;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+
+    .movie-card {
+        background: #111827;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: 0.2s ease;
+        border: 1px solid #1f2937;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .movie-card:hover {
+        transform: scale(1.04);
+        border-color: #3b82f6;
+    }
+
+    .movie-thumb {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        background: #000;
+    }
+
+    .movie-info {
+        padding: 12px 14px;
+    }
+
+    .movie-title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+
+    .movie-meta {
+        font-size: 13px;
+        color: #9ca3af;
+    }
+
+    .empty-box {
+        padding: 50px;
+        text-align: center;
+        font-size: 18px;
+        color: #9ca3af;
+    }
+</style>
+
+
+<div class="header">
+    {{ category.name }}
+</div>
+
+<div class="container-custom">
+
+    <div class="count-text">
+        {{ movies.count }} movies found in this category
+    </div>
+
+    {% if movies %}
+        <div class="grid">
+            {% for movie in movies %}
+                <a href="{% url 'movies:detail' movie.slug %}" class="movie-card">
+                    
+                    {% if movie.thumbnail %}
+                        <img src="{{ movie.thumbnail.url }}" class="movie-thumb">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x400?text=No+Image" class="movie-thumb">
+                    {% endif %}
+
+                    <div class="movie-info">
+                        <div class="movie-title">{{ movie.title }}</div>
+
+                        <div class="movie-meta">
+                            {{ movie.time_ago }} • {{ movie.comments_count }} comments
+                        </div>
+                    </div>
+
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-box">
+            No movies have been added to this category yet.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
