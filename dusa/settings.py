@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from django.conf.urls.static import static
 from dotenv import load_dotenv
 
 load_dotenv()  # load .env if exists

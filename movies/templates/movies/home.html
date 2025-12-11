@@ -50,40 +50,7 @@
 .footer { margin-top: 50px; padding: 30px 20px; background: #000; color: white; text-align: center; border-top: 1px solid #222; }
 </style>
 
-<!-- ==================== MAIN NAVBAR WITH AUTH LINKS ==================== -->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background:#121212;">
-    <div class="container">
-        
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto">
-                
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="{% url 'accounts:logout' %}">Logout</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:otp_login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-info" href="{% url 'accounts:register' %}">Register</a>
-                    </li>
-                {% endif %}
-            
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- ==================== HERO SECTION ==================== -->
+<!-- ==================== HERO SECTION (unchanged) ==================== -->
 <section class="hero">
     <div>
         <h1>Welcome to <span style="color:#ff2b2b;">Dusa Films</span></h1>
@@ -98,7 +65,7 @@
 
 <div class="container">
 
-    <!-- CATEGORIES -->
+    <!-- CATEGORIES (unchanged) -->
     {% if categories %}
     <h2 class="section-title">Categories</h2>
     <div class="row">
@@ -123,7 +90,7 @@
     {% endif %}
 </div>
 
-<!-- ==================== TRENDING SECTION ==================== -->
+<!-- ==================== TRENDING SECTION (unchanged) ==================== -->
 <div class="container">
     <h2 class="section-title">Trending Now</h2>
     <div class="row">

@@ -1,4 +1,4 @@
-  {% extends "movies/base.html" %}
+{% extends "movies/base.html" %}
 {% block title %}{{ movie.title }} • Dusa Films{% endblock %}
 
 {% block content %}
@@ -14,15 +14,6 @@
     }
 
     /* NAVBAR */
-    .navbar {
-        width: 100%;
-        max-width: 1300px;
-        margin: auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 0;
-    }
     .nav-links a {
         color: white;
         font-weight: bold;
@@ -75,10 +66,19 @@
         padding-left: 10px;
     }
 
-    .movie-description { font-size: 16px; line-height: 1.6; color: #d1d5db; margin-bottom: 25px; }
+    .movie-description {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #d1d5db;
+        margin-bottom: 25px;
+    }
 
     /* RELATED MOVIES */
-    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
     .movie-card {
         background: #111827;
         border: 1px solid #1f2937;
@@ -95,17 +95,6 @@
     .movie-meta-small { font-size: 13px; color: #9ca3af; }
 
     /* COMMENTS */
-    .comment-box {
-        background: #111827;
-        padding: 18px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #1f2937;
-    }
-    .comment-author { font-weight: bold; font-size: 15px; }
-    .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
-    .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
-
     textarea {
         width: 100%;
         background: #0f172a;
@@ -129,31 +118,35 @@
         font-weight: bold;
     }
     .btn-submit:hover { background: #2563eb; }
-</style>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <div class="logo">
-        <a href="{% url 'movies:home' %}" style="color:white; font-weight:bold; font-size:18px;">Dusa Films</a>
-    </div>
-    <div class="nav-links">
-        {% if user.is_authenticated %}
-            <a href="{% url 'movies:home' %}">Home</a>
-            <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
-            <a href="{% url 'accounts:logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'accounts:otp_login' %}">Login</a>
-            <a href="{% url 'accounts:register' %}">Register</a>
-        {% endif %}
-    </div>
-</div>
+    /* 🔥 SCROLLABLE COMMENTS BOX */
+    #commentsList {
+        max-height: 420px;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 20px;
+    }
+
+    .comment-box {
+        background: #111827;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #1f2937;
+    }
+    .comment-author { font-weight: bold; font-size: 15px; }
+    .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+    .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+
+</style>
 
 <div class="movie-wrapper">
 
     <!-- MOVIE INFO -->
     <div class="movie-title">{{ movie.title }}</div>
     <div class="movie-meta">
-        {{ movie.category.name }} • {{ movie.time_ago }} • <span id="commentsCount">{{ movie.comments_count }}</span> comments
+        {{ movie.category.name }} • {{ movie.time_ago }} • 
+        <span id="commentsCount">{{ movie.comments_count }}</span> comments
     </div>
 
     <!-- VIDEO -->
@@ -167,10 +160,7 @@
                 {% endif %}
             >
                 <source src="{{ movie.video_url }}" type="video/mp4">
-                Your browser does not support HTML5 video.
             </video>
-        {% else %}
-            <p style="padding:20px; color:#ccc; text-align:center;">Video not available.</p>
         {% endif %}
     </div>
 
@@ -189,19 +179,27 @@
     <div class="movie-description">{{ movie.description|linebreaks }}</div>
 
     <!-- COMMENTS -->
-    <div class="section-title">Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)</div>
+    <div class="section-title">
+        Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)
+    </div>
 
-    <!-- AJAX form: note id and action kept same -->
     <form id="commentForm" method="POST" action="{% url 'movies:add_comment' movie.slug %}">
         {% csrf_token %}
         <textarea name="text" id="commentText" placeholder="Write your comment..."></textarea>
         <button id="submitComment" class="btn-submit" type="submit">Post Comment</button>
     </form>
 
+    <!-- 🔥 SCROLLABLE COMMENTS -->
     <div id="commentsList">
         {% for c in comments %}
             <div class="comment-box">
-                <div class="comment-author">{{ c.name }}</div>
+                <div class="comment-author">
+                    {% if c.user %}
+                        {{ c.user.username }}
+                    {% else %}
+                        {{ c.guest_name }}
+                    {% endif %}
+                </div>
                 <div class="comment-time">{{ c.time_ago }}</div>
                 <div class="comment-text">{{ c.text }}</div>
             </div>
@@ -228,12 +226,11 @@
                 </a>
             {% endfor %}
         </div>
-    {% else %}
-        <p style="color:#9ca3af;">No related movies found.</p>
     {% endif %}
 
 </div>
 
+<!-- AJAX COMMENTING -->
 <script>
 (function(){
   const form = document.getElementById('commentForm');
@@ -243,8 +240,7 @@
   const commentsCountSpan = document.getElementById('commentsCount');
   const commentsCountInline = document.getElementById('commentsCountInline');
 
-  // current user name fallback (server-side rendered)
-  const currentUser = "{{ request.user.username|default:'Anonymous' }}";
+  const currentUser = "{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}";
 
   form.addEventListener('submit', async function(e){
     e.preventDefault();
@@ -252,56 +248,42 @@
     const text = textarea.value.trim();
     if (!text) return;
 
-    // read csrf token from the form's hidden input
-    const csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
-    const csrfToken = csrfInput ? csrfInput.value : null;
+    const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-    // disable while sending
     submitBtn.disabled = true;
     submitBtn.textContent = 'Posting...';
 
     try {
       const formData = new FormData();
       formData.append('text', text);
-      // fetch to the same action URL
+
       const response = await fetch(form.action, {
         method: 'POST',
-        headers: {
-          'X-CSRFToken': csrfToken
-        },
+        headers: { 'X-CSRFToken': csrfToken },
         body: formData,
-        credentials: 'same-origin', // ensure cookies are included
+        credentials: 'same-origin',
         redirect: 'follow'
       });
 
-      // If server created the comment, response will be a redirect or 200
       if (response.ok || response.redirected) {
-        // append comment locally so no reload required (video keeps playing)
-        const nowLabel = "just now";
         const commentBox = document.createElement('div');
         commentBox.className = 'comment-box';
         commentBox.innerHTML = `
             <div class="comment-author">${currentUser}</div>
-            <div class="comment-time">${nowLabel}</div>
+            <div class="comment-time">just now</div>
             <div class="comment-text">${escapeHtml(text)}</div>
         `;
-        // insert at top
         commentsList.insertBefore(commentBox, commentsList.firstChild);
 
-        // increment counters (two places)
         incrementCount(commentsCountSpan);
         incrementCount(commentsCountInline);
 
-        // clear textarea
         textarea.value = '';
         textarea.focus();
       } else {
-        // fallback: if not ok, reload to let server show errors
-        console.warn('Comment post failed, reloading to get server-side state.');
         window.location.reload();
       }
     } catch (err) {
-      console.error('Error posting comment:', err);
       window.location.reload();
     } finally {
       submitBtn.disabled = false;
@@ -310,12 +292,10 @@
   });
 
   function incrementCount(el){
-    if (!el) return;
     const val = parseInt(el.textContent) || 0;
     el.textContent = val + 1;
   }
 
-  // Simple HTML escape to prevent XSS when appending text client-side
   function escapeHtml(unsafe) {
     return unsafe
       .replace(/&/g, "&amp;")

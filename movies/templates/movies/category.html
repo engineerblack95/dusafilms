@@ -5,85 +5,109 @@
 
 <style>
     body {
-        background: #0b0b12;
+        background: #0a0a12;
         color: #fff;
+        font-family: 'Inter', sans-serif;
     }
 
+    /* HEADER */
     .header {
-        padding: 20px;
+        padding: 28px 20px;
         text-align: center;
-        background: #111827;
-        font-size: 28px;
-        font-weight: bold;
+        background: linear-gradient(to right, #0f172a, #111827);
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 1px;
         border-bottom: 1px solid #1f2937;
+        text-transform: uppercase;
     }
 
+    /* WRAPPER */
     .container-custom {
         width: 92%;
         max-width: 1400px;
         margin: auto;
-        padding: 25px 0;
+        padding: 32px 0;
     }
 
     .count-text {
-        color: #a3a3a3;
-        margin-bottom: 20px;
-        font-size: 16px;
+        color: #9ca3af;
+        margin-bottom: 24px;
+        font-size: 17px;
+        font-weight: 400;
     }
 
+    /* GRID */
     .grid {
         display: grid;
-        gap: 20px;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 24px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 
+    /* MOVIE CARD */
     .movie-card {
         background: #111827;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
-        transition: 0.2s ease;
         border: 1px solid #1f2937;
         text-decoration: none;
         color: #fff;
+        transition: 0.25s ease;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        position: relative;
     }
 
     .movie-card:hover {
-        transform: scale(1.04);
+        transform: translateY(-6px) scale(1.03);
         border-color: #3b82f6;
+        box-shadow: 0 6px 22px rgba(59,130,246,0.25);
     }
 
+    /* THUMBNAIL */
     .movie-thumb {
         width: 100%;
-        height: 220px;
+        height: 250px;
         object-fit: cover;
         background: #000;
+        transition: 0.25s ease;
     }
 
+    .movie-card:hover .movie-thumb {
+        filter: brightness(1.12);
+    }
+
+    /* INFO */
     .movie-info {
-        padding: 12px 14px;
+        padding: 14px 16px;
     }
 
     .movie-title {
-        font-size: 15px;
-        font-weight: bold;
-        margin-bottom: 6px;
-        line-height: 1.3;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        line-height: 1.35;
+        color: #f3f4f6;
     }
 
     .movie-meta {
         font-size: 13px;
         color: #9ca3af;
+        font-weight: 400;
     }
 
+    /* EMPTY STATE */
     .empty-box {
-        padding: 50px;
+        padding: 60px;
         text-align: center;
-        font-size: 18px;
+        font-size: 20px;
         color: #9ca3af;
+        background: #111827;
+        border-radius: 12px;
+        border: 1px solid #1f2937;
     }
 </style>
 
-
+<!-- HEADER -->
 <div class="header">
     {{ category.name }}
 </div>
@@ -98,7 +122,7 @@
         <div class="grid">
             {% for movie in movies %}
                 <a href="{% url 'movies:detail' movie.slug %}" class="movie-card">
-                    
+
                     {% if movie.thumbnail %}
                         <img src="{{ movie.thumbnail.url }}" class="movie-thumb">
                     {% else %}
@@ -107,7 +131,6 @@
 
                     <div class="movie-info">
                         <div class="movie-title">{{ movie.title }}</div>
-
                         <div class="movie-meta">
                             {{ movie.time_ago }} • {{ movie.comments_count }} comments
                         </div>

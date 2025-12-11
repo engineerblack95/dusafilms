@@ -31,7 +31,7 @@ class Movie(models.Model):
 
     @property
     def comments_count(self):
-        return self.movie_comments.count()  # updated related_name
+        return self.movie_comments.count()
 
     @property
     def related_movies(self):
@@ -53,7 +53,19 @@ class Movie(models.Model):
 
 class Comment(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_comments")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comments")
+
+    # 🔥 Allow guest users
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_comments",
+        null=True,
+        blank=True
+    )
+
+    # 🔥 For guests (logged-out users)
+    guest_name = models.CharField(max_length=50, blank=True, null=True, default="Guest")
+
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -61,7 +73,9 @@ class Comment(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.user.username} - {self.movie.title}"
+        if self.user:
+            return f"{self.user.username} - {self.movie.title}"
+        return f"{self.guest_name} - {self.movie.title}"
 
     @property
     def time_ago(self):

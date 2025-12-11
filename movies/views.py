@@ -24,17 +24,17 @@ def home(request):
 
 
 # -----------------------------
-# MOVIE DETAIL PAGE
+# MOVIE DETAIL PAGE (Guest allowed)
 # -----------------------------
-@login_required
 def detail(request, slug):
     movie = get_object_or_404(Movie, slug=slug)
 
-    # 🔥 Save watch history
-    WatchedMovie.objects.get_or_create(
-        user=request.user,
-        movie=movie
-    )
+    # Save watch history ONLY for logged-in users
+    if request.user.is_authenticated:
+        WatchedMovie.objects.get_or_create(
+            user=request.user,
+            movie=movie
+        )
 
     comments = movie.movie_comments.all().order_by('-created_at')
 
@@ -50,9 +50,8 @@ def detail(request, slug):
 
 
 # -----------------------------
-# ADD COMMENT
+# ADD COMMENT (Guest allowed)
 # -----------------------------
-@login_required
 def add_comment(request, slug):
     movie = get_object_or_404(Movie, slug=slug)
 
@@ -60,11 +59,20 @@ def add_comment(request, slug):
         text = (request.POST.get("text") or "").strip()
 
         if text:
-            Comment.objects.create(
-                movie=movie,
-                user=request.user,
-                text=text
-            )
+            if request.user.is_authenticated:
+                # Logged-in user
+                Comment.objects.create(
+                    movie=movie,
+                    user=request.user,
+                    text=text
+                )
+            else:
+                # Guest user
+                Comment.objects.create(
+                    movie=movie,
+                    guest_name="Guest",
+                    text=text
+                )
 
     return redirect("movies:detail", slug=slug)
 
