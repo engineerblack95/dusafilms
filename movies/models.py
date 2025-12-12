@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(blank=True, unique=True)
@@ -19,10 +20,17 @@ class Category(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="movies")
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="movies"
+    )
     thumbnail = models.ImageField(upload_to="thumbnails/", null=True, blank=True)
-    video_url = models.URLField()
-    download_link = models.URLField(blank=True, null=True)
+
+    # Updated fields
+    video_url = models.URLField(max_length=500)
+    download_link = models.URLField(max_length=500, blank=True, null=True)
+
     slug = models.SlugField(blank=True, unique=True)
     upload_time = models.DateTimeField(default=now)
 
@@ -52,9 +60,13 @@ class Movie(models.Model):
 
 
 class Comment(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_comments")
+    movie = models.ForeignKey(
+        Movie,
+        on_delete=models.CASCADE,
+        related_name="movie_comments"
+    )
 
-    # 🔥 Allow guest users
+    # Logged-in user (optional)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -63,8 +75,13 @@ class Comment(models.Model):
         blank=True
     )
 
-    # 🔥 For guests (logged-out users)
-    guest_name = models.CharField(max_length=50, blank=True, null=True, default="Guest")
+    # Guest commenter name
+    guest_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default="Guest"
+    )
 
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -84,8 +101,16 @@ class Comment(models.Model):
 
 
 class WatchedMovie(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_watched_movies")
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_watched")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_watched_movies"
+    )
+    movie = models.ForeignKey(
+        Movie,
+        on_delete=models.CASCADE,
+        related_name="movie_watched"
+    )
     watched_at = models.DateTimeField(default=now)
 
     class Meta:

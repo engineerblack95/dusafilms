@@ -50,7 +50,7 @@
 .footer { margin-top: 50px; padding: 30px 20px; background: #000; color: white; text-align: center; border-top: 1px solid #222; }
 </style>
 
-<!-- ==================== HERO SECTION (unchanged) ==================== -->
+<!-- ==================== HERO SECTION ==================== -->
 <section class="hero">
     <div>
         <h1>Welcome to <span style="color:#ff2b2b;">Dusa Films</span></h1>
@@ -65,7 +65,7 @@
 
 <div class="container">
 
-    <!-- CATEGORIES (unchanged) -->
+    <!-- ==================== CATEGORIES ==================== -->
     {% if categories %}
     <h2 class="section-title">Categories</h2>
     <div class="row">
@@ -88,39 +88,70 @@
         {% endfor %}
     </div>
     {% endif %}
+
 </div>
 
-<!-- ==================== TRENDING SECTION (unchanged) ==================== -->
+<!-- ==================== LATEST MOVIES ==================== -->
+<div class="container">
+    <h2 class="section-title">Latest Movies</h2>
+    <div class="row">
+        {% if latest %}
+            {% for movie in latest %}
+            <div class="col-md-3 mb-4">
+                <div class="movie-card">
+                    <a href="{% url 'movies:detail' movie.slug %}">
+                        {% if movie.thumbnail %}
+                            <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
+                        {% endif %}
+                    </a>
+                    <div class="movie-card-title">{{ movie.title }}</div>
+                    <div class="movie-card-footer">
+                        {% if movie.upload_time %}
+                            <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
+                        {% endif %}
+                        <span>{{ movie.category.name }}</span><br>
+                        <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-light ps-3">No movies available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ==================== TRENDING / TOP COMMENTED ==================== -->
 <div class="container">
     <h2 class="section-title">Trending Now</h2>
     <div class="row">
-        {% with list_to_show=top|default:latest %}
-            {% if list_to_show %}
-                {% for movie in list_to_show %}
-                <div class="col-md-3 mb-4">
-                    <div class="movie-card">
-                        <a href="{% url 'movies:detail' movie.slug %}">
-                            {% if movie.thumbnail %}
-                                <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
-                            {% endif %}
-                        </a>
-                        <div class="movie-card-title">{{ movie.title }}</div>
-                        <div class="movie-card-footer">
-                            {% if movie.upload_time %}
-                                <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
-                            {% endif %}
-                            <span>{{ movie.category.name }}</span><br>
-                            <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
-                        </div>
+        {% if top %}
+            {% for movie in top %}
+            <div class="col-md-3 mb-4">
+                <div class="movie-card">
+                    <a href="{% url 'movies:detail' movie.slug %}">
+                        {% if movie.thumbnail %}
+                            <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
+                        {% endif %}
+                    </a>
+                    <div class="movie-card-title">{{ movie.title }}</div>
+                    <div class="movie-card-footer">
+                        {% if movie.upload_time %}
+                            <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
+                        {% endif %}
+                        <span>{{ movie.category.name }}</span><br>
+                        <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
                     </div>
                 </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-light ps-3">No movies available.</p>
-            {% endif %}
-        {% endwith %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-light ps-3">No trending movies available.</p>
+        {% endif %}
     </div>
 </div>
 
