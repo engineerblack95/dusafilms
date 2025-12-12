@@ -56,12 +56,17 @@
             font-weight: 900;
         }
 
+        /* MAKE NAV LINKS BIGGER + BOLD (requested) */
+        .nav-link-strong {
+            font-weight: 700 !important;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
         /* PAGE SPACING */
         main.container {
             margin-top: calc(var(--nav-height) + 20px);
             padding-top: 10px;
-
-            /* FIX: add enough bottom padding for fixed footer */
             padding-bottom: calc(var(--footer-height) + 30px);
             min-height: calc(100vh - var(--nav-height) - var(--footer-height));
         }
@@ -113,14 +118,14 @@
 
                 <!-- HOME -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'movies:home' %}">Home</a>
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
                 </li>
 
                 {% if user.is_authenticated %}
 
                     <!-- DASHBOARD -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                        <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">Dashboard</a>
                     </li>
 
                     {% if user.is_superuser %}
@@ -143,12 +148,12 @@
 
                     <!-- LOGIN -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:otp_login' %}">Login</a>
+                        <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">Login</a>
                     </li>
 
                     <!-- REGISTER -->
                     <li class="nav-item">
-                        <a class="nav-link text-info" href="{% url 'accounts:register' %}">Register</a>
+                        <a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">Register</a>
                     </li>
 
                 {% endif %}

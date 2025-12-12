@@ -4,67 +4,78 @@
 {% block content %}
 
 <style>
+    body { background: #0b0b12; color: white; }
+
+    /* HEADER */
     .search-header {
-        background: #0b0b12;
-        padding: 25px 20px;
+        padding: 45px 20px;
         text-align: center;
         color: white;
         border-bottom: 1px solid #1f2937;
+        background: linear-gradient(to bottom, #0e0e16, #0b0b12);
     }
 
     .search-title {
-        font-size: 25px;
-        font-weight: bold;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
     }
 
     .query-text {
         color: #3b82f6;
-        font-size: 18px;
+        font-size: 19px;
+        margin-top: 6px;
     }
 
+    /* MAIN WRAPPER */
     .container-search {
         width: 92%;
-        max-width: 1400px;
+        max-width: 1500px;
         margin: auto;
-        padding: 30px 0;
+        padding: 40px 0 60px;
     }
 
+    /* GRID */
     .grid {
         display: grid;
-        gap: 20px;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 22px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 
+    /* MOVIE CARD */
     .movie-card {
+        position: relative;
         background: #111827;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
-        transition: 0.2s ease;
+        transition: 0.25s;
         border: 1px solid #1f2937;
-        color: #fff;
         text-decoration: none;
+        color: white;
+        cursor: pointer;
     }
 
     .movie-card:hover {
-        transform: scale(1.04);
+        transform: translateY(-6px);
         border-color: #3b82f6;
+        box-shadow: 0 0 12px #3b82f6aa;
     }
 
     .movie-thumb {
         width: 100%;
-        height: 220px;
+        height: 240px;
         object-fit: cover;
         background: black;
     }
 
     .movie-info {
-        padding: 12px;
+        padding: 14px;
     }
 
     .movie-title {
-        font-size: 15px;
-        font-weight: bold;
-        margin-bottom: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
     }
 
     .movie-meta {
@@ -72,30 +83,44 @@
         font-size: 13px;
     }
 
+    /* EMPTY STATE */
     .empty-box {
-        font-size: 20px;
-        color: #9ca3af;
         text-align: center;
-        padding: 50px;
+        padding: 80px 20px;
+        color: #9ca3af;
+        font-size: 20px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .empty-emoji {
+        font-size: 50px;
+        margin-bottom: 15px;
+        display: block;
+        opacity: 0.7;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
 
-<!-- SEARCH HEADER -->
+<!-- HEADER -->
 <div class="search-header">
     <div class="search-title">Search Results</div>
     <div class="query-text">for "{{ q }}"</div>
 </div>
 
 
-<!-- SEARCH RESULTS -->
+<!-- RESULTS -->
 <div class="container-search">
 
     {% if results %}
         <div class="grid">
             {% for movie in results %}
                 <a href="{% url 'movies:detail' movie.slug %}" class="movie-card">
-                    
+
                     {% if movie.thumbnail %}
                         <img src="{{ movie.thumbnail.url }}" class="movie-thumb">
                     {% else %}
@@ -115,8 +140,9 @@
 
     {% else %}
         <div class="empty-box">
-            No movies found for your search.  
-            Try another keyword 🔎
+            <span class="empty-emoji">🔍</span>
+            No movies found for your search.<br>
+            Try a different keyword.
         </div>
     {% endif %}
 </div>
