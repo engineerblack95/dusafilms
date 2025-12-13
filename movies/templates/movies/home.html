@@ -2,8 +2,9 @@
 {% block title %}Dusa Films – Home{% endblock %}
 
 {% block content %}
+
 <style>
-/* HERO */
+/* ================= HERO ================= */
 .hero {
     background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
                 url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1500&q=80');
@@ -17,40 +18,122 @@
     color: white;
     padding: 0 20px;
 }
-.hero h1 { font-size: 3.2rem; font-weight: bold; letter-spacing: 2px; }
-.hero p { font-size: 1.2rem; margin-top: 10px; opacity: 0.9; }
+.hero h1 {
+    font-size: 3.2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.hero p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    opacity: 0.9;
+}
 
-.search-box { margin-top: 25px; display: flex; justify-content: center; }
-.search-box input { width: 360px; height: 45px; border-radius: 30px 0 0 30px; border: none; padding: 0 20px; outline: none; }
-.search-box button { height: 45px; border-radius: 0 30px 30px 0; border: none; padding: 0 20px; font-weight: bold; background: #ff2b2b; color: white; transition: 0.3s; }
-.search-box button:hover { background: #d41919; }
+/* ================= SEARCH ================= */
+.search-box {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+.search-box input {
+    width: 360px;
+    height: 45px;
+    border-radius: 30px 0 0 30px;
+    border: none;
+    padding: 0 20px;
+    outline: none;
+}
+.search-box button {
+    height: 45px;
+    border-radius: 0 30px 30px 0;
+    border: none;
+    padding: 0 20px;
+    font-weight: bold;
+    background: #ff2b2b;
+    color: white;
+    transition: 0.3s;
+}
+.search-box button:hover {
+    background: #d41919;
+}
 
-/* SECTION STYLES */
-.section-title { font-size: 1.8rem; font-weight: bold; border-left: 5px solid #ff2b2b; padding-left: 10px; margin: 40px 0 20px 0; }
+/* ================= SECTIONS ================= */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    border-left: 5px solid #ff2b2b;
+    padding-left: 10px;
+    margin: 40px 0 20px;
+}
 
-.movie-card { border-radius: 12px; overflow: hidden; background: #111; transition: 0.3s; }
-.movie-card:hover { transform: scale(1.03); }
-.movie-card img { width: 100%; height: 260px; object-fit: cover; }
-.movie-card-title { padding: 10px; font-size: 1rem; font-weight: bold; color: white; }
-.movie-card-footer { padding: 0 10px 10px 10px; color: #4aa3ff; font-size: 0.9rem; }
+/* ================= MOVIES ================= */
+.movie-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+    transition: 0.3s;
+}
+.movie-card:hover {
+    transform: scale(1.03);
+}
+.movie-card img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+.movie-card-title {
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+}
+.movie-card-footer {
+    padding: 0 10px 10px;
+    color: #4aa3ff;
+    font-size: 0.9rem;
+}
 
 .watch-btn {
-    display:inline-block;
-    margin-top:6px;
-    padding:6px 14px;
-    background:#ff2b2b;
-    color:white;
-    border-radius:6px;
-    font-weight:bold;
-    text-decoration:none;
-    transition:0.3s;
+    display: inline-block;
+    margin-top: 6px;
+    padding: 6px 14px;
+    background: #ff2b2b;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
 }
-.watch-btn:hover { background:#d41919; }
+.watch-btn:hover {
+    background: #d41919;
+}
 
-.footer { margin-top: 50px; padding: 30px 20px; background: #000; color: white; text-align: center; border-top: 1px solid #222; }
+/* ================= WHATSAPP CHAT BUTTON ================= */
+.whatsapp-float {
+    position: fixed;
+    bottom: 90px;
+    right: 22px;
+    width: 62px;
+    height: 62px;
+    background: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+    z-index: 2000;
+    transition: 0.3s;
+    text-decoration: none;
+}
+.whatsapp-float:hover {
+    background: #1ebe57;
+    transform: scale(1.08);
+}
 </style>
 
-<!-- ==================== HERO SECTION ==================== -->
+<!-- ================= HERO ================= -->
 <section class="hero">
     <div>
         <h1>Welcome to <span style="color:#ff2b2b;">Dusa Films</span></h1>
@@ -63,100 +146,64 @@
     </div>
 </section>
 
+<!-- ================= CATEGORIES ================= -->
 <div class="container">
-
-    <!-- ==================== CATEGORIES ==================== -->
-    {% if categories %}
-    <h2 class="section-title">Categories</h2>
-    <div class="row">
-        {% for category in categories %}
-        <div class="col-md-3 mb-4">
-            <div class="movie-card">
-                <a href="{% url 'movies:category' category.slug %}">
-                    {% if category.image %}
-                        <img src="{{ category.image.url }}" alt="{{ category.name }}">
-                    {% else %}
-                        <img src="https://via.placeholder.com/400x260?text={{ category.name|urlencode }}" alt="{{ category.name }}">
-                    {% endif %}
-                </a>
-                <div class="movie-card-title">{{ category.name }}</div>
-                <div class="movie-card-footer">{{ category.movies.count }} movies</div>
+{% if categories %}
+<h2 class="section-title">Categories</h2>
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-3 mb-4">
+        <div class="movie-card">
+            <a href="{% url 'movies:category' category.slug %}">
+                {% if category.image %}
+                    <img src="{{ category.image.url }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/400x260">
+                {% endif %}
+            </a>
+            <div class="movie-card-title">{{ category.name }}</div>
+            <div class="movie-card-footer">
+                {{ category.movies.count }} movies
             </div>
         </div>
-        {% empty %}
-        <p class="text-light ps-3">No categories yet.</p>
-        {% endfor %}
     </div>
-    {% endif %}
-
+    {% endfor %}
+</div>
+{% endif %}
 </div>
 
-<!-- ==================== LATEST MOVIES ==================== -->
+<!-- ================= LATEST MOVIES ================= -->
 <div class="container">
-    <h2 class="section-title">Latest Movies</h2>
-    <div class="row">
-        {% if latest %}
-            {% for movie in latest %}
-            <div class="col-md-3 mb-4">
-                <div class="movie-card">
-                    <a href="{% url 'movies:detail' movie.slug %}">
-                        {% if movie.thumbnail %}
-                            <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
-                        {% endif %}
-                    </a>
-                    <div class="movie-card-title">{{ movie.title }}</div>
-                    <div class="movie-card-footer">
-                        {% if movie.upload_time %}
-                            <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
-                        {% endif %}
-                        <span>{{ movie.category.name }}</span><br>
-                        <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-light ps-3">No movies available.</p>
-        {% endif %}
+<h2 class="section-title">Latest Movies</h2>
+<div class="row">
+{% for movie in latest %}
+<div class="col-md-3 mb-4">
+    <div class="movie-card">
+        <a href="{% url 'movies:detail' movie.slug %}">
+            <img src="{{ movie.thumbnail.url }}">
+        </a>
+        <div class="movie-card-title">{{ movie.title }}</div>
+        <div class="movie-card-footer">
+            uploaded {{ movie.upload_time|timesince }} ago<br>
+            {{ movie.category.name }}<br>
+            <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">
+                WATCH NOW
+            </a>
+        </div>
     </div>
 </div>
-
-<!-- ==================== TRENDING / TOP COMMENTED ==================== -->
-<div class="container">
-    <h2 class="section-title">Trending Now</h2>
-    <div class="row">
-        {% if top %}
-            {% for movie in top %}
-            <div class="col-md-3 mb-4">
-                <div class="movie-card">
-                    <a href="{% url 'movies:detail' movie.slug %}">
-                        {% if movie.thumbnail %}
-                            <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/400x260?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
-                        {% endif %}
-                    </a>
-                    <div class="movie-card-title">{{ movie.title }}</div>
-                    <div class="movie-card-footer">
-                        {% if movie.upload_time %}
-                            <span style="color:#bbb;">uploaded {{ movie.upload_time|timesince }} ago</span><br>
-                        {% endif %}
-                        <span>{{ movie.category.name }}</span><br>
-                        <a class="watch-btn" href="{% url 'movies:detail' movie.slug %}">WATCH NOW</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-light ps-3">No trending movies available.</p>
-        {% endif %}
-    </div>
+{% endfor %}
+</div>
 </div>
 
-<div class="footer">
-    <p>© 2025 Dusa Films — All Rights Reserved</p>
-</div>
+<!-- ================= WHATSAPP CHAT LINK ================= -->
+<a href="https://wa.me/250786844104?text=Hello%20Dusa%20Films,%20I%20need%20help"
+   class="whatsapp-float"
+   target="_blank"
+   aria-label="Chat with us on WhatsApp">
+    💬
+</a>
+
+</a>
 
 {% endblock %}

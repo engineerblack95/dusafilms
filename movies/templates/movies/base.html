@@ -56,14 +56,12 @@
             font-weight: 900;
         }
 
-        /* MAKE NAV LINKS BIGGER + BOLD (requested) */
         .nav-link-strong {
             font-weight: 700 !important;
             font-size: 1.1rem;
             letter-spacing: 0.5px;
         }
 
-        /* PAGE SPACING */
         main.container {
             margin-top: calc(var(--nav-height) + 20px);
             padding-top: 10px;
@@ -71,7 +69,6 @@
             min-height: calc(100vh - var(--nav-height) - var(--footer-height));
         }
 
-        /* FOOTER */
         .site-footer {
             position: fixed;
             bottom: 0;
@@ -86,7 +83,6 @@
             z-index: 1030;
         }
 
-        /* MOBILE FIX */
         @media (max-width: 991px) {
             .site-navbar .collapse {
                 margin-top: 10px;
@@ -118,18 +114,43 @@
 
                 <!-- HOME -->
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <!-- ANNOUNCEMENTS (WITH UNREAD COUNT) -->
+                <li class="nav-item">
+                    <a href="{% url 'announcements:list' %}"
+                       class="nav-link nav-link-strong position-relative">
+
+                        Announcements
+
+                        {% if unread_announcements_count > 0 %}
+                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                                {{ unread_announcements_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                <!-- CONTACT -->
+                <li class="nav-item">
+                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">
+                        Contact
+                    </a>
                 </li>
 
                 {% if user.is_authenticated %}
 
                     <!-- DASHBOARD -->
                     <li class="nav-item">
-                        <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                        <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">
+                            Dashboard
+                        </a>
                     </li>
 
                     {% if user.is_superuser %}
-                    <!-- ADMIN PANEL ONLY FOR SUPERUSER -->
                     <li class="nav-item">
                         <a class="nav-link text-warning fw-bold" href="/admin/" target="_blank">
                             Admin Panel
@@ -148,12 +169,16 @@
 
                     <!-- LOGIN -->
                     <li class="nav-item">
-                        <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">Login</a>
+                        <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">
+                            Login
+                        </a>
                     </li>
 
                     <!-- REGISTER -->
                     <li class="nav-item">
-                        <a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">Register</a>
+                        <a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">
+                            Register
+                        </a>
                     </li>
 
                 {% endif %}

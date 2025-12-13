@@ -69,17 +69,11 @@
 
   </div>
 
-  <!-- ===== ACTION BUTTONS ===== -->
+  <!-- ===== ACTION BUTTON ===== -->
   <div class="row g-3 mb-5">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <a href="{% url 'movies:home' %}" class="btn btn-primary w-100 py-3">
         🎬 Browse Movies
-      </a>
-    </div>
-
-    <div class="col-md-6">
-      <a class="btn btn-outline-light w-100 py-3 disabled">
-        ⚙️ Edit Profile (Coming Soon)
       </a>
     </div>
   </div>
@@ -145,7 +139,9 @@
           <div class="col">
             <div class="top-movie-card">
               <div>
-                <a href="{% url 'movies:detail' t.movie__slug %}" class="fw-bold">{{ t.movie__title }}</a>
+                <a href="{% url 'movies:detail' t.movie__slug %}" class="fw-bold">
+                  {{ t.movie__title }}
+                </a>
                 <p class="text-muted small">{{ t.cnt }} comments</p>
               </div>
             </div>

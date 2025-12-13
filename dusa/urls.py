@@ -7,6 +7,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('', include('movies.urls', namespace='movies')),
+    path("contact/", include("contact.urls")),
+    path("announcements/", include("announcements.urls")),
+
+
 
 
 ]

@@ -1,63 +1,107 @@
 {% extends "movies/base.html" %}
 {% load django_bootstrap5 %}
-{% block title %}Register - Dusa Films{% endblock %}
+{% block title %}Register – Dusa Films{% endblock %}
 
 {% block content %}
 <style>
-  body { background: #0b0b12; color: white; }
-  
+  /* Match base.html background & colors */
+  .register-wrapper {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
   .register-card {
-      background: #111827;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      padding: 30px 25px;
+      background: #121212;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 32px 26px;
       width: 100%;
       max-width: 480px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      transition: 0.3s ease;
   }
+
   .register-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.65);
   }
+
   .register-card h3 {
-      font-weight: bold;
-      color: #ff2b2b;
-      margin-bottom: 20px;
+      font-weight: 900;
+      color: var(--red);
+      margin-bottom: 22px;
       text-align: center;
+      letter-spacing: 0.5px;
   }
-  .register-card .btn-blue {
-      background: #3b82f6;
+
+  /* Bootstrap form tweaks */
+  .register-card input {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--white);
+  }
+
+  .register-card input:focus {
+      background: #0b0b0b;
+      color: var(--white);
+      border-color: var(--blue);
+      box-shadow: none;
+  }
+
+  .register-card label {
+      color: #cbd5f5;
+      font-weight: 600;
+  }
+
+  /* Button */
+  .btn-register {
+      background: var(--blue);
       color: white;
-      font-weight: bold;
-      border-radius: 8px;
-      padding: 10px 0;
-      transition: background 0.3s;
+      font-weight: 800;
+      border-radius: 10px;
+      padding: 11px 0;
+      letter-spacing: 0.5px;
+      transition: 0.3s;
   }
-  .register-card .btn-blue:hover {
-      background: #2563eb;
+
+  .btn-register:hover {
+      background: #1876d1;
   }
+
+  /* Links */
   .register-card a {
-      color: #ff2b2b;
-      font-weight: bold;
+      color: var(--red);
+      font-weight: 700;
       text-decoration: none;
-      transition: color 0.2s;
   }
+
   .register-card a:hover {
       color: #dc2626;
   }
 </style>
 
-<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+<div class="register-wrapper">
   <div class="register-card">
+
     <h3>Create Your Account</h3>
-    <form method="post">
+
+    <form method="post" novalidate>
       {% csrf_token %}
       {% bootstrap_form form layout='vertical' %}
-      <button class="btn btn-blue w-100 mt-3" type="submit">Create Account</button>
+      <button class="btn btn-register w-100 mt-3" type="submit">
+        Create Account
+      </button>
     </form>
+
     <div class="mt-3 text-center">
-      <small>Already have an account? <a href="{% url 'accounts:otp_login' %}">Login with OTP</a></small>
+      <small>
+        Already have an account?
+        <a href="{% url 'accounts:otp_login' %}">Login with OTP</a>
+      </small>
     </div>
+
   </div>
 </div>
 {% endblock %}

@@ -1,98 +1,181 @@
 {% extends "movies/base.html" %}
 {% load django_bootstrap5 %}
-{% block title %}Verify OTP - Dusa Films{% endblock %}
+{% block title %}Verify OTP – Dusa Films{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height:75vh;">
-  <div class="card shadow-lg p-4" style="max-width:480px; width: 100%;">
+<style>
+  .otp-wrapper {
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
 
-    <h3 class="text-center mb-4">Enter OTP</h3>
+  .otp-card {
+      background: #121212;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 32px 26px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      color: var(--white);
+      transition: 0.3s ease;
+  }
 
-    <!-- Display messages -->
+  .otp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.7);
+  }
+
+  .otp-card h3 {
+      font-weight: 900;
+      color: var(--blue);
+      margin-bottom: 22px;
+      text-align: center;
+      letter-spacing: 0.5px;
+  }
+
+  /* Inputs */
+  .otp-card input {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--white);
+      text-align: center;
+      letter-spacing: 4px;
+      font-size: 1.2rem;
+  }
+
+  .otp-card input::placeholder {
+      color: #9ca3af;
+      letter-spacing: normal;
+      font-size: 0.95rem;
+  }
+
+  .otp-card input:focus {
+      background: #0b0b0b;
+      color: var(--white);
+      border-color: var(--blue);
+      box-shadow: none;
+  }
+
+  .otp-card label {
+      font-weight: 600;
+      color: #cbd5f5;
+  }
+
+  /* Buttons */
+  .btn-verify {
+      background: var(--blue);
+      border: none;
+      font-weight: 800;
+      padding: 11px 0;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      transition: 0.3s;
+  }
+
+  .btn-verify:hover {
+      background: #1876d1;
+  }
+
+  .btn-resend {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      font-weight: 700;
+      padding: 10px 0;
+      border-radius: 10px;
+      transition: 0.3s;
+  }
+
+  .btn-resend:hover {
+      background: #111827;
+      border-color: var(--blue);
+  }
+
+  /* Alerts */
+  .alert {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--white);
+  }
+
+  .alert-success {
+      border-left: 4px solid #22c55e;
+  }
+
+  .alert-danger {
+      border-left: 4px solid var(--red);
+  }
+
+  /* Links */
+  .otp-card a {
+      color: var(--red);
+      font-weight: 700;
+      text-decoration: none;
+  }
+
+  .otp-card a:hover {
+      color: #dc2626;
+      text-decoration: underline;
+  }
+</style>
+
+<div class="otp-wrapper">
+  <div class="otp-card">
+
+    <h3>Enter OTP</h3>
+
+    <!-- Messages -->
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3">
           {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
         </div>
       {% endfor %}
     {% endif %}
 
-    <!-- OTP Verification Form -->
+    <!-- Verify OTP -->
     <form method="post">
       {% csrf_token %}
       <input type="hidden" name="username" value="{{ username }}">
-      
+
       <div class="mb-3">
         <label for="otp" class="form-label">OTP Code</label>
-        <input type="text" name="otp" id="otp" class="form-control" maxlength="6" placeholder="Enter the 6-digit code" required>
+        <input
+          type="text"
+          name="otp"
+          id="otp"
+          class="form-control"
+          maxlength="6"
+          placeholder="Enter 6-digit code"
+          required
+        >
       </div>
 
-      <button class="btn btn-primary w-100 mb-2" type="submit">Verify & Login</button>
+      <button class="btn btn-verify w-100 mb-3" type="submit">
+        Verify & Login
+      </button>
     </form>
 
     <!-- Resend OTP -->
     <form method="post" action="{% url 'accounts:resend_otp' %}">
       {% csrf_token %}
       <input type="hidden" name="username" value="{{ username }}">
-      <button class="btn btn-secondary w-100" type="submit">Resend OTP</button>
+      <button class="btn btn-resend w-100" type="submit">
+        Resend OTP
+      </button>
     </form>
 
     <div class="text-center mt-3">
-      <small>Need to login with a different account? <a href="{% url 'accounts:otp_login' %}">Go back</a></small>
+      <small>
+        Need to login with a different account?
+        <a href="{% url 'accounts:otp_login' %}">Go back</a>
+      </small>
     </div>
+
   </div>
 </div>
-
-<style>
-.card {
-    border-radius: 12px;
-    background: #1f1f2b;
-    color: #fff;
-}
-
-.card h3 {
-    color: #3b82f6;
-}
-
-.form-control {
-    background: #2b2b3a;
-    border: 1px solid #3b3b4a;
-    color: #fff;
-}
-
-.form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.25);
-    background: #2b2b3a;
-    color: #fff;
-}
-
-.btn-primary {
-    background: #3b82f6;
-    border: none;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-}
-
-.btn-secondary {
-    background: #6b7280;
-    border: none;
-}
-
-.btn-secondary:hover {
-    background: #4b5563;
-}
-
-a {
-    color: #3b82f6;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-</style>
 {% endblock %}

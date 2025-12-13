@@ -1,0 +1,67 @@
+{% extends "movies/base.html" %}
+{% block title %}Announcements • Dusa Films{% endblock %}
+
+{% block content %}
+
+<style>
+  .announcement-box {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 22px;
+    transition: 0.25s ease;
+  }
+
+  .announcement-box:hover {
+    border-color: #1e90ff;
+    box-shadow: 0 0 10px rgba(30,144,255,0.25);
+  }
+
+  .announcement-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .announcement-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 12px;
+  }
+
+  .announcement-message {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #e5e7eb;
+    white-space: pre-line;
+  }
+</style>
+
+<div class="container">
+
+  <h2 class="fw-bold mb-4">📢 Announcements</h2>
+
+  {% if announcements %}
+    {% for a in announcements %}
+      <div class="announcement-box">
+        <div class="announcement-title">
+          {{ a.title }}
+        </div>
+
+        <div class="announcement-meta">
+          Posted on {{ a.created_at|date:"M d, Y H:i" }}
+        </div>
+
+        <div class="announcement-message">
+          {{ a.message }}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No announcements available at the moment.</p>
+  {% endif %}
+
+</div>
+
+{% endblock %}

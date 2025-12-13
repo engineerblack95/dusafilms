@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from movies.models import Movie
+from django.shortcuts import render, redirect
+from movies.models import Movie, Comment, WatchedMovie
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -7,12 +7,13 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 import random
-from .models import Profile, WatchedMovie
-from movies.models import Comment
 
+from .models import Profile
 from .forms import UserRegisterForm, OTPLoginForm, ProfilePhotoForm
+
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+
 
 # ----------------------------
 # User Registration
@@ -32,6 +33,7 @@ def register(request):
 
     return render(request, "accounts/register.html", {"form": form})
 
+
 # ----------------------------
 # OTP Login Page
 # ----------------------------
@@ -40,6 +42,7 @@ def otp_login(request):
         return redirect("movies:home")
     form = OTPLoginForm()
     return render(request, "accounts/otp_login.html", {"form": form})
+
 
 # ----------------------------
 # Send OTP
@@ -57,17 +60,16 @@ def send_otp(request):
             messages.error(request, "User does not exist.")
             return redirect("accounts:otp_login")
 
-        # Generate 6-digit OTP
         otp = str(random.randint(100000, 999999)).zfill(6)
         profile = user.profile
         profile.otp = otp
         profile.otp_created_at = timezone.now()
         profile.save()
 
-        # Send OTP via email
         subject = "Dusa Films — Your OTP"
         message = f"Hello {user.username},\n\nYour OTP is: {otp}\nIt expires in 5 minutes."
         from_email = getattr(settings, "EMAIL_HOST_USER", None)
+
         try:
             send_mail(subject, message, from_email, [user.email], fail_silently=True)
         except Exception:
@@ -78,11 +80,13 @@ def send_otp(request):
 
     return redirect("accounts:otp_login")
 
+
 # ----------------------------
 # Resend OTP
 # ----------------------------
 def resend_otp(request):
     return send_otp(request)
+
 
 # ----------------------------
 # Verify OTP
@@ -113,6 +117,7 @@ def verify_otp(request):
 
     return render(request, "accounts/verify_otp.html", {"username": username})
 
+
 # ----------------------------
 # Dashboard
 # ----------------------------
@@ -135,15 +140,21 @@ def dashboard(request):
     all_watched = WatchedMovie.objects.filter(user=request.user).order_by('-watched_at')
 
     total_comments = all_comments.count()
-    movies_watched = all_watched.count()
+
+    # ✅ FIXED: count DISTINCT movies watched
+    movies_watched = (
+        all_watched
+        .values("movie")
+        .distinct()
+        .count()
+    )
 
     recent_comments = all_comments[:5]
     recent_watched = all_watched[:5]
 
-    # Top commented movies
     top_commented = (
         all_comments
-        .values('movie__id', 'movie__title', 'movie__slug')
+        .values('movie__title', 'movie__slug')
         .annotate(cnt=Count('id'))
         .order_by('-cnt')[:6]
     )
@@ -159,28 +170,6 @@ def dashboard(request):
     }
 
     return render(request, "accounts/dashboard.html", context)
-
-@login_required
-def detail(request, slug):
-    movie = get_object_or_404(Movie, slug=slug)
-
-    # 🔥 Save watch history (this is what you were missing)
-    WatchedMovie.objects.get_or_create(
-        user=request.user,
-        movie=movie
-    )
-
-    comments = movie.movie_comments.all().order_by('-created_at')
-
-    related = Movie.objects.filter(
-        category=movie.category
-    ).exclude(pk=movie.pk)[:8]
-
-    return render(request, "movies/detail.html", {
-        'movie': movie,
-        'related': related,
-        'comments': comments,
-    })
 
 
 # ----------------------------

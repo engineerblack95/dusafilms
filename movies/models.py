@@ -3,10 +3,10 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 
-
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(blank=True, unique=True)
+    image = models.ImageField(upload_to="category_images/", blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

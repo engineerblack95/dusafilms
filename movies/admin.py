@@ -24,8 +24,11 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ("movie",)
 
     def user_name(self, obj):
-        """Display the username of the commenter"""
-        return obj.user.username
+        """
+        Display the username of the commenter safely.
+        Handles deleted or anonymous users.
+        """
+        return obj.user.username if obj.user else "Anonymous"
 
-    user_name.admin_order_field = 'user'  # Allows sorting by user
-    user_name.short_description = 'User Name'  # Column header
+    user_name.admin_order_field = "user"
+    user_name.short_description = "User Name"

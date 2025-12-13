@@ -1,19 +1,118 @@
 {% extends "movies/base.html" %}
 {% load django_bootstrap5 %}
-{% block title %}OTP Login - Dusa Films{% endblock %}
+{% block title %}OTP Login – Dusa Films{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height:75vh;">
-  <div class="card shadow-lg p-4" style="max-width:480px; width: 100%;">
-    
-    <h3 class="text-center mb-4">Login with OTP</h3>
+<style>
+  .otp-wrapper {
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
 
-    <!-- Display messages -->
+  .otp-card {
+      background: #121212;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 32px 26px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      color: var(--white);
+      transition: 0.3s ease;
+  }
+
+  .otp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.7);
+  }
+
+  .otp-card h3 {
+      font-weight: 900;
+      color: var(--blue);
+      margin-bottom: 22px;
+      text-align: center;
+      letter-spacing: 0.5px;
+  }
+
+  /* Inputs */
+  .otp-card input {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--white);
+  }
+
+  .otp-card input::placeholder {
+      color: #9ca3af;
+  }
+
+  .otp-card input:focus {
+      background: #0b0b0b;
+      color: var(--white);
+      border-color: var(--blue);
+      box-shadow: none;
+  }
+
+  .otp-card label {
+      font-weight: 600;
+      color: #cbd5f5;
+  }
+
+  /* Button */
+  .btn-otp {
+      background: var(--blue);
+      border: none;
+      font-weight: 800;
+      padding: 11px 0;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      transition: 0.3s;
+  }
+
+  .btn-otp:hover {
+      background: #1876d1;
+  }
+
+  /* Alerts */
+  .alert {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--white);
+  }
+
+  .alert-success {
+      border-left: 4px solid #22c55e;
+  }
+
+  .alert-danger {
+      border-left: 4px solid var(--red);
+  }
+
+  /* Links */
+  .otp-card a {
+      color: var(--red);
+      font-weight: 700;
+      text-decoration: none;
+  }
+
+  .otp-card a:hover {
+      color: #dc2626;
+      text-decoration: underline;
+  }
+</style>
+
+<div class="otp-wrapper">
+  <div class="otp-card">
+
+    <h3>Login with OTP</h3>
+
+    <!-- Messages -->
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3">
           {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
         </div>
       {% endfor %}
     {% endif %}
@@ -23,57 +122,28 @@
       {% csrf_token %}
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
-        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+        <input
+          type="text"
+          name="username"
+          id="username"
+          class="form-control"
+          placeholder="Enter your username"
+          required
+        >
       </div>
-      <button class="btn btn-primary w-100 mb-3" type="submit">Send OTP</button>
+
+      <button class="btn btn-otp w-100 mb-3" type="submit">
+        Send OTP
+      </button>
     </form>
 
     <div class="text-center">
-      <small>Don't have an account? <a href="{% url 'accounts:register' %}">Create one</a></small>
+      <small>
+        Don't have an account?
+        <a href="{% url 'accounts:register' %}">Create one</a>
+      </small>
     </div>
+
   </div>
 </div>
-
-<style>
-.card {
-    border-radius: 12px;
-    background: #1f1f2b;
-    color: #fff;
-}
-
-.card h3 {
-    color: #3b82f6;
-}
-
-.form-control {
-    background: #2b2b3a;
-    border: 1px solid #3b3b4a;
-    color: #fff;
-}
-
-.form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.25);
-    background: #2b2b3a;
-    color: #fff;
-}
-
-.btn-primary {
-    background: #3b82f6;
-    border: none;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-}
-
-a {
-    color: #3b82f6;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-</style>
 {% endblock %}

@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
+
 from .models import Movie, Category, Comment, WatchedMovie
+from announcements.models import Announcement  # ✅ ANNOUNCEMENTS IMPORT
 
 
 # -----------------------------
@@ -16,10 +18,16 @@ def home(request):
 
     categories = Category.objects.all()
 
+    # ✅ FETCH ACTIVE ANNOUNCEMENTS (CREATED BY ADMIN ONLY)
+    announcements = Announcement.objects.filter(
+        is_active=True
+    ).order_by('-created_at')
+
     return render(request, "movies/home.html", {
         'latest': latest,
         'top': top,
         'categories': categories,
+        'announcements': announcements,  # ✅ PASSED TO TEMPLATE
     })
 
 
@@ -83,6 +91,7 @@ def add_comment(request, slug):
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug)
     movies = Movie.objects.filter(category=category)
+
     return render(request, "movies/category.html", {
         "category": category,
         "movies": movies

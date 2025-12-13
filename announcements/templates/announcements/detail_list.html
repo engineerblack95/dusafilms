@@ -1,0 +1,92 @@
+{% extends "movies/base.html" %}
+{% block title %}{{ announcement.title }} – Announcement{% endblock %}
+
+{% block content %}
+<style>
+/* ANNOUNCEMENT DETAIL */
+.announcement-detail {
+    max-width: 900px;
+    margin: 60px auto;
+    background: #0d1b2a;
+    border-radius: 16px;
+    padding: 30px 35px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    color: #e5e7eb;
+}
+
+.announcement-detail h1 {
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.announcement-meta {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-bottom: 25px;
+}
+
+.announcement-body {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.announcement-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-back {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-list {
+    background: #1e90ff;
+    color: #fff;
+}
+
+.btn-list:hover {
+    background: #1876d1;
+}
+
+.btn-home {
+    background: transparent;
+    border: 1px solid #374151;
+    color: #e5e7eb;
+}
+
+.btn-home:hover {
+    background: #111827;
+}
+</style>
+
+<div class="announcement-detail">
+
+    <h1>📢 {{ announcement.title }}</h1>
+
+    <div class="announcement-meta">
+        Posted on {{ announcement.created_at|date:"F d, Y · H:i" }}
+    </div>
+
+    <div class="announcement-body">
+        {{ announcement.message }}
+    </div>
+
+    <div class="announcement-actions">
+        <a href="{% url 'announcements:list' %}" class="btn-back btn-list">
+            ← Back to announcements
+        </a>
+
+        <a href="{% url 'movies:home' %}" class="btn-back btn-home">
+            ⌂ Home
+        </a>
+    </div>
+
+</div>
+{% endblock %}

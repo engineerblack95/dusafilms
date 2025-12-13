@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     # Your apps
     'accounts',
     'movies',
+    'contact',
+    'announcements',
+
 ]
 
 
@@ -65,8 +68,8 @@ ROOT_URLCONF = 'dusa.urls'
 # -----------------------------
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / "templates" ],
+         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'announcements.context_processors.unread_announcements',
             ],
         },
     },
