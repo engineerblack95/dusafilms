@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-from django.conf.urls.static import static
 from dotenv import load_dotenv
+import dj_database_url
 
-load_dotenv()  # load .env if exists
+load_dotenv()  # Load .env variables
 
 # -----------------------------
 # BASE DIRECTORY
@@ -14,35 +14,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------
 # SECURITY SETTINGS
 # -----------------------------
-SECRET_KEY = 'django-insecure-89#s^m2r2v3h_ubi)watn^03bc+jh5c34-w1lb&$!1=0!lyq&^'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-dev-key")
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # -----------------------------
 # INSTALLED APPS
 # -----------------------------
 INSTALLED_APPS = [
-    # Django apps
+    # Django core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
     # PostgreSQL extensions
     'django.contrib.postgres',
 
-    # Third-party apps
+    # Third-party
     'django_bootstrap5',
 
-    # Your apps
+    # Local apps
     'accounts',
     'movies',
     'contact',
     'announcements',
-
 ]
 
 
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
 # -----------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,11 +71,12 @@ ROOT_URLCONF = 'dusa.urls'
 # -----------------------------
 TEMPLATES = [
     {
-         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
@@ -87,18 +91,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dusa.wsgi.application'
 
 
-# ---------------------------------
-# DATABASE — PostgreSQL
-# ---------------------------------
+# -----------------------------
+# DATABASE CONFIGURATION
+# -----------------------------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DJANGO_DB_NAME', 'dusa_films'),
-        'USER': os.getenv('DJANGO_DB_USER', 'admin'),
-        'PASSWORD': os.getenv('DJANGO_DB_PASSWORD', 'admin123'),
-        'HOST': os.getenv('DJANGO_DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DJANGO_DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=not DEBUG
+    )
 }
 
 
@@ -114,19 +115,22 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # -----------------------------
-# INTERNATIONAL
+# INTERNATIONALIZATION
 # -----------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = USE_TZ = True
+USE_I18N = True
+USE_TZ = True
 
 
 # -----------------------------
-# STATIC / MEDIA FILES
+# STATIC & MEDIA FILES
 # -----------------------------
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [ BASE_DIR / "static" ]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
@@ -137,16 +141,26 @@ MEDIA_ROOT = BASE_DIR / "media"
 # -----------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ---------------------------------
-# EMAIL CONFIGURATION (REAL GMAIL OTP)
-# ---------------------------------
+
+# -----------------------------
+# EMAIL CONFIGURATION (OTP / CONTACT)
+# -----------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'engineerblack95@gmail.com'
-EMAIL_HOST_PASSWORD = 'zxrwyuxlpufukfmq'
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+
+# -----------------------------
+# SECURITY (PRODUCTION SAFE)
+# -----------------------------
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

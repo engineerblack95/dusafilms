@@ -1,4 +1,22 @@
-﻿Django==5.2.7
-psycopg2-binary==2.9.9
-djangorestframework==3.16.1
-Pillow==10.1.0
+﻿# ===============================
+# DJANGO CORE
+# ===============================
+DJANGO_SECRET_KEY=django-insecure-change-this-to-a-strong-secret
+DJANGO_DEBUG=True
+
+
+# ===============================
+# DATABASE (LOCAL DEVELOPMENT)
+# ===============================
+DJANGO_DB_NAME=dusa_films
+DJANGO_DB_USER=admin
+DJANGO_DB_PASSWORD=admin123
+DJANGO_DB_HOST=127.0.0.1
+DJANGO_DB_PORT=5432
+
+
+# ===============================
+# EMAIL (GMAIL SMTP)
+# ===============================
+EMAIL_HOST_USER=filmsdusa@gmail.com
+EMAIL_HOST_PASSWORD=your_gmail_app_password_here
