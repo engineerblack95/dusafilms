@@ -8,5 +8,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path("movie/<slug:slug>/comment/", views.add_comment, name="add_comment"),
     path("category/<slug:slug>/", views.category_view, name="category"),
+    path("about/", views.about, name="about")
+
 ]
 

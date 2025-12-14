@@ -1,0 +1,197 @@
+{% extends "movies/base.html" %}
+{% block title %}About Dusa Films{% endblock %}
+
+{% block content %}
+
+<style>
+/* ================= ABOUT PAGE ================= */
+.about-hero {
+    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)),
+        url("https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c");
+    background-size: cover;
+    background-position: center;
+    border-radius: 18px;
+    padding: 80px 30px;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.about-hero span {
+    color: #ff2b2b;
+}
+
+.about-hero p {
+    font-size: 1.2rem;
+    margin-top: 15px;
+    color: #d1d5db;
+}
+
+/* ================= SECTIONS ================= */
+.about-section {
+    margin-bottom: 50px;
+}
+
+.about-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    border-left: 6px solid #ff2b2b;
+    padding-left: 12px;
+}
+
+.about-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #e5e7eb;
+}
+
+/* ================= HIGHLIGHTS ================= */
+.highlight-box {
+    background: #111827;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.highlight-box:hover {
+    transform: translateY(-5px);
+    border-color: #ff2b2b;
+}
+
+.highlight-box h4 {
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.highlight-box p {
+    color: #9ca3af;
+}
+
+/* ================= CTA ================= */
+.about-cta {
+    background: linear-gradient(135deg, #ff2b2b, #b91c1c);
+    border-radius: 16px;
+    padding: 40px 30px;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.about-cta h2 {
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.about-cta p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+}
+
+.about-cta a {
+    display: inline-block;
+    margin-top: 20px;
+    background: #000;
+    color: #fff;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.about-cta a:hover {
+    background: #111;
+}
+</style>
+
+<!-- ================= HERO ================= -->
+<div class="about-hero">
+    <h1>About <span>Dusa Films</span></h1>
+    <p>The Ocean of Free Movies — Watch & Download Anytime, Anywhere</p>
+</div>
+
+<!-- ================= WHAT IS DUSA FILMS ================= -->
+<div class="about-section">
+    <div class="about-title">What is Dusa Films?</div>
+    <p class="about-text">
+        <strong>Dusa Films</strong> is a global digital entertainment platform designed to bring
+        <strong>free movies to people all around the world</strong>.
+        We believe that entertainment should be accessible to everyone, without limits, without borders,
+        and without cost.
+    </p>
+    <p class="about-text">
+        On Dusa Films, users can <strong>watch movies online for FREE</strong> and
+        <strong>download movies for FREE</strong>. From short films and drama to cinema and creative
+        storytelling, Dusa Films is truly an <strong>ocean of movies</strong>.
+    </p>
+</div>
+
+<!-- ================= HIGHLIGHTS ================= -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-4">
+        <div class="highlight-box">
+            <h4>🌍 Global Access</h4>
+            <p>Enjoy movies from anywhere in the world with no restrictions.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="highlight-box">
+            <h4>🎬 Free Forever</h4>
+            <p>Watch and download movies 100% free, no hidden costs.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="highlight-box">
+            <h4>⚡ Instant Entertainment</h4>
+            <p>Stream or download instantly and enjoy without delays.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MISSION ================= -->
+<div class="about-section">
+    <div class="about-title">Our Mission</div>
+    <p class="about-text">
+        Our mission is to make movies <strong>free, accessible, and enjoyable</strong> for everyone.
+        We aim to remove barriers to entertainment and give people the freedom to explore stories
+        from different cultures, creators, and perspectives.
+    </p>
+</div>
+
+<!-- ================= VISION ================= -->
+<div class="about-section">
+    <div class="about-title">Our Vision</div>
+    <p class="about-text">
+        To become the world’s largest <strong>free movie platform</strong> — a place where creativity,
+        storytelling, and entertainment flow freely like an ocean.
+    </p>
+</div>
+
+<!-- ================= WHAT YOU CAN DO ================= -->
+<div class="about-section">
+    <div class="about-title">What You Can Do on Dusa Films</div>
+    <p class="about-text">
+        ✔ Watch movies online for free<br>
+        ✔ Download movies for free<br>
+        ✔ Discover new films and categories<br>
+        ✔ Enjoy unlimited entertainment without subscriptions
+    </p>
+</div>
+
+<!-- ================= CTA ================= -->
+<div class="about-cta">
+    <h2>Need Help or Want to Talk to Us?</h2>
+    <p>Chat directly with Dusa Films admin on WhatsApp — we’re always ready to help.</p>
+    <a href="https://wa.me/250786844104?text=Hello%20Dusa%20Films,%20I%20need%20help" target="_blank">
+        💬 Chat with Us on WhatsApp
+    </a>
+</div>
+
+{% endblock %}

@@ -114,3 +114,6 @@ def search(request):
         "results": results,
         "q": q,
     })
+
+def about(request):
+    return render(request, "movies/about.html")

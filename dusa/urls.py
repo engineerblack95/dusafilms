@@ -9,9 +9,7 @@ urlpatterns = [
     path('', include('movies.urls', namespace='movies')),
     path("contact/", include("contact.urls")),
     path("announcements/", include("announcements.urls")),
-
-
-
+    path("", include("movies.urls")),  # ✅ VERY IMPORTANT
 
 ]
 

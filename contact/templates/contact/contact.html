@@ -4,97 +4,137 @@
 {% block content %}
 
 <style>
-    .contact-box {
-        max-width: 700px;
-        margin: auto;
-        background: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 14px;
-        padding: 32px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
+/* ================= CONTACT PAGE ================= */
+.contact-wrapper {
+    max-width: 900px;
+    margin: 60px auto;
+}
 
-    .contact-box h2 {
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
+.contact-box {
+    background: linear-gradient(145deg, #0d1b2a, #0b1220);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 40px 42px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
 
-    .contact-box p {
-        color: #9ca3af;
-        margin-bottom: 24px;
-    }
+.contact-box h2 {
+    font-weight: 900;
+    margin-bottom: 10px;
+}
 
-    .form-control {
-        background: #0b1220;
-        border: 1px solid #1f2937;
-        color: #fff;
-    }
+.contact-box p {
+    color: #9ca3af;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
 
-    .form-control:focus {
-        background: #0b1220;
-        color: #fff;
-        border-color: #3b82f6;
-        box-shadow: none;
-    }
+.form-label {
+    color: #e5e7eb;
+    font-weight: 600;
+}
 
-    .btn-send {
-        background: linear-gradient(135deg, #2563eb, #1e40af);
-        border: none;
-        font-weight: 700;
-        padding: 12px;
-    }
+.form-control {
+    background: #020617;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 12px 14px;
+}
 
-    .alert-success {
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.4);
-        color: #6ee7b7;
-        border-radius: 12px;
-        animation: fadeIn 0.5s ease;
-    }
+.form-control:focus {
+    background: #020617;
+    color: #f8fafc;
+    border-color: #1e90ff;
+    box-shadow: 0 0 0 3px rgba(30,144,255,0.2);
+}
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-8px); }
-        to { opacity: 1; transform: translateY(0); }
+textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.btn-send {
+    background: linear-gradient(135deg, #1e90ff, #2563eb);
+    border: none;
+    font-weight: 800;
+    padding: 14px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    transition: 0.3s ease;
+}
+
+.btn-send:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(30,144,255,0.45);
+}
+
+.alert-success {
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.35);
+    color: #6ee7b7;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 26px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
 
-<div class="contact-box">
+<div class="contact-wrapper">
 
-    <h2>📩 Contact Us</h2>
-    <p>Have a question, suggestion, or issue? Send us a message.</p>
+    <div class="contact-box">
 
-    <!-- ✅ SUCCESS MESSAGE -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        <h2>📩 Contact Dusa Films</h2>
+        <p>
+            Have a question, feedback, movie request, or need help?  
+            We’re always happy to hear from you.
+        </p>
+
+        <!-- SUCCESS MESSAGE -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-4">
+                {{ form.name.label_tag }}
+                {{ form.name }}
             </div>
-        {% endfor %}
-    {% endif %}
 
-    <form method="POST" novalidate>
-        {% csrf_token %}
+            <div class="mb-4">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
 
-        <div class="mb-3">
-            {{ form.name.label_tag }}
-            {{ form.name }}
-        </div>
+            <div class="mb-4">
+                {{ form.message.label_tag }}
+                {{ form.message }}
+            </div>
 
-        <div class="mb-3">
-            {{ form.email.label_tag }}
-            {{ form.email }}
-        </div>
+            <button type="submit" class="btn btn-send w-100">
+                Send Message 🚀
+            </button>
+        </form>
 
-        <div class="mb-3">
-            {{ form.message.label_tag }}
-            {{ form.message }}
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 btn-send">
-            Send Message 🚀
-        </button>
-    </form>
+    </div>
 
 </div>
 

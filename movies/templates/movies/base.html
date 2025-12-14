@@ -10,6 +10,9 @@
     <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- BOOTSTRAP ICONS (for footer social icons only) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         :root {
             --bg: #0b0b0b;
@@ -17,8 +20,8 @@
             --blue: #1e90ff;
             --white: #f8f8f8;
 
-            --nav-height: 72px;
-            --footer-height: 56px;
+            --nav-height: 76px;
+            --footer-height: 64px;
         }
 
         html, body {
@@ -29,7 +32,7 @@
             color: var(--white);
         }
 
-        /* FIXED NAVBAR */
+        /* ================= NAVBAR ================= */
         .site-navbar {
             position: fixed;
             top: 0;
@@ -39,14 +42,14 @@
             z-index: 1030;
             display: flex;
             align-items: center;
-            background: #121212;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(4px);
+            background: linear-gradient(180deg, #0f0f0f, #121212);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(6px);
         }
 
         .site-navbar .navbar-brand img {
-            height: 60px;
-            width: 60px;
+            height: 58px;
+            width: 58px;
             object-fit: cover;
             margin-right: 12px;
         }
@@ -54,12 +57,45 @@
         .logo-text {
             font-size: 2rem;
             font-weight: 900;
+            letter-spacing: 1px;
         }
 
         .nav-link-strong {
-            font-weight: 700 !important;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
+            font-weight: 900 !important;
+            font-size: 1.15rem;
+            letter-spacing: 0.6px;
+            padding: 10px 16px !important;
+            color: #e5e7eb !important;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .nav-link-strong:hover {
+            color: var(--blue) !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-link-strong::after {
+            content: "";
+            position: absolute;
+            bottom: 4px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--blue);
+            opacity: 0;
+            transform: scaleX(0);
+            transition: 0.25s ease;
+        }
+
+        .nav-link-strong:hover::after {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .navbar-nav .nav-item {
+            margin-left: 6px;
+            margin-right: 6px;
         }
 
         main.container {
@@ -69,24 +105,81 @@
             min-height: calc(100vh - var(--nav-height) - var(--footer-height));
         }
 
+        /* ================= FOOTER (UPDATED ONLY) ================= */
         .site-footer {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             height: var(--footer-height);
-            background: #000;
-            text-align: center;
-            color: white;
-            line-height: var(--footer-height);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, #000, #0a0a0a);
+            border-top: 1px solid rgba(255,255,255,0.08);
             z-index: 1030;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-wrap {
+            width: 100%;
+            text-align: center;
+        }
+
+        .footer-logo {
+            height: 32px;
+            margin-bottom: 2px;
+        }
+
+        .footer-social a {
+            color: #9ca3af;
+            font-size: 1.2rem;
+            margin: 0 8px;
+            transition: 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: var(--blue);
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin: 0 6px;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            text-decoration: underline;
+        }
+
+        .footer-text {
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            animation: glow 2.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 4px rgba(30,144,255,0.4);
+            }
+            to {
+                text-shadow: 0 0 14px rgba(30,144,255,0.9);
+            }
         }
 
         @media (max-width: 991px) {
             .site-navbar .collapse {
                 margin-top: 10px;
+                background: #0f0f0f;
+                padding: 12px;
+                border-radius: 12px;
             }
+
+            .navbar-nav .nav-item {
+                margin: 6px 0;
+            }
+
             main.container {
                 margin-top: calc(var(--nav-height) + 10px);
             }
@@ -96,7 +189,7 @@
 
 <body>
 
-<!-- NAVBAR -->
+<!-- ================= NAVBAR ================= -->
 <nav class="navbar navbar-expand-lg navbar-dark site-navbar">
     <div class="container">
 
@@ -110,22 +203,20 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
 
-                <!-- HOME -->
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">
-                        Home
-                    </a>
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
                 </li>
 
-                <!-- ANNOUNCEMENTS (WITH UNREAD COUNT) -->
+                <li class="nav-item">
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a>
+                </li>
+
                 <li class="nav-item">
                     <a href="{% url 'announcements:list' %}"
                        class="nav-link nav-link-strong position-relative">
-
                         Announcements
-
                         {% if unread_announcements_count > 0 %}
                             <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
                                 {{ unread_announcements_count }}
@@ -134,16 +225,11 @@
                     </a>
                 </li>
 
-                <!-- CONTACT -->
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">
-                        Contact
-                    </a>
+                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a>
                 </li>
 
                 {% if user.is_authenticated %}
-
-                    <!-- DASHBOARD -->
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">
                             Dashboard
@@ -152,40 +238,32 @@
 
                     {% if user.is_superuser %}
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="/admin/" target="_blank">
+                        <a class="nav-link fw-bold text-warning" href="/admin/" target="_blank">
                             Admin Panel
                         </a>
                     </li>
                     {% endif %}
 
-                    <!-- LOGOUT -->
                     <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="{% url 'accounts:logout' %}">
+                        <a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">
                             Logout
                         </a>
                     </li>
-
                 {% else %}
-
-                    <!-- LOGIN -->
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">
                             Login
                         </a>
                     </li>
 
-                    <!-- REGISTER -->
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">
                             Register
                         </a>
                     </li>
-
                 {% endif %}
-
             </ul>
         </div>
-
     </div>
 </nav>
 
@@ -194,10 +272,30 @@
     {% block content %}{% endblock %}
 </main>
 
-<!-- FOOTER -->
+<!-- ================= FOOTER (UPDATED ONLY) ================= -->
 <footer class="site-footer">
-    <div class="container">
-        <small>© 2025 Dusa Films — All Rights Reserved</small>
+    <div class="container footer-wrap">
+
+        <img src="{% static 'movies/samu1.png' %}" class="footer-logo" alt="Dusa Films">
+
+        <div class="footer-social">
+            <a  href="https://wa.me/250786844104?text=Hello%20Dusa%20Films,%20I%20need%20help">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            <a href="https://www.youtube.com" target="_blank" title="YouTube">
+                <i class="bi bi-youtube"></i>
+            </a>
+        </div>
+
+        <div class="footer-links">
+            <a href="">Privacy</a> |
+            <a href="">Terms</a>
+        </div>
+
+        <div class="footer-text">
+            © {% now "Y" %} Dusa Films — All Rights Reserved
+        </div>
+
     </div>
 </footer>
 
