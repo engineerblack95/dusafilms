@@ -3,7 +3,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()  # Load .env variables
+# Load environment variables (.env locally, Render vars in production)
+load_dotenv()
 
 # -----------------------------
 # BASE DIRECTORY
@@ -14,11 +15,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------
 # SECURITY SETTINGS
 # -----------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-dev-key")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
 
 
 # -----------------------------
@@ -143,7 +154,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # -----------------------------
-# EMAIL CONFIGURATION (OTP / CONTACT)
+# EMAIL CONFIGURATION
 # -----------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
