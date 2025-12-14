@@ -8,30 +8,34 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# =========================
+# ==================================================
 # SECURITY
-# =========================
+# ==================================================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
-DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 
-# =========================
-# HOST & CSRF
-# =========================
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,dusa-films-oaes.onrender.com"
-).split(",")
+# ==================================================
+# HOST & PROXY (THIS FIXES 400 ERROR)
+# ==================================================
+ALLOWED_HOSTS = [
+    "dusa-films-oaes.onrender.com",
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS",
-    "https://dusa-films-oaes.onrender.com"
-).split(",")
+USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://dusa-films-oaes.onrender.com",
+]
 
 
-# =========================
+# ==================================================
 # APPLICATIONS
-# =========================
+# ==================================================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,7 +46,6 @@ INSTALLED_APPS = [
 
     'django.contrib.postgres',
 
-    # KEEP ONLY IF INSTALLED IN requirements.txt
     'django_bootstrap5',
 
     'accounts',
@@ -52,9 +55,9 @@ INSTALLED_APPS = [
 ]
 
 
-# =========================
+# ==================================================
 # MIDDLEWARE
-# =========================
+# ==================================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -71,9 +74,9 @@ ROOT_URLCONF = 'dusa.urls'
 WSGI_APPLICATION = 'dusa.wsgi.application'
 
 
-# =========================
+# ==================================================
 # TEMPLATES
-# =========================
+# ==================================================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -93,9 +96,9 @@ TEMPLATES = [
 ]
 
 
-# =========================
+# ==================================================
 # DATABASE
-# =========================
+# ==================================================
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv("DATABASE_URL"),
@@ -105,9 +108,29 @@ DATABASES = {
 }
 
 
-# =========================
+# ==================================================
+# PASSWORD VALIDATION
+# ==================================================
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
+
+# ==================================================
+# INTERNATIONALIZATION
+# ==================================================
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+
+# ==================================================
 # STATIC & MEDIA
-# =========================
+# ==================================================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -116,9 +139,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# =========================
+# ==================================================
 # EMAIL
-# =========================
+# ==================================================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -128,11 +151,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-# =========================
+# ==================================================
 # PRODUCTION SECURITY
-# =========================
+# ==================================================
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+ 
