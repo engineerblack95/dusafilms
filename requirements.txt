@@ -3,6 +3,7 @@ gunicorn
 whitenoise
 psycopg2-binary==2.9.9
 djangorestframework==3.16.1
+django-bootstrap5
 Pillow>=10.3.0
 dj-database-url
 python-dotenv
