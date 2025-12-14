@@ -12,20 +12,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # =========================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 
 # =========================
-# HOST & CSRF (CRITICAL)
+# HOST & CSRF
 # =========================
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,.onrender.com"
+    "localhost,127.0.0.1,dusa-films-oaes.onrender.com"
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
     "CSRF_TRUSTED_ORIGINS",
-    "https://*.onrender.com"
+    "https://dusa-films-oaes.onrender.com"
 ).split(",")
 
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'django.contrib.postgres',
 
+    # KEEP ONLY IF INSTALLED IN requirements.txt
     'django_bootstrap5',
 
     'accounts',
@@ -67,7 +68,6 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = 'dusa.urls'
-
 WSGI_APPLICATION = 'dusa.wsgi.application'
 
 
@@ -106,31 +106,10 @@ DATABASES = {
 
 
 # =========================
-# PASSWORDS
-# =========================
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-
-# =========================
-# I18N
-# =========================
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-
-# =========================
 # STATIC & MEDIA
 # =========================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = '/media/'
