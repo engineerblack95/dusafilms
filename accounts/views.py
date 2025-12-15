@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage  # ✅ CHANGED
 from django.conf import settings
 import random
 
@@ -70,10 +70,18 @@ def send_otp(request):
         message = f"Hello {user.username},\n\nYour OTP is: {otp}\nIt expires in 5 minutes."
         from_email = getattr(settings, "EMAIL_HOST_USER", None)
 
+        # ✅ FIXED EMAIL SENDING (NO WORKER TIMEOUT)
         try:
-            send_mail(subject, message, from_email, [user.email], fail_silently=True)
-        except Exception:
-            pass
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=from_email,
+                to=[user.email],
+            )
+            email.connection.timeout = 10
+            email.send(fail_silently=True)
+        except Exception as e:
+            print("OTP email failed:", e)
 
         messages.success(request, f"OTP sent to {user.email}.")
         return redirect(f"/accounts/verify-otp/?username={username}")
@@ -125,7 +133,6 @@ def verify_otp(request):
 def dashboard(request):
     profile = request.user.profile
 
-    # Profile photo update
     if request.method == "POST":
         photo_form = ProfilePhotoForm(request.POST, request.FILES, instance=profile)
         if photo_form.is_valid():
@@ -135,13 +142,11 @@ def dashboard(request):
     else:
         photo_form = ProfilePhotoForm(instance=profile)
 
-    # Fetch user activity
     all_comments = Comment.objects.filter(user=request.user).order_by('-created_at')
     all_watched = WatchedMovie.objects.filter(user=request.user).order_by('-watched_at')
 
     total_comments = all_comments.count()
 
-    # ✅ FIXED: count DISTINCT movies watched
     movies_watched = (
         all_watched
         .values("movie")
