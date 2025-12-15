@@ -13,7 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==================================================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
 
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
 # ==================================================
@@ -100,13 +101,12 @@ TEMPLATES = [
 # DATABASE (RENDER POSTGRES – CORRECT)
 # ==================================================
 DATABASES = {
-    "default": dj_database_url.parse(
-        os.environ["DATABASE_URL"],
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=True,
+        ssl_require=not DEBUG,  # ✅ SSL only in production (Render)
     )
 }
-
 
 
 # ==================================================
