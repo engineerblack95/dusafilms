@@ -10,21 +10,23 @@
                 url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1500&q=80');
     background-size: cover;
     background-position: center;
-    height: 70vh;
+    min-height: 70vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: white;
-    padding: 0 20px;
+    padding: 1rem;
 }
+
 .hero h1 {
-    font-size: 3.2rem;
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
+
 .hero p {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
     margin-top: 10px;
     opacity: 0.9;
 }
@@ -34,32 +36,38 @@
     margin-top: 25px;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
+
 .search-box input {
-    width: 360px;
+    width: 100%;
+    max-width: 360px;
     height: 45px;
-    border-radius: 30px 0 0 30px;
+    border-radius: 30px;
     border: none;
     padding: 0 20px;
     outline: none;
 }
+
 .search-box button {
     height: 45px;
-    border-radius: 0 30px 30px 0;
+    border-radius: 30px;
     border: none;
-    padding: 0 20px;
+    padding: 0 26px;
     font-weight: bold;
     background: #ff2b2b;
     color: white;
     transition: 0.3s;
 }
+
 .search-box button:hover {
     background: #d41919;
 }
 
 /* ================= SECTIONS ================= */
 .section-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     border-left: 5px solid #ff2b2b;
     padding-left: 10px;
@@ -68,35 +76,43 @@
 
 /* ================= MOVIES ================= */
 .movie-card {
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
     background: #111;
     transition: 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
+
 .movie-card:hover {
-    transform: scale(1.03);
+    transform: translateY(-4px);
 }
+
 .movie-card img {
     width: 100%;
-    height: 260px;
+    height: 240px;
     object-fit: cover;
 }
+
 .movie-card-title {
     padding: 10px;
     font-size: 1rem;
     font-weight: bold;
     color: white;
 }
+
 .movie-card-footer {
-    padding: 0 10px 10px;
+    padding: 0 10px 12px;
     color: #4aa3ff;
     font-size: 0.9rem;
+    margin-top: auto;
 }
 
 .watch-btn {
     display: inline-block;
-    margin-top: 6px;
-    padding: 6px 14px;
+    margin-top: 8px;
+    padding: 8px 16px;
     background: #ff2b2b;
     color: white;
     border-radius: 6px;
@@ -104,19 +120,33 @@
     text-decoration: none;
     transition: 0.3s;
 }
+
 .watch-btn:hover {
     background: #d41919;
+}
+
+/* ================= MOBILE FIXES ================= */
+@media (max-width: 576px) {
+    .movie-card img {
+        height: 200px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
 }
 </style>
 
 <!-- ================= HERO ================= -->
 <section class="hero">
-    <div>
-        <h1>Welcome to <span style="color:#ff2b2b;">Dusa Films</span></h1>
+    <div class="container">
+        <h1>
+            Welcome to <span style="color:#ff2b2b;">Dusa Films</span>
+        </h1>
         <p>Your home for short films, drama, cinema & storytelling excellence.</p>
 
         <form class="search-box" method="GET" action="{% url 'movies:search' %}">
-            <input type="text" name="q" placeholder="Search movies, categories...">
+            <input type="text" name="q" placeholder="Search movies, categories..." aria-label="Search movies">
             <button type="submit">Search</button>
         </form>
     </div>
@@ -128,13 +158,13 @@
 <h2 class="section-title">Categories</h2>
 <div class="row">
     {% for category in categories %}
-    <div class="col-md-3 mb-4">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
         <div class="movie-card">
             <a href="{% url 'movies:category' category.slug %}">
                 {% if category.image %}
-                    <img src="{{ category.image.url }}">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
                 {% else %}
-                    <img src="https://via.placeholder.com/400x260">
+                    <img src="https://via.placeholder.com/400x260" alt="{{ category.name }}">
                 {% endif %}
             </a>
             <div class="movie-card-title">{{ category.name }}</div>
@@ -153,10 +183,10 @@
 <h2 class="section-title">Latest Movies</h2>
 <div class="row">
 {% for movie in latest %}
-<div class="col-md-3 mb-4">
+<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
     <div class="movie-card">
         <a href="{% url 'movies:detail' movie.slug %}">
-            <img src="{{ movie.thumbnail.url }}">
+            <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
         </a>
         <div class="movie-card-title">{{ movie.title }}</div>
         <div class="movie-card-footer">
