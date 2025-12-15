@@ -3,12 +3,14 @@ services:
     name: dusa-films
     env: python
     plan: free
+
     buildCommand: |
       pip install -r requirements.txt
+      python manage.py migrate --noinput
       python manage.py collectstatic --noinput
-    startCommand: |
-      python manage.py migrate &&
-      gunicorn dusa.wsgi:application
+
+    startCommand: gunicorn dusa.wsgi:application
+
     envVars:
       - key: DATABASE_URL
         fromDatabase:
