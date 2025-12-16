@@ -1,13 +1,15 @@
 from django.db import migrations
-from django.contrib.auth import get_user_model
 import os
 
 def create_admin(apps, schema_editor):
-    User = get_user_model()
+    User = apps.get_model("auth", "User")
 
-    username = os.environ.get("ADMIN_USERNAME", "admin")
-    email = os.environ.get("ADMIN_EMAIL", "admin@dusa.com")
-    password = os.environ.get("ADMIN_PASSWORD", "StrongPassword123")
+    username = os.environ.get("ADMIN_USERNAME")
+    email = os.environ.get("ADMIN_EMAIL")
+    password = os.environ.get("ADMIN_PASSWORD")
+
+    if not username or not password:
+        return
 
     if not User.objects.filter(username=username).exists():
         User.objects.create_superuser(
