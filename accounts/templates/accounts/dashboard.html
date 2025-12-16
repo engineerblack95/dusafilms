@@ -6,27 +6,27 @@
 <div class="container">
 
   <!-- ===== HEADER WITH PROFILE ===== -->
-  <div class="dashboard-header d-flex align-items-center justify-content-between mb-4">
+  <div class="dashboard-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
 
     <!-- Left: Profile -->
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3 flex-wrap profile-header">
       {% if profile.profile_photo %}
         <img src="{{ profile.profile_photo.url }}" class="profile-photo" alt="Profile">
       {% else %}
         <img src="{% static 'img/user-default.png' %}" class="profile-photo" alt="Profile">
       {% endif %}
 
-      <div>
+      <div class="profile-text">
         <h2 class="fw-bold mb-1">Hello, {{ request.user.username }} 👋</h2>
         <p class="text-muted small mb-0">Welcome to your activity dashboard</p>
       </div>
     </div>
 
     <!-- Right: Upload profile photo -->
-    <form method="POST" enctype="multipart/form-data" class="text-end">
+    <form method="POST" enctype="multipart/form-data" class="text-end upload-form">
       {% csrf_token %}
       {{ photo_form.profile_photo }}
-      <button class="btn btn-outline-light btn-sm mt-1">Update Photo</button>
+      <button class="btn btn-outline-light btn-sm mt-1 w-100">Update Photo</button>
     </form>
 
   </div>
@@ -34,8 +34,7 @@
   <!-- ===== STATS GRID ===== -->
   <div class="row g-4 mb-4">
 
-    <!-- Total Comments -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-6 col-12">
       <div class="studio-card">
         <div class="studio-icon bg-primary">📝</div>
         <div>
@@ -45,8 +44,7 @@
       </div>
     </div>
 
-    <!-- Movies Watched -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-6 col-12">
       <div class="studio-card">
         <div class="studio-icon bg-success">🍿</div>
         <div>
@@ -56,8 +54,7 @@
       </div>
     </div>
 
-    <!-- Account Status -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-12 col-12">
       <div class="studio-card">
         <div class="studio-icon bg-info">🧑‍💻</div>
         <div>
@@ -71,7 +68,7 @@
 
   <!-- ===== ACTION BUTTON ===== -->
   <div class="row g-3 mb-5">
-    <div class="col-md-12">
+    <div class="col-12">
       <a href="{% url 'movies:home' %}" class="btn btn-primary w-100 py-3">
         🎬 Browse Movies
       </a>
@@ -81,15 +78,14 @@
   <!-- ===== TWO-COLUMN ACTIVITY SECTION ===== -->
   <div class="row g-4">
 
-    <!-- Recent Comments -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-12">
       <div class="panel-box">
         <h5 class="fw-bold mb-3">💬 Recent Comments</h5>
 
         {% if recent_comments %}
           <ul class="list-group list-group-flush">
             {% for c in recent_comments %}
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item">
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item flex-wrap gap-2">
                 <div>
                   <div class="fw-bold">{{ c.movie.title }}</div>
                   <div class="text-muted small">{{ c.text|truncatechars:100 }}</div>
@@ -104,15 +100,14 @@
       </div>
     </div>
 
-    <!-- Recently Watched -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-12">
       <div class="panel-box">
         <h5 class="fw-bold mb-3">⏱️ Recently Watched</h5>
 
         {% if recent_watched %}
           <ul class="list-group list-group-flush">
             {% for w in recent_watched %}
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item">
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item flex-wrap gap-2">
                 <div>
                   <a href="{% url 'movies:detail' w.movie.slug %}" class="fw-bold">{{ w.movie.title }}</a>
                   <div class="text-muted small">{{ w.watched_at|date:"M d, Y H:i" }}</div>
@@ -134,7 +129,7 @@
     <h5 class="fw-bold mb-3">📊 Top Commented Movies</h5>
 
     {% if top_commented %}
-      <div class="row row-cols-1 row-cols-md-3 g-3">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
         {% for t in top_commented %}
           <div class="col">
             <div class="top-movie-card">
@@ -175,11 +170,7 @@
     border: 1px solid rgba(255,255,255,0.08);
     transition: 0.2s ease;
   }
-  .studio-card:hover {
-    transform: translateY(-3px);
-    border-color: #1e90ff;
-    box-shadow: 0 0 10px rgba(30,144,255,0.4);
-  }
+
   .studio-icon {
     width: 50px;
     height: 50px;
@@ -189,15 +180,6 @@
     align-items: center;
     font-size: 26px;
   }
-  .studio-label {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #aaa;
-  }
-  .studio-value {
-    font-size: 1.8rem;
-    margin: 0;
-  }
 
   .panel-box {
     background: #0d1117;
@@ -206,20 +188,37 @@
     border: 1px solid rgba(255,255,255,0.08);
   }
 
-  .panel-item {
-    border-color: rgba(255,255,255,0.05);
-  }
-
   .top-movie-card {
     background: #111;
     padding: 18px;
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.08);
-    transition: 0.2s;
   }
-  .top-movie-card:hover {
-    border-color: #1e90ff;
-    box-shadow: 0 0 8px rgba(30,144,255,0.4);
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .dashboard-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .profile-header {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .profile-text h2 {
+      font-size: 1.5rem;
+    }
+
+    .upload-form {
+      width: 100%;
+    }
+
+    .studio-value {
+      font-size: 1.5rem;
+    }
   }
 </style>
 
