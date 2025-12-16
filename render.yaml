@@ -34,3 +34,12 @@ startCommand: |
 
       - key: DJANGO_SUPERUSER_PASSWORD
         value: StrongPassword123
+        
+         key: ADMIN_USERNAME
+        value: admin
+
+      - key: ADMIN_EMAIL
+        value: admin@dusa.com
+
+      - key: ADMIN_PASSWORD
+        value: StrongPassword123
