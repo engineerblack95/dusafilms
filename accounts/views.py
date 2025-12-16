@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.utils import timezone
-from django.core.mail import EmailMessage  # ✅ CHANGED
+from django.core.mail import EmailMessage
 from django.conf import settings
 import random
 
@@ -45,7 +45,7 @@ def otp_login(request):
 
 
 # ----------------------------
-# Send OTP
+# Send OTP (FIXED)
 # ----------------------------
 def send_otp(request):
     if request.method == "POST":
@@ -68,9 +68,8 @@ def send_otp(request):
 
         subject = "Dusa Films — Your OTP"
         message = f"Hello {user.username},\n\nYour OTP is: {otp}\nIt expires in 5 minutes."
-        from_email = getattr(settings, "EMAIL_HOST_USER", None)
+        from_email = settings.DEFAULT_FROM_EMAIL
 
-        # ✅ FIXED EMAIL SENDING (NO WORKER TIMEOUT)
         try:
             email = EmailMessage(
                 subject=subject,
@@ -78,13 +77,18 @@ def send_otp(request):
                 from_email=from_email,
                 to=[user.email],
             )
-            email.connection.timeout = 10
-            email.send(fail_silently=True)
+            email.send(fail_silently=False)
+
+            messages.success(request, f"OTP sent to {user.email}.")
+            return redirect(f"/accounts/verify-otp/?username={username}")
+
         except Exception as e:
             print("OTP email failed:", e)
-
-        messages.success(request, f"OTP sent to {user.email}.")
-        return redirect(f"/accounts/verify-otp/?username={username}")
+            messages.error(
+                request,
+                "OTP could not be sent. Email service is currently unavailable."
+            )
+            return redirect("accounts:otp_login")
 
     return redirect("accounts:otp_login")
 
@@ -108,7 +112,7 @@ def verify_otp(request):
     try:
         user = User.objects.get(username=username)
         profile = user.profile
-    except Exception:
+    except User.DoesNotExist:
         messages.error(request, "Invalid username.")
         return redirect("accounts:otp_login")
 
