@@ -7,11 +7,11 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
-startCommand: |
-  python manage.py migrate --noinput &&
-  python manage.py createsu &&
-  gunicorn dusa.wsgi:application
 
+    startCommand: |
+      python manage.py migrate --noinput &&
+      python manage.py createsu &&
+      gunicorn dusa.wsgi:application
 
     envVars:
       - key: DATABASE_URL
@@ -25,17 +25,8 @@ startCommand: |
       - key: DEBUG
         value: "False"
 
-      # 👇 REQUIRED FOR ADMIN LOGIN
-      - key: DJANGO_SUPERUSER_USERNAME
-        value: admin
-
-      - key: DJANGO_SUPERUSER_EMAIL
-        value: admin@dusa.com
-
-      - key: DJANGO_SUPERUSER_PASSWORD
-        value: StrongPassword123
-        
-         key: ADMIN_USERNAME
+      # Admin creation (USED BY createsu)
+      - key: ADMIN_USERNAME
         value: admin
 
       - key: ADMIN_EMAIL

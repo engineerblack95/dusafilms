@@ -5,19 +5,19 @@ import os
 User = get_user_model()
 
 class Command(BaseCommand):
-    help = "Create superuser automatically"
+    help = "Create default admin user if not exists"
 
-    def handle(self, *args, **kwargs):
-        username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-        email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-        password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+    def handle(self, *args, **options):
+        username = os.environ.get("ADMIN_USERNAME")
+        email = os.environ.get("ADMIN_EMAIL")
+        password = os.environ.get("ADMIN_PASSWORD")
 
         if not username or not password:
-            self.stdout.write("Superuser env vars not set")
+            self.stdout.write("Admin env vars not set, skipping.")
             return
 
         if User.objects.filter(username=username).exists():
-            self.stdout.write("Superuser already exists")
+            self.stdout.write("Admin user already exists.")
             return
 
         User.objects.create_superuser(
@@ -25,4 +25,5 @@ class Command(BaseCommand):
             email=email,
             password=password
         )
-        self.stdout.write("Superuser created successfully")
+
+        self.stdout.write(self.style.SUCCESS("Superuser created successfully"))
