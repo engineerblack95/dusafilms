@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -6,20 +7,19 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-
+# ==================================================
+# LOAD ENVIRONMENT VARIABLES
+# ==================================================
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # ==================================================
 # SECURITY
 # ==================================================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
 
-
 DEBUG = os.getenv("DEBUG", "False") == "True"
-
 
 # ==================================================
 # HOST & PROXY (THIS FIXES 400 ERROR)
@@ -36,7 +36,6 @@ USE_X_FORWARDED_HOST = True
 CSRF_TRUSTED_ORIGINS = [
     "https://dusa-films-oaes.onrender.com",
 ]
-
 
 # ==================================================
 # APPLICATIONS
@@ -55,15 +54,11 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
 
-
     'accounts',
     'movies',
     'contact',
     'announcements',
-    
-
 ]
-
 
 # ==================================================
 # MIDDLEWARE
@@ -79,10 +74,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'dusa.urls'
 WSGI_APPLICATION = 'dusa.wsgi.application'
-
 
 # ==================================================
 # TEMPLATES
@@ -96,7 +89,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.template.context_processors.media',
+                'django.template.context_processors.media',  # optional, safe for Cloudinary
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'announcements.context_processors.unread_announcements',
@@ -105,18 +98,16 @@ TEMPLATES = [
     },
 ]
 
-
 # ==================================================
-# DATABASE (RENDER POSTGRES – CORRECT)
+# DATABASE (RENDER POSTGRES)
 # ==================================================
 DATABASES = {
     "default": dj_database_url.config(
         default=os.getenv("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=not DEBUG,  # ✅ SSL only in production (Render)
+        ssl_require=not DEBUG,  # SSL only in production
     )
 }
-
 
 # ==================================================
 # PASSWORD VALIDATION
@@ -128,27 +119,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # ==================================================
 # INTERNATIONALIZATION
 # ==================================================
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Kigali'  # optional, for Rwanda local time
 USE_I18N = True
 USE_TZ = True
 
-
 # ==================================================
-# STATIC & MEDIA
+# STATIC FILES
 # ==================================================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
-
-# CLOUDINARY CONFIG
+# ==================================================
+# CLOUDINARY CONFIG (PRODUCTION MEDIA)
 # ==================================================
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -157,8 +144,6 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-
 
 # ==================================================
 # EMAIL
@@ -169,9 +154,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_TIMEOUT = 10  # ⬅ CRITICAL (prevents hanging)
+EMAIL_TIMEOUT = 10
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 
 # ==================================================
 # PRODUCTION SECURITY
@@ -182,6 +166,7 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
- 
+# ==================================================
+# DEFAULT AUTO FIELD (Django 6+ requirement)
+# ==================================================
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
