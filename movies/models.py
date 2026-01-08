@@ -29,8 +29,10 @@ class Movie(models.Model):
         related_name="movies"
     )
 
-    thumbnail = CloudinaryField('image', null=True, blank=True)  # FIXED: Cloudinary
-    video = CloudinaryField(resource_type="video", blank=True, null=True)
+    thumbnail = CloudinaryField('image', null=True, blank=True)  # Cloudinary image ONLY
+
+    # ✅ VIDEO AS URL (NOT FILE UPLOAD)
+    video_url = models.URLField(max_length=500, blank=True, null=True)
 
     download_link = models.URLField(max_length=500, blank=True, null=True)
 
@@ -60,6 +62,7 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
 
 
 class Comment(models.Model):
