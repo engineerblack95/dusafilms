@@ -73,7 +73,7 @@
             font-size: 1.05rem;
             color: #e5e7eb !important;
             transition: 0.25s ease;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
         }
 
@@ -84,23 +84,49 @@
             text-decoration: none;
         }
 
-        .nav-item + .nav-item {
-            margin-left: 6px;
-        }
-
-        /* For active page highlighting */
         .nav-link-strong.active {
             color: var(--blue) !important;
             font-weight: 800;
         }
 
-        /* ================= MAIN CONTENT ================= */
-        main.container {
-            padding-top: calc(var(--nav-height) + 30px);
-            padding-bottom: calc(var(--footer-height) + 20px);
+        /* Add spacing between nav items */
+        .navbar-nav .nav-item {
+            margin-left: 6px;
         }
 
-        /* ================= FOOTER (FIXED) ================= */
+        /* ================= MOBILE STYLING ================= */
+        @media (max-width: 992px) {
+            .nav-link-strong {
+                font-size: 1rem;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --footer-height: 140px;
+            }
+
+            .logo-text {
+                font-size: 1.3rem;
+            }
+
+            .navbar-nav {
+                text-align: center;
+            }
+
+            .navbar-nav .nav-item {
+                margin-left: 0;
+                margin-bottom: 6px;
+            }
+
+            .nav-link-strong {
+                width: 100%;
+                padding: 10px 0;
+            }
+        }
+
+        /* ================= FOOTER ================= */
         .site-footer {
             position: fixed;
             bottom: 0;
@@ -137,41 +163,16 @@
             opacity: 0.9;
         }
 
-        /* ================= RESPONSIVE ================= */
-        @media (max-width: 992px) {
-            .nav-link-strong {
-                font-size: 1rem;
-                padding: 6px 10px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --footer-height: 140px;
-            }
-
-            .logo-text {
-                font-size: 1.3rem;
-            }
-
-            .nav-item + .nav-item {
-                margin-left: 0;
-            }
-
-            .nav-link-strong {
-                text-align: center;
-                padding: 10px 0;
-                width: 100%;
-            }
-
-            .footer-social {
-                margin-top: 8px;
-            }
-        }
-
         /* ================= INTERACTIVE TOUCH EFFECTS ================= */
         .navbar-nav .nav-link-strong:active {
             background: rgba(30,144,255,0.25);
+        }
+
+        /* ================= BADGE ================= */
+        .nav-link-strong .badge {
+            font-size: 0.7rem;
+            top: 0.5rem;
+            right: -0.6rem;
         }
     </style>
 </head>
@@ -186,7 +187,7 @@
             <span class="logo-text">Dusa Films 🔥</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -201,11 +202,11 @@
                     <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'movies:about' %}">About</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong position-relative {% if request.resolver_match.url_name == 'announcements:list' %}active{% endif %}" href="{% url 'announcements:list' %}">
+                <li class="nav-item position-relative">
+                    <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'announcements:list' %}active{% endif %}" href="{% url 'announcements:list' %}">
                         Announcements
                         {% if unread_announcements_count > 0 %}
-                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                        <span class="badge bg-danger rounded-pill position-absolute">
                             {{ unread_announcements_count }}
                         </span>
                         {% endif %}
