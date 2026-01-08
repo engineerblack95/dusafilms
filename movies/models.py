@@ -2,13 +2,13 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.timezone import now
 from django.contrib.auth.models import User
-from cloudinary.models import CloudinaryField  # <-- added CloudinaryField
+from cloudinary.models import CloudinaryField
 
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(blank=True, unique=True)
-    image = CloudinaryField('image', blank=True, null=True)  # <-- updated to Cloudinary
+    image = CloudinaryField('image', blank=True, null=True)  # FIXED: Cloudinary
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -22,13 +22,16 @@ class Category(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
+
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
         related_name="movies"
     )
-    thumbnail = CloudinaryField('image', null=True, blank=True)  # <-- updated to Cloudinary
-    video = CloudinaryField(resource_type="video")  # <-- replaced video_url with Cloudinary video
+
+    thumbnail = CloudinaryField('image', null=True, blank=True)  # FIXED: Cloudinary
+    video = CloudinaryField(resource_type="video", blank=True, null=True)
+
     download_link = models.URLField(max_length=500, blank=True, null=True)
 
     slug = models.SlugField(blank=True, unique=True)
@@ -66,7 +69,6 @@ class Comment(models.Model):
         related_name="movie_comments"
     )
 
-    # Logged-in user (optional)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -75,7 +77,6 @@ class Comment(models.Model):
         blank=True
     )
 
-    # Guest commenter name
     guest_name = models.CharField(
         max_length=50,
         blank=True,
