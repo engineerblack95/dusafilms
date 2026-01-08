@@ -83,20 +83,17 @@
     display: flex;
     flex-direction: column;
 
-    /* NEW */
+    /* red hover effect setup */
     border: 2px solid transparent;
-    transition: 
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    z-index: 1;
 }
 
 .movie-card:hover {
     transform: translateY(-6px);
-
-    /* 🔴 RED HOVER EFFECT */
-    border-color: #ff2b2b;
-    box-shadow: 0 0 18px rgba(255, 43, 43, 0.55);
+    border-color: #ff2b2b !important;
+    box-shadow: 0 0 20px rgba(255, 43, 43, 0.7) !important;
+    z-index: 10; /* make hover overlay visible above others */
 }
 
 .movie-card img {
