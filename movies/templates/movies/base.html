@@ -19,6 +19,7 @@
             --blue: #1e90ff;
             --white: #f8f8f8;
             --nav-height: 76px;
+            --footer-height: 120px;
         }
 
         html, body {
@@ -32,10 +33,6 @@
         body {
             display: flex;
             flex-direction: column;
-        }
-
-        main {
-            flex: 1;
         }
 
         /* ================= NAVBAR ================= */
@@ -76,15 +73,21 @@
         /* ================= MAIN CONTENT ================= */
         main.container {
             padding-top: calc(var(--nav-height) + 30px);
-            padding-bottom: 40px;
+            padding-bottom: calc(var(--footer-height) + 20px);
         }
 
-        /* ================= FOOTER ================= */
+        /* ================= FOOTER (FIXED) ================= */
         .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
             background: linear-gradient(180deg, #000, #0a0a0a);
             border-top: 1px solid rgba(255,255,255,0.08);
             padding: 28px 0;
             text-align: center;
+            z-index: 1020;
         }
 
         .footer-logo {
@@ -112,6 +115,10 @@
 
         /* ================= RESPONSIVE ================= */
         @media (max-width: 768px) {
+            :root {
+                --footer-height: 140px;
+            }
+
             .logo-text {
                 font-size: 1.3rem;
             }
@@ -140,13 +147,8 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto">
 
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a>
-                </li>
+                <li class="nav-item"><a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a></li>
 
                 <li class="nav-item">
                     <a class="nav-link nav-link-strong position-relative" href="{% url 'announcements:list' %}">
@@ -159,34 +161,15 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a>
-                </li>
+                <li class="nav-item"><a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a></li>
 
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">
-                            Logout
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">Logout</a></li>
                 {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">
-                            Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">
-                            Register
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-strong text-info" href="{% url 'accounts:register' %}">Register</a></li>
                 {% endif %}
-
             </ul>
         </div>
     </div>
@@ -203,12 +186,8 @@
         <img src="{% static 'movies/samu1.png' %}" class="footer-logo" alt="Dusa Films">
 
         <div class="footer-social">
-            <a href="https://wa.me/250786844104" target="_blank">
-                <i class="bi bi-whatsapp"></i>
-            </a>
-            <a href="https://www.youtube.com" target="_blank">
-                <i class="bi bi-youtube"></i>
-            </a>
+            <a href="https://wa.me/250786844104" target="_blank"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://www.youtube.com" target="_blank"><i class="bi bi-youtube"></i></a>
         </div>
 
         <div class="footer-text">
