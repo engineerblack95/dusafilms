@@ -2,11 +2,13 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.timezone import now
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField  # <-- added CloudinaryField
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(blank=True, unique=True)
-    image = models.ImageField(upload_to="category_images/", blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)  # <-- updated to Cloudinary
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -25,10 +27,8 @@ class Movie(models.Model):
         on_delete=models.CASCADE,
         related_name="movies"
     )
-    thumbnail = models.ImageField(upload_to="thumbnails/", null=True, blank=True)
-
-    # Updated fields
-    video_url = models.URLField(max_length=500)
+    thumbnail = CloudinaryField('image', null=True, blank=True)  # <-- updated to Cloudinary
+    video = CloudinaryField(resource_type="video")  # <-- replaced video_url with Cloudinary video
     download_link = models.URLField(max_length=500, blank=True, null=True)
 
     slug = models.SlugField(blank=True, unique=True)
