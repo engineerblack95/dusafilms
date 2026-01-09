@@ -19,20 +19,12 @@
             --blue: #1e90ff;
             --white: #f8f8f8;
             --nav-height: 76px;
-            --footer-height: 120px;
         }
 
         html, body {
-            height: 100%;
             margin: 0;
             background: var(--bg);
             color: var(--white);
-        }
-
-        /* ================= PAGE LAYOUT ================= */
-        body {
-            display: flex;
-            flex-direction: column;
         }
 
         /* ================= NAVBAR ================= */
@@ -45,7 +37,6 @@
             z-index: 1030;
             background: linear-gradient(180deg, #0f0f0f, #121212);
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            transition: background 0.3s ease;
         }
 
         /* ================= BRAND ================= */
@@ -60,11 +51,6 @@
             font-weight: 900;
             margin-left: 10px;
             color: var(--white);
-            transition: color 0.3s ease;
-        }
-
-        .logo-text:hover {
-            color: var(--blue);
         }
 
         /* ================= NAV LINKS ================= */
@@ -72,16 +58,14 @@
             font-weight: 700;
             font-size: 1.05rem;
             color: #e5e7eb !important;
-            transition: 0.25s ease;
             padding: 8px 14px;
             border-radius: 6px;
+            transition: 0.25s ease;
         }
 
-        .nav-link-strong:hover,
-        .nav-link-strong:focus {
-            color: var(--white) !important;
-            background: rgba(30, 144, 255, 0.15);
-            text-decoration: none;
+        .nav-link-strong:hover {
+            background: rgba(30,144,255,0.15);
+            color: white !important;
         }
 
         .nav-link-strong.active {
@@ -89,55 +73,23 @@
             font-weight: 800;
         }
 
-        /* Add spacing between nav items */
         .navbar-nav .nav-item {
             margin-left: 6px;
         }
 
-        /* ================= MOBILE STYLING ================= */
-        @media (max-width: 992px) {
-            .nav-link-strong {
-                font-size: 1rem;
-                padding: 8px 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --footer-height: 140px;
-            }
-
-            .logo-text {
-                font-size: 1.3rem;
-            }
-
-            .navbar-nav {
-                text-align: center;
-            }
-
-            .navbar-nav .nav-item {
-                margin-left: 0;
-                margin-bottom: 6px;
-            }
-
-            .nav-link-strong {
-                width: 100%;
-                padding: 10px 0;
-            }
+        /* ================= PAGE CONTENT ================= */
+        main.container {
+            padding-top: calc(var(--nav-height) + 30px);
+            padding-bottom: 40px;
         }
 
         /* ================= FOOTER ================= */
         .site-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: var(--footer-height);
             background: linear-gradient(180deg, #000, #0a0a0a);
             border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 28px 0;
+            padding: 30px 0;
             text-align: center;
-            z-index: 1020;
+            margin-top: 60px;
         }
 
         .footer-logo {
@@ -163,16 +115,25 @@
             opacity: 0.9;
         }
 
-        /* ================= INTERACTIVE TOUCH EFFECTS ================= */
-        .navbar-nav .nav-link-strong:active {
-            background: rgba(30,144,255,0.25);
-        }
+        /* ================= MOBILE ================= */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 1.3rem;
+            }
 
-        /* ================= BADGE ================= */
-        .nav-link-strong .badge {
-            font-size: 0.7rem;
-            top: 0.5rem;
-            right: -0.6rem;
+            .navbar-nav {
+                text-align: center;
+            }
+
+            .navbar-nav .nav-item {
+                margin-left: 0;
+                margin-bottom: 6px;
+            }
+
+            .nav-link-strong {
+                width: 100%;
+                padding: 10px 0;
+            }
         }
     </style>
 </head>
@@ -187,7 +148,7 @@
             <span class="logo-text">Dusa Films 🔥</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -195,15 +156,15 @@
             <ul class="navbar-nav ms-auto text-center">
 
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'movies:home' %}">Home</a>
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'movies:about' %}">About</a>
+                    <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a>
                 </li>
 
                 <li class="nav-item position-relative">
-                    <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'announcements:list' %}active{% endif %}" href="{% url 'announcements:list' %}">
+                    <a class="nav-link nav-link-strong" href="{% url 'announcements:list' %}">
                         Announcements
                         {% if unread_announcements_count > 0 %}
                         <span class="badge bg-danger rounded-pill position-absolute">
@@ -214,22 +175,15 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'contact:contact' %}active{% endif %}" href="{% url 'contact:contact' %}">Contact</a>
+                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a>
                 </li>
 
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'accounts:dashboard' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                        <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">Logout</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong {% if request.resolver_match.url_name == 'accounts:otp_login' %}active{% endif %}" href="{% url 'accounts:otp_login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong text-info {% if request.resolver_match.url_name == 'accounts:register' %}active{% endif %}" href="{% url 'accounts:register' %}">Register</a>
                     </li>
                 {% endif %}
             </ul>
