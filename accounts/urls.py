@@ -10,4 +10,6 @@ urlpatterns = [
     path('resend-otp/', views.resend_otp, name='resend_otp'),
    path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path("debug-admins/", views.debug_admin_users),
+
 ]

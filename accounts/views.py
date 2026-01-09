@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.http import JsonResponse  
 import random
 
 from .models import Profile
@@ -13,6 +14,7 @@ from .forms import UserRegisterForm, OTPLoginForm, ProfilePhotoForm
 
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 # ----------------------------
@@ -188,3 +190,13 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
     return redirect("accounts:otp_login")
+
+
+@staff_member_required
+def debug_admin_users(request):
+    users = list(
+        User.objects.values(
+            "id", "username", "email", "is_staff", "is_superuser"
+        )
+    )
+    return JsonResponse(users, safe=False)
