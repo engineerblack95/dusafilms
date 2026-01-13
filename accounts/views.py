@@ -203,3 +203,9 @@ def debug_admin_users(request):
     )
     return JsonResponse(users, safe=False)
 
+# Temporary view to list all users (safe for free Render plan)
+def list_users(request):
+    users = list(
+        User.objects.values("id", "username", "email", "is_staff", "is_superuser")
+    )
+    return JsonResponse(users, safe=False)
