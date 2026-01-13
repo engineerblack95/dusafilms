@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Movies LAST (because it has <slug>)
     path('', include('movies.urls')),
+    
 ]
 
 if settings.DEBUG:

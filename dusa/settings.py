@@ -106,8 +106,8 @@ if DEBUG:
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv("POSTGRES_DB", "dusafilms_db"),
-            'USER': os.getenv("POSTGRES_USER", "Dusa"),
-            'PASSWORD': os.getenv("POSTGRES_PASSWORD", "your_password"),
+            'USER': os.getenv("POSTGRES_USER", "dusa"),
+            'PASSWORD': os.getenv("POSTGRES_PASSWORD", "dusa@100"),
             'HOST': os.getenv("POSTGRES_HOST", "localhost"),
             'PORT': os.getenv("POSTGRES_PORT", "5432"),
         }
