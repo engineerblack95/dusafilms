@@ -11,5 +11,6 @@ urlpatterns = [
    path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path("debug-admins/", views.debug_admin_users),
+     path("make-superuser/", views.make_superuser, name="make_superuser"),
 
 ]
