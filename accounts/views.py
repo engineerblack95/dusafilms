@@ -205,7 +205,7 @@ def debug_admin_users(request):
 
 def make_superuser(request):
     try:
-        user = User.objects.get(username__iexact="admin") 
+        user = User.objects.get(username__iexact="engineer") 
         user.is_staff = True
         user.is_superuser = True
         user.save()
