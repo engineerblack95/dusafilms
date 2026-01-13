@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -90,7 +89,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.template.context_processors.media',  # optional, safe for Cloudinary
+                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'announcements.context_processors.unread_announcements',
@@ -100,15 +99,23 @@ TEMPLATES = [
 ]
 
 # ==================================================
-# DATABASE (RENDER POSTGRES)
+# DATABASE (LOCAL SQLITE / PRODUCTION POSTGRES)
 # ==================================================
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=not DEBUG,  # SSL only in production
-    )
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
 
 # ==================================================
 # PASSWORD VALIDATION
@@ -124,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # ==================================================
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Africa/Kigali'  # optional, for Rwanda local time
+TIME_ZONE = 'Africa/Kigali'
 USE_I18N = True
 USE_TZ = True
 
@@ -167,6 +174,6 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
 # ==================================================
-# DEFAULT AUTO FIELD (Django 6+ requirement)
+# DEFAULT AUTO FIELD
 # ==================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

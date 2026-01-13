@@ -51,13 +51,14 @@ def otp_login(request):
 # ----------------------------
 def send_otp(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        username = request.POST.get("username", "").strip().lower()
+
         if not username:
             messages.error(request, "Please enter your username.")
             return redirect("accounts:otp_login")
 
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(username__iexact=username)
         except User.DoesNotExist:
             messages.error(request, "User does not exist.")
             return redirect("accounts:otp_login")
@@ -67,7 +68,6 @@ def send_otp(request):
         profile.otp = otp
         profile.otp_created_at = timezone.now()
         profile.save()
-
         subject = "Dusa Films — Your OTP"
         message = f"Hello {user.username},\n\nYour OTP is: {otp}\nIt expires in 5 minutes."
         from_email = settings.DEFAULT_FROM_EMAIL
@@ -106,20 +106,22 @@ def resend_otp(request):
 # Verify OTP
 # ----------------------------
 def verify_otp(request):
-    username = request.GET.get("username") or request.POST.get("username")
+    username = (request.GET.get("username") or request.POST.get("username") or "").strip().lower()
+
     if not username:
         messages.error(request, "Username missing. Please try again.")
         return redirect("accounts:otp_login")
 
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(username__iexact=username)
         profile = user.profile
     except User.DoesNotExist:
         messages.error(request, "Invalid username.")
         return redirect("accounts:otp_login")
 
     if request.method == "POST":
-        otp_input = request.POST.get("otp")
+        otp_input = request.POST.get("otp", "").strip()
+
         if profile.otp and profile.otp == otp_input and profile.is_otp_valid():
             login(request, user)
             profile.clear_otp()
@@ -130,7 +132,6 @@ def verify_otp(request):
             return redirect(f"/accounts/verify-otp/?username={username}")
 
     return render(request, "accounts/verify_otp.html", {"username": username})
-
 
 # ----------------------------
 # Dashboard
