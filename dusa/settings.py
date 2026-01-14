@@ -181,3 +181,21 @@ if not DEBUG:
 # DEFAULT AUTO FIELD
 # ==================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==================================================
+# LOGGING (to see errors in Render logs)
+# ==================================================
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',
+    },
+}
+
