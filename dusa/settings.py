@@ -24,7 +24,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 # HOST & PROXY (THIS FIXES 400 ERROR)
 # ==================================================
 ALLOWED_HOSTS = [
-    "dusa-films-oaes.onrender.com",
+    "dusafilms.onrender.com",
     ".onrender.com",
     "localhost",
     "127.0.0.1",
@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
 USE_X_FORWARDED_HOST = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://dusa-films-oaes.onrender.com",
+    "https://dusafilms.onrender.com",
 ]
 
 # ==================================================
