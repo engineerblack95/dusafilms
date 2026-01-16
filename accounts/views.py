@@ -16,6 +16,9 @@ from .forms import UserRegisterForm, OTPLoginForm, ProfilePhotoForm
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
 
 
 # ----------------------------
@@ -209,3 +212,21 @@ def list_users(request):
         User.objects.values("id", "username", "email", "is_staff", "is_superuser")
     )
     return JsonResponse(users, safe=False)
+
+def list_users_debug(request):
+    # Simple protection with secret key
+    token = request.GET.get("token")
+    if token != settings.SECRET_KEY:
+        return HttpResponse("Forbidden", status=403)
+
+    User = get_user_model()
+    users = User.objects.all()
+
+    output = []
+    for u in users:
+        output.append(
+            f"ID: {u.id} | email: {getattr(u, 'email', '')} | username: {getattr(u, 'username', '')} | is_staff: {u.is_staff}"
+        )
+
+    return HttpResponse("<br>".join(output))
+
