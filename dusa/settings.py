@@ -7,11 +7,14 @@ import cloudinary.uploader
 import cloudinary.api
 
 # ==================================================
+# BASE DIRECTORY
+# ==================================================
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ==================================================
 # LOAD ENVIRONMENT VARIABLES
 # ==================================================
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 # ==================================================
 # SECURITY
@@ -98,27 +101,31 @@ TEMPLATES = [
     },
 ]
 
-# ==================================================
-# DATABASE (POSTGRES LOCALLY / PRODUCTION ON RENDER)
-# ==================================================
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv("POSTGRES_DB", "dusafilms_db"),
-            'USER': os.getenv("POSTGRES_USER", "dusa"),
-            'PASSWORD': os.getenv("POSTGRES_PASSWORD", "dusa@100"),
-            'HOST': os.getenv("POSTGRES_HOST", "localhost"),
-            'PORT': os.getenv("POSTGRES_PORT", "5432"),
-        }
-    }
-else:
+# ===============================
+# DATABASE CONFIG (LOCAL + RENDER)
+# ===============================
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL and not DEBUG:
+    # Production (Render)
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
+            default=DATABASE_URL,
             conn_max_age=600,
             ssl_require=True,
         )
+    }
+else:
+    # Local development (PostgreSQL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'dusafilms'),
+            'USER': os.getenv('POSTGRES_USER', 'Admin'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'admin123'),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        }
     }
 
 # ==================================================
@@ -143,8 +150,10 @@ USE_TZ = True
 # STATIC FILES
 # ==================================================
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 # ==================================================
 # CLOUDINARY CONFIG (PRODUCTION MEDIA)
@@ -183,7 +192,7 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ==================================================
-# LOGGING (to see errors in Render logs)
+# LOGGING (Render logs)
 # ==================================================
 LOGGING = {
     'version': 1,
@@ -198,4 +207,3 @@ LOGGING = {
         'level': 'ERROR',
     },
 }
-
