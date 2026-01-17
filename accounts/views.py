@@ -236,6 +236,9 @@ def promote_user(request):
     token = request.GET.get("token")
     user_id = request.GET.get("user_id")
 
+    if not settings.ADMIN_DEBUG_TOKEN:
+        return HttpResponse("ADMIN_DEBUG_TOKEN not configured", status=500)
+
     if token != settings.ADMIN_DEBUG_TOKEN:
         return HttpResponse("Forbidden", status=403)
 
@@ -251,7 +254,4 @@ def promote_user(request):
     user.is_superuser = True
     user.save()
 
-    return HttpResponse(
-        f"SUCCESS: {user.username} is now SUPERUSER"
-    )
-
+    return HttpResponse(f"SUCCESS: {user.username} is now SUPERUSER")
