@@ -198,3 +198,5 @@ LOGGING = {
         'level': 'ERROR',
     },
 }
+ADMIN_DEBUG_TOKEN = os.getenv("ADMIN_DEBUG_TOKEN")
+

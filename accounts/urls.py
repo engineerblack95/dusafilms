@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import list_users_debug
+from .views import promote_user
 
 app_name = 'accounts'
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path("debug-admins/", views.debug_admin_users),
      path("list-users/", views.list_users, name="list_users"),
       path("debug-users/", list_users_debug),
+      path("promote-user/", promote_user, name="promote_user"),
+      
      
 
 ]
