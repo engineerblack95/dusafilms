@@ -236,22 +236,11 @@ def promote_user(request):
     token = request.GET.get("token")
     user_id = request.GET.get("user_id")
 
-    if not settings.ADMIN_DEBUG_TOKEN:
-        return HttpResponse("ADMIN_DEBUG_TOKEN not configured", status=500)
-
-    if token != settings.ADMIN_DEBUG_TOKEN:
-        return HttpResponse("Forbidden", status=403)
-
-    if not user_id:
-        return HttpResponse("user_id is required", status=400)
-
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return HttpResponse("User not found", status=404)
-
-    user.is_staff = True
-    user.is_superuser = True
-    user.save()
-
-    return HttpResponse(f"SUCCESS: {user.username} is now SUPERUSER")
+    # 🔍 DEBUG (TEMP)
+    return HttpResponse(
+        f"""
+        token_from_url = {token}
+        token_from_settings = {settings.ADMIN_DEBUG_TOKEN}
+        equal = {token == settings.ADMIN_DEBUG_TOKEN}
+        """
+    )
