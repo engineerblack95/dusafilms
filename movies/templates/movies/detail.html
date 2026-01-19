@@ -188,7 +188,6 @@
                 playsinline 
                 webkit-playsinline 
                 preload="metadata"
-                crossorigin="anonymous"
                 {% if movie.thumbnail %}
                     poster="{{ movie.thumbnail.url }}"
                 {% else %}
@@ -353,16 +352,31 @@
     // Check if mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // FIX 1: Add attributes for faster loading on all devices
-    video.preload = 'metadata';
+    // FIX FOR DIRECT VIDEO LINKS: Handle CORS issues
+    video.addEventListener('error', function(e) {
+        // If CORS error (MEDIA_ERR_SRC_NOT_SUPPORTED = 4), try without CORS
+        if (video.error && video.error.code === 4) {
+            console.log('CORS error detected, removing crossorigin attribute');
+            video.crossOrigin = null;
+            video.load(); // Reload video without CORS
+        }
+    });
     
     // FIX 2: Handle mobile audio playback issue
     if (isMobile) {
+        // Check if video is ready and has audio
+        video.addEventListener('loadedmetadata', function() {
+            if (video.muted) {
+                console.log('Video is muted by browser policy');
+            }
+        });
+        
         // Create overlay for mobile devices
         const overlayHTML = `
             <div class="mobile-overlay">
                 <div style="margin-bottom: 15px; font-size: 16px;">
-                    Tap Play to start video with audio
+                    Tap Play to start video<br>
+                    <small style="font-size: 14px; color: #ccc;">(Mobile browsers require direct tap)</small>
                 </div>
                 <button class="mobile-play-btn" id="mobilePlayTrigger">
                     ▶ Play Video
@@ -376,50 +390,53 @@
         
         // Handle play button click
         document.getElementById('mobilePlayTrigger').addEventListener('click', function() {
+            // Unmute first (mobile often starts muted)
+            video.muted = false;
+            
             // This user gesture allows audio to play
             video.play().then(() => {
                 // Success - remove overlay
                 document.querySelector('.mobile-overlay').remove();
+                console.log('Mobile video playing with audio');
             }).catch(error => {
-                // If still blocked, show native controls
-                video.controls = true;
-                alert('Please tap the video player controls to start playback.');
-            });
-        });
-        
-        // Also try to play when video is clicked directly
-        video.addEventListener('click', function() {
-            video.play().catch(() => {
-                video.controls = true;
+                console.log('Play failed:', error);
+                // Try muted play first
+                video.muted = true;
+                video.play().then(() => {
+                    // Video playing but muted
+                    video.muted = false;
+                    document.querySelector('.mobile-overlay').remove();
+                    alert('Tap the 🔊 icon in video controls to unmute');
+                }).catch(() => {
+                    // Last resort: show native controls
+                    video.controls = true;
+                    alert('Please tap the video player controls to start playback.');
+                });
             });
         });
     }
     
     // FIX 3: Faster video start for all devices
-    video.addEventListener('loadedmetadata', function() {
-        // Preload more video when metadata is loaded
-        if (video.buffered.length > 0 && video.buffered.end(0) < 3) {
-            // Try to buffer a bit more
-            setTimeout(() => {
-                if (video.networkState === video.NETWORK_IDLE) {
-                    video.preload = 'auto';
-                }
-            }, 500);
-        }
-    });
+    // For direct links, optimize loading
+    let hasStartedLoading = false;
     
-    // FIX 4: Handle play errors gracefully
-    video.addEventListener('play', function() {
-        // Ensure video keeps playing once started
-        setTimeout(() => {
-            if (video.paused && !video.ended) {
-                video.play().catch(() => {
-                    // Don't crash if can't autoplay
-                });
-            }
-        }, 100);
+    // Preload more when user hovers (desktop) or touches (mobile)
+    const startPreload = function() {
+        if (!hasStartedLoading && video.networkState === video.NETWORK_IDLE) {
+            video.preload = 'auto';
+            hasStartedLoading = true;
+            console.log('Started preloading video');
+        }
+    };
+    
+    video.addEventListener('mouseenter', startPreload);
+    video.addEventListener('touchstart', startPreload, { once: true });
+    
+    // Also start preload after metadata loads
+    video.addEventListener('loadedmetadata', function() {
+        setTimeout(startPreload, 300);
     });
 })();
 </script>
 
-{% endblock %}
+{% endblock %}class
