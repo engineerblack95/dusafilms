@@ -139,7 +139,7 @@
     .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
     .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
 
-    /* Mobile overlay styles */
+    /* Mobile overlay styles - UPDATED */
     .mobile-overlay {
         position: absolute;
         top: 0;
@@ -155,6 +155,10 @@
         color: white;
         text-align: center;
         padding: 20px;
+        pointer-events: none; /* IMPORTANT: Lets clicks pass through to video */
+    }
+    .mobile-overlay-content {
+        pointer-events: auto; /* But the content can be clicked */
     }
     .mobile-play-btn {
         background: #3b82f6;
@@ -166,6 +170,7 @@
         font-weight: bold;
         cursor: pointer;
         margin-top: 15px;
+        pointer-events: auto;
     }
     .mobile-play-btn:hover { background: #2563eb; }
 
@@ -184,7 +189,6 @@
     <div class="video-box">
         {% if movie.video_url %}
             <video id="mainPlayer" 
-                controls 
                 playsinline 
                 webkit-playsinline 
                 preload="metadata"
@@ -193,10 +197,13 @@
                 {% else %}
                     poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"
                 {% endif %}
+                style="width: 100%; display: block;"
             >
                 <source src="{{ movie.video_url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
+            
+            <!-- MOBILE OVERLAY - Will be added by JavaScript -->
         {% endif %}
     </div>
 
@@ -343,7 +350,7 @@
 })();
 </script>
 
-<!-- VIDEO PLAYBACK FIXES -->
+<!-- VIDEO PLAYBACK FIXES - UPDATED FOR MOBILE AUDIO -->
 <script>
 (function() {
     const video = document.getElementById('mainPlayer');
@@ -352,91 +359,102 @@
     // Check if mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // FIX FOR DIRECT VIDEO LINKS: Handle CORS issues
-    video.addEventListener('error', function(e) {
-        // If CORS error (MEDIA_ERR_SRC_NOT_SUPPORTED = 4), try without CORS
-        if (video.error && video.error.code === 4) {
-            console.log('CORS error detected, removing crossorigin attribute');
-            video.crossOrigin = null;
-            video.load(); // Reload video without CORS
-        }
-    });
-    
-    // FIX 2: Handle mobile audio playback issue
+    // CRITICAL FIX: For mobile, we need to handle audio permissions differently
     if (isMobile) {
-        // Check if video is ready and has audio
-        video.addEventListener('loadedmetadata', function() {
-            if (video.muted) {
-                console.log('Video is muted by browser policy');
-            }
-        });
+        // Step 1: Initially hide controls and mute (mobile browsers often block unmuted autoplay)
+        video.controls = false;
+        video.muted = true; // Start muted to bypass autoplay restrictions
         
-        // Create overlay for mobile devices
+        // Step 2: Create a fake play button that actually clicks the VIDEO element
         const overlayHTML = `
             <div class="mobile-overlay">
-                <div style="margin-bottom: 15px; font-size: 16px;">
-                    Tap Play to start video<br>
-                    <small style="font-size: 14px; color: #ccc;">(Mobile browsers require direct tap)</small>
+                <div class="mobile-overlay-content">
+                    <div style="margin-bottom: 15px; font-size: 16px;">
+                        Tap Play to start video with audio
+                    </div>
+                    <button class="mobile-play-btn" id="mobilePlayTrigger">
+                        ▶ Tap to Play
+                    </button>
+                    <div style="margin-top: 10px; font-size: 14px; color: #ccc;">
+                        (Audio will play after tapping)
+                    </div>
                 </div>
-                <button class="mobile-play-btn" id="mobilePlayTrigger">
-                    ▶ Play Video
-                </button>
             </div>
         `;
         
-        // Insert overlay
         const videoContainer = document.querySelector('.video-box');
         videoContainer.insertAdjacentHTML('beforeend', overlayHTML);
         
-        // Handle play button click
-        document.getElementById('mobilePlayTrigger').addEventListener('click', function() {
-            // Unmute first (mobile often starts muted)
-            video.muted = false;
+        // Step 3: When user clicks the button, actually click the VIDEO element
+        document.getElementById('mobilePlayTrigger').addEventListener('click', function(e) {
+            e.stopPropagation();
             
-            // This user gesture allows audio to play
+            // First, show controls on video
+            video.controls = true;
+            
+            // Now trigger a click on the VIDEO element itself
+            // This is what mobile browsers need for audio permission
+            video.click();
+            
+            // Also try to play
+            video.muted = false;
             video.play().then(() => {
-                // Success - remove overlay
-                document.querySelector('.mobile-overlay').remove();
-                console.log('Mobile video playing with audio');
+                console.log('Video playing with audio on mobile');
+                document.querySelector('.mobile-overlay').style.display = 'none';
             }).catch(error => {
-                console.log('Play failed:', error);
-                // Try muted play first
-                video.muted = true;
-                video.play().then(() => {
-                    // Video playing but muted
-                    video.muted = false;
-                    document.querySelector('.mobile-overlay').remove();
-                    alert('Tap the 🔊 icon in video controls to unmute');
-                }).catch(() => {
-                    // Last resort: show native controls
-                    video.controls = true;
-                    alert('Please tap the video player controls to start playback.');
-                });
+                console.log('Auto-play failed:', error);
+                // Show a message to tap the video
+                alert('Please tap the video player to start playback with audio');
             });
         });
+        
+        // Step 4: Also allow clicking anywhere on the video
+        video.addEventListener('click', function() {
+            video.muted = false;
+            video.controls = true;
+            video.play().catch(e => {
+                console.log('Video click play failed:', e);
+            });
+        });
+        
+        // Step 5: Once video starts playing, remove overlay
+        video.addEventListener('play', function() {
+            const overlay = document.querySelector('.mobile-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        });
+        
+        // Step 6: Handle user tapping the native play button in controls
+        video.addEventListener('playing', function() {
+            // Ensure audio is unmuted when playing
+            video.muted = false;
+        });
+    } else {
+        // For desktop: just add controls
+        video.controls = true;
     }
     
-    // FIX 3: Faster video start for all devices
-    // For direct links, optimize loading
-    let hasStartedLoading = false;
-    
-    // Preload more when user hovers (desktop) or touches (mobile)
+    // FIX for faster video start
+    let hasPreloaded = false;
     const startPreload = function() {
-        if (!hasStartedLoading && video.networkState === video.NETWORK_IDLE) {
+        if (!hasPreloaded) {
             video.preload = 'auto';
-            hasStartedLoading = true;
-            console.log('Started preloading video');
+            hasPreloaded = true;
         }
     };
     
     video.addEventListener('mouseenter', startPreload);
     video.addEventListener('touchstart', startPreload, { once: true });
     
-    // Also start preload after metadata loads
+    // Also start after metadata loads
     video.addEventListener('loadedmetadata', function() {
-        setTimeout(startPreload, 300);
+        if (video.buffered.length === 0) {
+            setTimeout(startPreload, 100);
+        }
     });
 })();
 </script>
 
-{% endblock %}class
+{% endblock %}
