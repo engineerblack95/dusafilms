@@ -1,0 +1,101 @@
+# Create directory and file in one command
+mkdir -p static/tests && cat > static/tests/video_test.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Audio Test</title>
+    <style>
+        body { background: black; color: white; padding: 20px; font-family: Arial; }
+        video { width: 100%; max-width: 600px; margin: 20px 0; border: 2px solid #333; }
+        .test { margin: 30px 0; padding: 20px; background: #222; border-radius: 10px; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>🎬 Mobile Video/Audio Test</h1>
+    <p>Open this page on your phone and test each video</p>
+    
+    <div class="test">
+        <h3>Test 1: Google Demo Video (Should work everywhere)</h3>
+        <video id="test1" controls playsinline webkit-playsinline>
+            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+        </video>
+        <div id="result1" class="info">Click play to test...</div>
+    </div>
+    
+    <div class="test">
+        <h3>Test 2: Cloudinary Demo Video</h3>
+        <video id="test2" controls playsinline webkit-playsinline>
+            <source src="https://res.cloudinary.com/demo/video/upload/q_auto,f_mp4,vc_h264/sample.mp4" type="video/mp4">
+        </video>
+        <div id="result2" class="info">Click play to test...</div>
+    </div>
+    
+    <div class="test">
+        <h3>Test 3: Archive.org Video</h3>
+        <video id="test3" controls playsinline webkit-playsinline>
+            <source src="https://archive.org/download/squid-s-3-e-2/SQUID%20S3%20E2.ia.mp4" type="video/mp4">
+        </video>
+        <div id="result3" class="info">Click play to test...</div>
+    </div>
+
+    <div id="debug" style="margin-top: 40px; padding: 20px; background: #111; border-radius: 10px;">
+        <h3>📱 Device Info</h3>
+        <div id="deviceInfo"></div>
+    </div>
+
+    <script>
+        // Show device info
+        const deviceInfo = document.getElementById('deviceInfo');
+        deviceInfo.innerHTML = `
+            User Agent: ${navigator.userAgent}<br>
+            Platform: ${navigator.platform}<br>
+            Cookies: ${navigator.cookieEnabled ? 'Enabled' : 'Disabled'}<br>
+            Online: ${navigator.onLine ? 'Yes' : 'No'}<br>
+        `;
+        
+        // Test each video
+        function testVideo(videoId, resultId) {
+            const video = document.getElementById(videoId);
+            const result = document.getElementById(resultId);
+            
+            video.addEventListener('error', (e) => {
+                let errorMsg = 'Unknown error';
+                if (video.error) {
+                    switch(video.error.code) {
+                        case 1: errorMsg = 'Video loading aborted'; break;
+                        case 2: errorMsg = 'Network error'; break;
+                        case 3: errorMsg = 'Video decoding error'; break;
+                        case 4: errorMsg = 'Video not supported (CORS/codec)'; break;
+                    }
+                }
+                result.innerHTML = `<span class="error">❌ ERROR: ${errorMsg}</span>`;
+                console.log(`Video ${videoId} error:`, video.error);
+            });
+            
+            video.addEventListener('play', () => {
+                const audioStatus = video.muted ? '🔇 MUTED' : '🔊 UNMUTED';
+                result.innerHTML = `<span class="success">✅ PLAYING! ${audioStatus}</span>`;
+            });
+            
+            video.addEventListener('loadedmetadata', () => {
+                result.innerHTML = `<span class="info">📦 Loaded: ${video.duration.toFixed(1)}s</span>`;
+            });
+        }
+        
+        testVideo('test1', 'result1');
+        testVideo('test2', 'result2');
+        testVideo('test3', 'result3');
+    </script>
+</body>
+</html>
+EOF
+
+# Then push
+git add static/tests/video_test.html
+git commit -m "Add video test page"
+git push origin main
