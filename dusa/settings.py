@@ -200,3 +200,21 @@ LOGGING = {
 }
 ADMIN_DEBUG_TOKEN = os.getenv("ADMIN_DEBUG_TOKEN")
 
+# DISABLE security headers that block video
+SECURE_CONTENT_TYPE_NOSNIFF = False
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# Allow all origins for video testing (temporary)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Ensure proper MIME types for video
+import mimetypes
+mimetypes.add_type("video/mp4", ".mp4", True)
+mimetypes.add_type("video/webm", ".webm", True)
+
+# If using Cloudinary for videos, ensure it's configured
+if os.getenv('CLOUDINARY_URL'):
+    CLOUDINARY_STORAGE = {
+        'CLOUDINARY_URL': os.getenv('CLOUDINARY_URL')
+    }
+
