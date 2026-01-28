@@ -17,15 +17,30 @@
     <style>
         :root {
             --bg: #0b0b0b;
+            --red: #ef4444;
             --blue: #1e90ff;
             --white: #f8f8f8;
             --nav-height: 76px;
+            --footer-height: 180px; /* Approximate footer height */
         }
 
         html, body {
             margin: 0;
             background: var(--bg);
             color: var(--white);
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .site-wrapper {
+            flex: 1 0 auto;
+            padding-bottom: var(--footer-height);
+            position: relative;
         }
 
         .site-navbar {
@@ -102,136 +117,334 @@
         }
 
         .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
             background: linear-gradient(180deg, #000, #0a0a0a);
             border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 30px 0;
+            padding: 20px 0;
             text-align: center;
-            margin-top: 60px;
+            z-index: 1020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 15px;
         }
 
         .footer-logo {
-            height: 36px;
-            margin-bottom: 10px;
+            height: 30px;
+            margin-bottom: 8px;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 12px 0;
         }
 
         .footer-social a {
-            color: #9ca3af;
-            font-size: 1.4rem;
-            margin: 0 10px;
-            transition: 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
 
-        .footer-social a:hover {
-            color: var(--blue);
+        /* WhatsApp - Green */
+        .social-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        .social-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
         }
 
+        /* YouTube - Red */
+        .social-youtube {
+            background: #FF0000;
+            color: white;
+        }
+        .social-youtube:hover {
+            background: #CC0000;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        /* Facebook - Blue */
+        .social-facebook {
+            background: #1877F2;
+            color: white;
+        }
+        .social-facebook:hover {
+            background: #166FE5;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(24, 119, 242, 0.4);
+        }
+
+        /* Instagram - Gradient */
+        .social-instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+            color: white;
+        }
+        .social-instagram:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(225, 48, 108, 0.4);
+        }
+
+        /* TikTok - Black */
+        .social-tiktok {
+            background: #000000;
+            color: white;
+        }
+        .social-tiktok:hover {
+            background: #222222;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Twitter/X - Black */
+        .social-twitter {
+            background: #000000;
+            color: white;
+        }
+        .social-twitter:hover {
+            background: #222222;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Footer text styling - SAME as "Follow Us" */
         .footer-text {
-            margin-top: 10px;
-            font-size: 0.95rem;
-            font-weight: 700;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
             opacity: 0.9;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-social-title {
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Ensure content doesn't hide behind fixed footer */
+        .content-padding {
+            padding-bottom: calc(var(--footer-height) + 20px);
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --footer-height: 160px;
+            }
+            
+            .site-footer {
+                padding: 15px 0;
+            }
+            
+            .footer-social {
+                gap: 10px;
+            }
+            
+            .footer-social a {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
+            .footer-logo {
+                height: 26px;
+            }
+            
+            .footer-text {
+                font-size: 0.8rem;
+            }
+            
+            .footer-social-title {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --footer-height: 150px;
+            }
+            
+            .footer-social {
+                gap: 8px;
+            }
+            
+            .footer-social a {
+                width: 34px;
+                height: 34px;
+                font-size: 0.9rem;
+            }
+            
+            .footer-text {
+                font-size: 0.75rem;
+            }
+            
+            .footer-social-title {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 
 <body>
+<div class="site-wrapper">
+    <nav class="navbar navbar-expand-lg navbar-dark site-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'movies:home' %}">
+                <img src="{% static 'movies/samu1.png' %}" alt="Dusa Films">
+                <span class="logo-text">Dusa Films 🔥</span>
+            </a>
 
-<nav class="navbar navbar-expand-lg navbar-dark site-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'movies:home' %}">
-            <img src="{% static 'movies/samu1.png' %}" alt="Dusa Films">
-            <span class="logo-text">Dusa Films 🔥</span>
-        </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto">
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'announcements:list' %}">
-                        Announcements
-                        {% if unread_announcements_count > 0 %}
-                        <span class="badge bg-danger rounded-pill ms-1">
-                            {{ unread_announcements_count }}
-                        </span>
-                        {% endif %}
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a>
-                </li>
-
-                {% if user.is_authenticated %}
-
-                    {% if user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link nav-link-strong text-warning fw-bold"
-                           href="{% url 'admin:index' %}">
-                            Admin
+                        <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">About</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-strong" href="{% url 'announcements:list' %}">
+                            Announcements
+                            {% if unread_announcements_count > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-1">
+                                {{ unread_announcements_count }}
+                            </span>
+                            {% endif %}
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">Contact</a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-strong text-warning fw-bold"
+                               href="{% url 'admin:index' %}">
+                                Admin
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-strong"
+                               href="{% url 'accounts:dashboard' %}">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-danger"
+                               href="{% url 'accounts:logout' %}">
+                                Logout
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-strong"
+                               href="{% url 'accounts:otp_login' %}">
+                                Login
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-strong"
+                               href="{% url 'accounts:register' %}">
+                                Register
+                            </a>
+                        </li>
+
                     {% endif %}
 
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong"
-                           href="{% url 'accounts:dashboard' %}">
-                            Dashboard
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold text-danger"
-                           href="{% url 'accounts:logout' %}">
-                            Logout
-                        </a>
-                    </li>
-
-                {% else %}
-
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong"
-                           href="{% url 'accounts:otp_login' %}">
-                            Login
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-strong"
-                           href="{% url 'accounts:register' %}">
-                            Register
-                        </a>
-                    </li>
-
-                {% endif %}
-
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<main class="container">
-    {% block content %}{% endblock %}
-</main>
+    <main class="container content-padding">
+        {% block content %}{% endblock %}
+    </main>
+</div>
 
 <footer class="site-footer">
-    <div class="container">
+    <div class="footer-content">
         <img src="{% static 'movies/samu1.png' %}" class="footer-logo" alt="Dusa Films">
-
+        
+        <div class="footer-social-title">Follow Us</div>
+        
         <div class="footer-social">
-            <a href="https://wa.me/250786844104" target="_blank"><i class="bi bi-whatsapp"></i></a>
-            <a href="https://www.youtube.com" target="_blank"><i class="bi bi-youtube"></i></a>
+            <!-- WhatsApp -->
+            <a href="https://wa.me/250786844104" target="_blank" class="social-whatsapp" 
+               title="WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            
+            <!-- YouTube -->
+            <a href="https://www.youtube.com" target="_blank" class="social-youtube"
+               title="YouTube">
+                <i class="bi bi-youtube"></i>
+            </a>
+            
+            <!-- Facebook -->
+            <a href="https://facebook.com" target="_blank" class="social-facebook"
+               title="Facebook">
+                <i class="bi bi-facebook"></i>
+            </a>
+            
+            <!-- Instagram -->
+            <a href="https://instagram.com" target="_blank" class="social-instagram"
+               title="Instagram">
+                <i class="bi bi-instagram"></i>
+            </a>
+            
+            <!-- TikTok -->
+            <a href="https://tiktok.com" target="_blank" class="social-tiktok"
+               title="TikTok">
+                <i class="bi bi-tiktok"></i>
+            </a>
+            
+            <!-- Twitter/X -->
+            <a href="https://twitter.com" target="_blank" class="social-twitter"
+               title="Twitter">
+                <i class="bi bi-twitter-x"></i>
+            </a>
         </div>
 
         <div class="footer-text">
