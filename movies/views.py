@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+import json
 
 from .models import Movie, Category, Comment, WatchedMovie
 from announcements.models import Announcement  # ✅ ANNOUNCEMENTS IMPORT
@@ -32,7 +34,7 @@ def home(request):
 
 
 # -----------------------------
-# MOVIE DETAIL PAGE (Guest allowed)
+# MOVIE DETAIL PAGE (Guest allowed) - UPDATED for Autoplay Next
 # -----------------------------
 def detail(request, slug):
     movie = get_object_or_404(Movie, slug=slug)
@@ -50,10 +52,30 @@ def detail(request, slug):
         category=movie.category
     ).exclude(pk=movie.pk)[:8]
 
+    # ✅ NEW: Get playlist for autoplay next feature
+    # Get all movies in same category (excluding current) for the playlist
+    playlist_movies = Movie.objects.filter(
+        category=movie.category
+    ).exclude(pk=movie.pk).order_by('-upload_time')[:20]  # Limit to 20 movies
+
+    # Prepare playlist data for JSON
+    playlist_data = []
+    for m in playlist_movies:
+        playlist_data.append({
+            'id': m.id,
+            'title': m.title,
+            'slug': m.slug,
+            'video_url': m.video_url,
+            'thumbnail': m.thumbnail.url if m.thumbnail else '',
+            'time_ago': m.time_ago,  # Assuming you have this method in model
+            'comments_count': m.movie_comments.count()
+        })
+
     return render(request, "movies/detail.html", {
         'movie': movie,
         'related': related,
         'comments': comments,
+        'playlist_json': json.dumps(playlist_data),  # ✅ For JavaScript autoplay
     })
 
 
@@ -115,5 +137,9 @@ def search(request):
         "q": q,
     })
 
+
+# -----------------------------
+# ABOUT PAGE
+# -----------------------------
 def about(request):
     return render(request, "movies/about.html")
