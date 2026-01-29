@@ -1,3 +1,1180 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a7930a3b7ec3a627163d4178f8a101576fab385a7d92f51174aa8f88cbedc449
-size 37574
+{% extends "movies/base.html" %}
+{% block title %}{{ movie.title }} • Dusa Films{% endblock %}
+
+{% block content %}
+<style>
+    body { background: #0b0b12; color: white; }
+
+    /* WRAPPER */
+    .movie-wrapper {
+        width: 92%;
+        max-width: 1300px;
+        margin: auto;
+        padding: 35px 0;
+    }
+
+    /* MOVIE DETAILS */
+    .movie-title { font-size: 32px; font-weight: bold; margin-bottom: 10px; }
+    .movie-meta { font-size: 15px; color: #a3a3a3; margin-bottom: 20px; }
+
+    .video-box {
+        background: black;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        border: 1px solid #1f2937;
+        position: relative;
+    }
+    video { width: 100%; max-height: 70vh; background: black; }
+
+    .buttons { 
+        margin-top: 20px; 
+        display: flex; 
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .btn-primary-custom {
+        background: #3b82f6;
+        padding: 12px 22px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-primary-custom:hover { background: #2563eb; }
+    .btn-download {
+        background: #ef4444;
+        padding: 12px 22px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-download:hover { background: #dc2626; }
+
+    .section-title {
+        margin: 35px 0 15px;
+        font-size: 20px;
+        font-weight: bold;
+        border-left: 4px solid #ef4444;
+        padding-left: 10px;
+    }
+
+    .movie-description {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #d1d5db;
+        margin-bottom: 25px;
+    }
+
+    /* RELATED MOVIES */
+    .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .movie-card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 8px;
+        overflow: hidden;
+        text-decoration: none;
+        color: white;
+        transition: 0.2s;
+    }
+    .movie-card:hover { transform: scale(1.04); border-color: #3b82f6; }
+    .movie-thumb { width: 100%; height: 220px; object-fit: cover; }
+    .movie-info { padding: 10px; }
+    .movie-title-small { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+    .movie-meta-small { font-size: 13px; color: #9ca3af; }
+
+    /* COMMENTS */
+    textarea {
+        width: 100%;
+        background: #0f172a;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #1f2937;
+        resize: vertical;
+        min-height: 110px;
+    }
+    textarea:focus { outline: none; border-color: #3b82f6; }
+
+    .btn-submit {
+        background: #3b82f6;
+        padding: 10px 18px;
+        color: white;
+        border-radius: 6px;
+        margin-top: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 120px;
+    }
+    .btn-submit:hover { background: #2563eb; }
+    .btn-submit.loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    /* 🔥 SCROLLABLE COMMENTS BOX */
+    #commentsList {
+        max-height: 420px;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 20px;
+    }
+    #commentsList::-webkit-scrollbar {
+        width: 6px;
+    }
+    #commentsList::-webkit-scrollbar-track {
+        background: #1f2937;
+        border-radius: 3px;
+    }
+    #commentsList::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 3px;
+    }
+
+    .comment-box {
+        background: #111827;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #1f2937;
+        scroll-margin-top: 10px;
+    }
+    .comment-author { font-weight: bold; font-size: 15px; }
+    .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+    .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+
+    /* Mobile overlay styles */
+    .mobile-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.92);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+    }
+    .mobile-overlay h3 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+    .mobile-overlay p {
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+    .mobile-play-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background 0.2s;
+    }
+    .mobile-play-btn:hover { background: #2563eb; }
+
+    /* Loading spinner */
+    .spinner {
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top: 3px solid white;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    .spinner-large {
+        border: 5px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top: 5px solid #3b82f6;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Toast notification */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        z-index: 10000;
+        animation: fadeInOut 3s ease;
+        font-weight: 500;
+    }
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-20px); }
+        15% { opacity: 1; transform: translateY(0); }
+        85% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-20px); }
+    }
+
+    /* Autoplay Next Feature Styles */
+    .playlist-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+
+    .playlist-loading-content,
+    .playlist-end-content {
+        text-align: center;
+        max-width: 400px;
+        padding: 30px;
+        background: rgba(30, 41, 59, 0.9);
+        border-radius: 12px;
+        border: 1px solid #3b82f6;
+    }
+
+    .playlist-end-content {
+        border-color: #ef4444;
+    }
+
+    .btn-cancel {
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        margin-top: 15px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .btn-cancel:hover { background: #4b5563; }
+
+    .end-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .next-video-overlay {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(30, 41, 59, 0.95);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #3b82f6;
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+        backdrop-filter: blur(5px);
+        align-items: center;
+    }
+
+    .btn-play-next {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-play-next:hover { background: #2563eb; }
+
+    .btn-dismiss {
+        background: #6b7280;
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-dismiss:hover { background: #4b5563; }
+
+    .autoplay-settings {
+        margin-left: auto;
+        padding: 8px 15px;
+        background: rgba(30, 41, 59, 0.7);
+        border-radius: 6px;
+        border: 1px solid #1f2937;
+    }
+
+    .autoplay-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #d1d5db;
+    }
+
+    .autoplay-toggle input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #3b82f6;
+    }
+
+    .playlist-sidebar {
+        position: fixed;
+        top: 76px;
+        right: 20px;
+        width: 300px;
+        max-height: calc(100vh - 120px);
+        background: rgba(17, 24, 39, 0.95);
+        border-radius: 12px;
+        border: 1px solid #1f2937;
+        padding: 15px;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        overflow-y: auto;
+    }
+
+    .playlist-sidebar h4 {
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: #d1d5db;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 8px;
+    }
+
+    .playlist-item {
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+
+    .playlist-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-left-color: #3b82f6;
+    }
+
+    .playlist-item.active {
+        background: rgba(59, 130, 246, 0.2);
+        border-left-color: #3b82f6;
+        font-weight: bold;
+    }
+
+    .playlist-item-title {
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: white;
+    }
+
+    .playlist-item-meta {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    /* Progress bar for upcoming video */
+    .upcoming-progress {
+        height: 3px;
+        background: #1f2937;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .upcoming-progress-bar {
+        height: 100%;
+        background: #3b82f6;
+        width: 0%;
+        transition: width 0.3s;
+    }
+</style>
+
+<div class="movie-wrapper">
+
+    <!-- Hidden playlist data -->
+    <div id="playlistData" data-playlist='{{ playlist_json|safe }}' style="display: none;"></div>
+
+    <!-- MOVIE INFO -->
+    <div class="movie-title">{{ movie.title }}</div>
+    <div class="movie-meta">
+        {{ movie.category.name }} • {{ movie.time_ago }} • 
+        <span id="commentsCount">{{ movie.comments_count }}</span> comments
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box">
+        {% if movie.video_url %}
+            <video id="mainPlayer" 
+                playsinline 
+                webkit-playsinline 
+                preload="metadata"
+                {% if movie.thumbnail %}
+                    poster="{{ movie.thumbnail.url }}"
+                {% else %}
+                    poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"
+                {% endif %}
+                style="width: 100%; display: block;"
+                aria-label="Movie player for {{ movie.title }}"
+                aria-describedby="videoDescription"
+            >
+                <source src="{{ movie.video_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            
+            <!-- Progress bar for upcoming video -->
+            <div class="upcoming-progress" id="upcomingProgress" style="display: none;">
+                <div class="upcoming-progress-bar" id="upcomingProgressBar"></div>
+            </div>
+            
+            <!-- Hidden video description for accessibility -->
+            <div id="videoDescription" hidden>
+                Movie titled {{ movie.title }}, category: {{ movie.category.name }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="buttons">
+        {% if movie.video_url %}
+            <a href="{{ movie.video_url }}" target="_blank" class="btn-primary-custom">
+                <i class="bi bi-fullscreen"></i> Watch in Fullscreen
+            </a>
+        {% endif %}
+        {% if movie.download_link %}
+            <a href="{{ movie.download_link }}" class="btn-download" download>
+                <i class="bi bi-download"></i> Download
+            </a>
+        {% endif %}
+        
+        <!-- Autoplay settings -->
+        <div class="autoplay-settings">
+            <label class="autoplay-toggle">
+                <input type="checkbox" id="autoplayToggle" checked>
+                <span>Autoplay next</span>
+            </label>
+        </div>
+        
+        <!-- Playlist toggle button -->
+        <button id="playlistToggle" class="btn-primary-custom">
+            <i class="bi bi-list"></i> Playlist
+        </button>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="section-title">Description</div>
+    <div class="movie-description">{{ movie.description|linebreaks }}</div>
+
+    <!-- COMMENTS -->
+    <div class="section-title">
+        Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)
+    </div>
+
+    <form id="commentForm" method="POST" action="{% url 'movies:add_comment' movie.slug %}">
+        {% csrf_token %}
+        <textarea name="text" 
+                  id="commentText" 
+                  placeholder="Write your comment..."
+                  aria-label="Comment text area"
+                  aria-describedby="commentHelp"
+                  maxlength="1000"></textarea>
+        <div id="commentHelp" hidden>Maximum 1000 characters allowed</div>
+        <button id="submitComment" class="btn-submit" type="submit">Post Comment</button>
+    </form>
+
+    <!-- 🔥 SCROLLABLE COMMENTS -->
+    <div id="commentsList">
+        {% for c in comments %}
+            <div class="comment-box">
+                <div class="comment-author">
+                    {% if c.user %}
+                        {{ c.user.username }}
+                    {% else %}
+                        {{ c.guest_name }}
+                    {% endif %}
+                </div>
+                <div class="comment-time">{{ c.time_ago }}</div>
+                <div class="comment-text">{{ c.text }}</div>
+            </div>
+        {% empty %}
+            <p style="color:#9ca3af;">No comments yet. Be the first!</p>
+        {% endfor %}
+    </div>
+
+    <!-- RELATED MOVIES -->
+    {% if related %}
+        <div class="section-title">Related Movies</div>
+        <div class="grid">
+            {% for m in related %}
+                <a href="{% url 'movies:detail' m.slug %}" class="movie-card" data-movie-id="{{ m.id }}">
+                    {% if m.thumbnail %}
+                        <img src="{{ m.thumbnail.url }}" 
+                             class="movie-thumb" 
+                             loading="lazy"
+                             alt="{{ m.title }} thumbnail">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x400?text=No+Image" 
+                             class="movie-thumb" 
+                             loading="lazy"
+                             alt="{{ m.title }} thumbnail">
+                    {% endif %}
+                    <div class="movie-info">
+                        <div class="movie-title-small">{{ m.title }}</div>
+                        <div class="movie-meta-small">{{ m.time_ago }} • {{ m.comments_count }} comments</div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- Playlist Sidebar -->
+<div class="playlist-sidebar" id="playlistSidebar" style="display: none;">
+    <h4>Up Next in {{ movie.category.name }}</h4>
+    <div id="playlistItems"></div>
+</div>
+
+<script>
+// ==================== UTILITY FUNCTIONS ====================
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showToast(message, isError = true) {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) existingToast.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.background = isError ? '#ef4444' : '#10b981';
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+    }, 3000);
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function validateComment(text) {
+    if (!text.trim()) {
+        showToast('Comment cannot be empty');
+        return false;
+    }
+    if (text.length > 1000) {
+        showToast('Comment is too long (max 1000 characters)');
+        return false;
+    }
+    return true;
+}
+
+// ==================== GLOBAL VARIABLES ====================
+let currentPlaylist = [];
+let currentVideoIndex = -1;
+let autoplayEnabled = localStorage.getItem('dusa_autoplay') !== 'false';
+let countdownTimer = null;
+
+// ==================== PLAYLIST SYSTEM ====================
+function initializePlaylist() {
+    const playlistData = document.getElementById('playlistData');
+    if (!playlistData) return;
+    
+    try {
+        const playlistJson = playlistData.getAttribute('data-playlist');
+        currentPlaylist = JSON.parse(playlistJson) || [];
+        
+        if (currentPlaylist.length > 0) {
+            // Find current video in playlist
+            const currentVideoUrl = document.querySelector('#mainPlayer source').src;
+            currentVideoIndex = currentPlaylist.findIndex(item => item.video_url === currentVideoUrl);
+            
+            if (currentVideoIndex === -1) {
+                // Current video not in playlist, set to start
+                currentVideoIndex = -1;
+            }
+            
+            // Initialize playlist sidebar
+            initializePlaylistSidebar();
+            
+            // Update autoplay toggle
+            const autoplayToggle = document.getElementById('autoplayToggle');
+            if (autoplayToggle) {
+                autoplayToggle.checked = autoplayEnabled;
+                autoplayToggle.addEventListener('change', function(e) {
+                    autoplayEnabled = e.target.checked;
+                    localStorage.setItem('dusa_autoplay', autoplayEnabled);
+                    showToast(`Autoplay ${autoplayEnabled ? 'enabled' : 'disabled'}`);
+                });
+            }
+            
+            // Initialize playlist toggle
+            const playlistToggle = document.getElementById('playlistToggle');
+            if (playlistToggle) {
+                playlistToggle.addEventListener('click', togglePlaylistSidebar);
+            }
+        }
+    } catch (error) {
+        console.error('Error initializing playlist:', error);
+    }
+}
+
+function initializePlaylistSidebar() {
+    const playlistItems = document.getElementById('playlistItems');
+    if (!playlistItems) return;
+    
+    playlistItems.innerHTML = '';
+    
+    currentPlaylist.forEach((movie, index) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${index === currentVideoIndex ? 'active' : ''}`;
+        item.dataset.index = index;
+        item.innerHTML = `
+            <div class="playlist-item-title">${escapeHtml(movie.title)}</div>
+            <div class="playlist-item-meta">${movie.time_ago} • ${movie.comments_count} comments</div>
+        `;
+        
+        item.addEventListener('click', () => {
+            playVideoByIndex(index);
+        });
+        
+        playlistItems.appendChild(item);
+    });
+}
+
+function togglePlaylistSidebar() {
+    const sidebar = document.getElementById('playlistSidebar');
+    if (sidebar.style.display === 'block') {
+        sidebar.style.display = 'none';
+    } else {
+        sidebar.style.display = 'block';
+        updatePlaylistSidebar();
+    }
+}
+
+function updatePlaylistSidebar() {
+    const items = document.querySelectorAll('.playlist-item');
+    items.forEach((item, index) => {
+        if (index === currentVideoIndex) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// ==================== AUTOPLAY NEXT FUNCTIONALITY ====================
+function setupAutoplay() {
+    const video = document.getElementById('mainPlayer');
+    if (!video) return;
+    
+    video.addEventListener('ended', handleVideoEnded);
+    video.addEventListener('play', hideUpcomingProgress);
+    
+    // Preload next video if autoplay is enabled
+    if (autoplayEnabled && currentPlaylist.length > 0 && currentVideoIndex < currentPlaylist.length - 1) {
+        preloadNextVideo();
+    }
+}
+
+function handleVideoEnded() {
+    if (!autoplayEnabled) {
+        showPlayNextButton();
+        return;
+    }
+    
+    if (currentPlaylist.length > 0 && currentVideoIndex < currentPlaylist.length - 1) {
+        // Start countdown for next video
+        startCountdown(5); // 5 seconds countdown
+    } else {
+        showEndOfPlaylistMessage();
+    }
+}
+
+function startCountdown(seconds) {
+    clearTimeout(countdownTimer);
+    
+    const progressBar = document.getElementById('upcomingProgressBar');
+    const progressContainer = document.getElementById('upcomingProgress');
+    let timeLeft = seconds;
+    
+    if (progressContainer) {
+        progressContainer.style.display = 'block';
+    }
+    
+    const updateCountdown = () => {
+        if (timeLeft <= 0) {
+            playNextVideo();
+            return;
+        }
+        
+        const progressPercent = ((seconds - timeLeft) / seconds) * 100;
+        if (progressBar) {
+            progressBar.style.width = `${progressPercent}%`;
+        }
+        
+        timeLeft--;
+        countdownTimer = setTimeout(updateCountdown, 1000);
+    };
+    
+    updateCountdown();
+}
+
+function hideUpcomingProgress() {
+    const progressContainer = document.getElementById('upcomingProgress');
+    if (progressContainer) {
+        progressContainer.style.display = 'none';
+    }
+    clearTimeout(countdownTimer);
+}
+
+function playNextVideo() {
+    if (currentPlaylist.length === 0 || currentVideoIndex >= currentPlaylist.length - 1) {
+        showEndOfPlaylistMessage();
+        return;
+    }
+    
+    const nextIndex = currentVideoIndex + 1;
+    playVideoByIndex(nextIndex);
+}
+
+function playVideoByIndex(index) {
+    if (index < 0 || index >= currentPlaylist.length) return;
+    
+    const movie = currentPlaylist[index];
+    const video = document.getElementById('mainPlayer');
+    
+    if (!video || !movie.video_url) return;
+    
+    // Show loading overlay
+    showLoadingOverlay(movie.title);
+    
+    // Update video source
+    video.querySelector('source').src = movie.video_url;
+    video.load();
+    
+    // Update thumbnail if available
+    if (movie.thumbnail) {
+        video.poster = movie.thumbnail;
+    }
+    
+    // Update page title and URL
+    document.title = `${movie.title} • Dusa Films`;
+    window.history.pushState({}, '', `/movies/${movie.slug}/`);
+    
+    // Update movie info (simplified - full update would require AJAX)
+    updateMovieInfoDisplay(movie);
+    
+    // Update current index
+    currentVideoIndex = index;
+    
+    // Update playlist sidebar
+    updatePlaylistSidebar();
+    
+    // Play the video after a short delay
+    setTimeout(() => {
+        video.play().catch(err => {
+            console.log('Auto-play failed:', err);
+            showToast('Tap the video player to start playback');
+        });
+    }, 500);
+}
+
+function showLoadingOverlay(nextTitle) {
+    const videoContainer = document.querySelector('.video-box');
+    if (!videoContainer) return;
+    
+    const overlayHTML = `
+        <div class="playlist-overlay" id="playlistLoading">
+            <div class="playlist-loading-content">
+                <div class="spinner-large"></div>
+                <h3>Playing Next:</h3>
+                <p>${escapeHtml(nextTitle)}</p>
+                <button id="cancelNext" class="btn-cancel">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    const existing = document.getElementById('playlistLoading');
+    if (existing) existing.remove();
+    
+    videoContainer.insertAdjacentHTML('beforeend', overlayHTML);
+    
+    document.getElementById('cancelNext').addEventListener('click', () => {
+        document.getElementById('playlistLoading').remove();
+        clearTimeout(countdownTimer);
+        hideUpcomingProgress();
+    });
+    
+    setTimeout(() => {
+        const loadingEl = document.getElementById('playlistLoading');
+        if (loadingEl) loadingEl.remove();
+    }, 3000);
+}
+
+function updateMovieInfoDisplay(movie) {
+    // Update title
+    const titleEl = document.querySelector('.movie-title');
+    if (titleEl) titleEl.textContent = movie.title;
+    
+    // Update metadata
+    const metaEl = document.querySelector('.movie-meta');
+    if (metaEl) {
+        const categoryName = "{{ movie.category.name }}"; // Keep same category
+        metaEl.innerHTML = `${categoryName} • ${movie.time_ago} • <span id="commentsCount">${movie.comments_count}</span> comments`;
+    }
+    
+    // Update watch in fullscreen button
+    const watchBtn = document.querySelector('.btn-primary-custom');
+    if (watchBtn) {
+        watchBtn.href = movie.video_url;
+        watchBtn.querySelector('i').nextSibling.textContent = ' Watch in Fullscreen';
+    }
+    
+    // Clear comments section
+    const commentsList = document.getElementById('commentsList');
+    if (commentsList) {
+        commentsList.innerHTML = '<p style="color:#9ca3af;">Loading comments...</p>';
+    }
+    
+    // Update comment count in title
+    const commentsCountInline = document.getElementById('commentsCountInline');
+    if (commentsCountInline) {
+        commentsCountInline.textContent = movie.comments_count;
+    }
+    
+    // We would need to fetch comments via AJAX here
+    // For now, we'll show a message
+    setTimeout(() => {
+        if (commentsList) {
+            commentsList.innerHTML = '<p style="color:#9ca3af;">Comments will load when you refresh the page.</p>';
+        }
+    }, 1000);
+}
+
+function showPlayNextButton() {
+    if (currentPlaylist.length === 0 || currentVideoIndex >= currentPlaylist.length - 1) return;
+    
+    const videoContainer = document.querySelector('.video-box');
+    if (!videoContainer) return;
+    
+    const nextButtonHTML = `
+        <div class="next-video-overlay" id="nextVideoOverlay">
+            <button id="playNextBtn" class="btn-play-next">
+                <i class="bi bi-play-fill"></i> Play Next
+            </button>
+            <button id="dismissNext" class="btn-dismiss">✕</button>
+        </div>
+    `;
+    
+    const existing = document.getElementById('nextVideoOverlay');
+    if (existing) existing.remove();
+    
+    videoContainer.insertAdjacentHTML('beforeend', nextButtonHTML);
+    
+    document.getElementById('playNextBtn').addEventListener('click', playNextVideo);
+    document.getElementById('dismissNext').addEventListener('click', () => {
+        document.getElementById('nextVideoOverlay').remove();
+    });
+}
+
+function showEndOfPlaylistMessage() {
+    const videoContainer = document.querySelector('.video-box');
+    if (!videoContainer) return;
+    
+    const messageHTML = `
+        <div class="playlist-overlay" id="endOfPlaylist">
+            <div class="playlist-end-content">
+                <h3>🎬 End of Playlist</h3>
+                <p>You've watched all movies in this category</p>
+                <div class="end-buttons">
+                    <a href="{% url 'movies:category' movie.category.slug %}" class="btn-primary-custom">
+                        Browse More in {{ movie.category.name }}
+                    </a>
+                    <button id="closeEndMsg" class="btn-download">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const existing = document.getElementById('endOfPlaylist');
+    if (existing) existing.remove();
+    
+    videoContainer.insertAdjacentHTML('beforeend', messageHTML);
+    
+    document.getElementById('closeEndMsg').addEventListener('click', () => {
+        document.getElementById('endOfPlaylist').remove();
+    });
+}
+
+function preloadNextVideo() {
+    if (currentPlaylist.length === 0 || currentVideoIndex >= currentPlaylist.length - 1) return;
+    
+    const nextMovie = currentPlaylist[currentVideoIndex + 1];
+    if (!nextMovie.video_url) return;
+    
+    // Preload video
+    const preloadLink = document.createElement('link');
+    preloadLink.rel = 'preload';
+    preloadLink.href = nextMovie.video_url;
+    preloadLink.as = 'video';
+    document.head.appendChild(preloadLink);
+}
+
+// ==================== COMMENT SYSTEM ====================
+(function(){
+    const form = document.getElementById('commentForm');
+    if (!form) return;
+
+    const textarea = document.getElementById('commentText');
+    const commentsList = document.getElementById('commentsList');
+    const submitBtn = document.getElementById('submitComment');
+    const commentsCountSpan = document.getElementById('commentsCount');
+    const commentsCountInline = document.getElementById('commentsCountInline');
+
+    const currentUser = "{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}";
+    const csrftoken = getCookie('csrftoken');
+
+    form.addEventListener('submit', async function(e){
+        e.preventDefault();
+
+        const text = textarea.value.trim();
+        if (!validateComment(text)) return;
+
+        submitBtn.innerHTML = '<span class="spinner"></span>Posting...';
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: { 
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `text=${encodeURIComponent(text)}`,
+                credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+                const commentBox = document.createElement('div');
+                commentBox.className = 'comment-box';
+                commentBox.innerHTML = `
+                    <div class="comment-author">${currentUser}</div>
+                    <div class="comment-time">just now</div>
+                    <div class="comment-text">${escapeHtml(text)}</div>
+                `;
+                
+                const firstComment = commentsList.querySelector('.comment-box');
+                if (firstComment) {
+                    commentsList.insertBefore(commentBox, firstComment);
+                } else {
+                    commentsList.innerHTML = '';
+                    commentsList.appendChild(commentBox);
+                }
+                
+                commentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                const incrementCount = (el) => {
+                    const val = parseInt(el.textContent) || 0;
+                    el.textContent = val + 1;
+                };
+                incrementCount(commentsCountSpan);
+                incrementCount(commentsCountInline);
+                
+                textarea.value = '';
+                textarea.focus();
+                
+                showToast('Comment posted successfully!', false);
+            } else {
+                throw new Error('Server error');
+            }
+        } catch (error) {
+            console.error('Comment submission error:', error);
+            showToast('Failed to post comment. Please try again.');
+        } finally {
+            submitBtn.innerHTML = 'Post Comment';
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    });
+})();
+
+// ==================== VIDEO PLAYBACK SYSTEM ====================
+(function() {
+    const video = document.getElementById('mainPlayer');
+    if (!video) return;
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const videoContainer = document.querySelector('.video-box');
+    
+    video.controls = true;
+    video.preload = 'metadata';
+    
+    // Mobile overlay
+    if (isMobile && videoContainer) {
+        const overlayHTML = `
+            <div class="mobile-overlay" id="mobileOverlay">
+                <h3>Tap to Play</h3>
+                <p>Video will play with sound after tapping</p>
+                <div style="font-size: 3rem; margin: 15px 0; color: #3b82f6;">▶</div>
+                <button class="mobile-play-btn" id="mobilePlayTrigger">
+                    Tap to Play
+                </button>
+            </div>
+        `;
+        
+        videoContainer.insertAdjacentHTML('beforeend', overlayHTML);
+        
+        const overlay = document.getElementById('mobileOverlay');
+        const playButton = document.getElementById('mobilePlayTrigger');
+        
+        const playVideo = () => {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 300);
+            video.play().catch(err => {
+                console.log('Video play failed:', err);
+                showToast('Tap the video player to start playback');
+            });
+        };
+        
+        playButton.addEventListener('click', playVideo);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) playVideo();
+        });
+        
+        video.addEventListener('play', () => {
+            if (overlay && overlay.parentNode) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        });
+        
+        video.addEventListener('playing', () => {
+            video.muted = false;
+        });
+    }
+    
+    // Page visibility
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && !video.paused) {
+            video.pause();
+        }
+    });
+    
+    // Preload optimization
+    let hasPreloaded = false;
+    const startPreload = () => {
+        if (!hasPreloaded) {
+            video.preload = 'auto';
+            hasPreloaded = true;
+        }
+    };
+    
+    video.addEventListener('mouseenter', startPreload);
+    video.addEventListener('touchstart', startPreload, { once: true });
+    
+    video.addEventListener('loadedmetadata', () => {
+        if (video.buffered.length === 0) {
+            setTimeout(startPreload, 100);
+        }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.target === document.getElementById('commentText')) return;
+        
+        switch(e.key) {
+            case ' ':
+                if (e.target !== video) {
+                    e.preventDefault();
+                    video.paused ? video.play() : video.pause();
+                }
+                break;
+            case 'f':
+                if (video.requestFullscreen) video.requestFullscreen();
+                else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+                break;
+            case 'm':
+                video.muted = !video.muted;
+                break;
+            case 'n':
+                e.preventDefault();
+                playNextVideo();
+                break;
+        }
+    });
+    
+    // Initialize playlist and autoplay
+    initializePlaylist();
+    setupAutoplay();
+})();
+</script>
+
+{% endblock %}
