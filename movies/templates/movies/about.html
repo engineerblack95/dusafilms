@@ -1,4 +1,5 @@
 {% extends "movies/base.html" %}
+{% load static %}
 {% block title %}About Dusa Films{% endblock %}
 
 {% block content %}
@@ -6,192 +7,700 @@
 <style>
 /* ================= ABOUT PAGE ================= */
 .about-hero {
-    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)),
-        url("https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c");
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)),
+                url("https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");
     background-size: cover;
     background-position: center;
-    border-radius: 18px;
-    padding: 80px 30px;
+    border-radius: 20px;
+    padding: 100px 30px;
     text-align: center;
     margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .about-hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 900;
     letter-spacing: 1px;
+    margin-bottom: 20px;
+    position: relative;
 }
 
 .about-hero span {
-    color: #ff2b2b;
+    color: #ef4444;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }
 
 .about-hero p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin-top: 15px;
     color: #d1d5db;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
 }
 
 /* ================= SECTIONS ================= */
 .about-section {
-    margin-bottom: 50px;
+    margin-bottom: 60px;
+    padding: 30px;
+    background: rgba(17, 24, 39, 0.7);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
 }
 
 .about-title {
-    font-size: 1.9rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 15px;
-    border-left: 6px solid #ff2b2b;
-    padding-left: 12px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #ef4444;
+    position: relative;
+}
+
+.about-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #ef4444, transparent);
 }
 
 .about-text {
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 1.1rem;
+    line-height: 1.9;
     color: #e5e7eb;
+    margin-bottom: 20px;
 }
 
 /* ================= HIGHLIGHTS ================= */
 .highlight-box {
-    background: #111827;
-    border-radius: 14px;
-    padding: 25px;
+    background: linear-gradient(145deg, #111827, #1f2937);
+    border-radius: 16px;
+    padding: 35px 25px;
     text-align: center;
-    transition: 0.3s;
-    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, #3b82f6);
 }
 
 .highlight-box:hover {
-    transform: translateY(-5px);
-    border-color: #ff2b2b;
+    transform: translateY(-10px) scale(1.02);
+    border-color: #ef4444;
+    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.2);
 }
 
 .highlight-box h4 {
     font-weight: 800;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    color: #f8fafc;
 }
 
 .highlight-box p {
-    color: #9ca3af;
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.highlight-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* ================= STATS ================= */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 50px 0;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 30px 20px;
+    min-width: 200px;
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #ef4444;
+    line-height: 1;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ================= FEATURES ================= */
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 25px 0;
+}
+
+.feature-list li {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-list li::before {
+    content: '✓';
+    color: #10b981;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    background: rgba(16, 185, 129, 0.1);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ================= CTA ================= */
 .about-cta {
-    background: linear-gradient(135deg, #ff2b2b, #b91c1c);
-    border-radius: 16px;
-    padding: 40px 30px;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border-radius: 20px;
+    padding: 60px 40px;
     text-align: center;
-    margin-top: 60px;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.about-cta::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+    animation: pulse 4s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
 }
 
 .about-cta h2 {
     font-weight: 900;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    position: relative;
+    color: #f8fafc;
 }
 
 .about-cta p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     opacity: 0.95;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    color: #cbd5e1;
+    line-height: 1.7;
 }
 
 .about-cta a {
-    display: inline-block;
-    margin-top: 20px;
-    background: #000;
-    color: #fff;
-    padding: 12px 26px;
-    border-radius: 10px;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 18px 35px;
+    border-radius: 12px;
+    font-weight: 700;
     text-decoration: none;
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 2;
+    border: none;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
 }
 
 .about-cta a:hover {
-    background: #111;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+/* ================= WEBSITE MANAGER ================= */
+.manager-section {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-radius: 20px;
+    padding: 50px;
+    margin-top: 80px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.manager-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ef4444, #3b82f6, #10b981);
+}
+
+.manager-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 40px;
+    color: #f8fafc;
+    position: relative;
+    display: inline-block;
+}
+
+.manager-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, transparent);
+}
+
+.manager-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.manager-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #ef4444;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.3);
+    transition: all 0.3s ease;
+}
+
+.manager-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 25px 50px rgba(239, 68, 68, 0.4);
+}
+
+.manager-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 10px;
+}
+
+.manager-role {
+    font-size: 1.3rem;
+    color: #ef4444;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.manager-bio {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+    max-width: 700px;
+    margin: 0 auto 30px;
+}
+
+.manager-contact {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.contact-btn.whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+.contact-btn.email {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.contact-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+.contact-btn.whatsapp:hover {
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+}
+
+.contact-btn.email:hover {
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .about-hero {
+        padding: 60px 20px;
+    }
+    
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .about-hero p {
+        font-size: 1.1rem;
+    }
+    
+    .stats-container {
+        gap: 20px;
+    }
+    
+    .stat-box {
+        min-width: 150px;
+        padding: 20px 15px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .about-cta {
+        padding: 40px 20px;
+    }
+    
+    .about-cta h2 {
+        font-size: 2rem;
+    }
+    
+    .manager-section {
+        padding: 30px 20px;
+    }
+    
+    .manager-title {
+        font-size: 1.8rem;
+    }
+    
+    .manager-image {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .manager-name {
+        font-size: 1.7rem;
+    }
+    
+    .contact-btn {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .manager-contact {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-btn {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
 }
 </style>
 
 <!-- ================= HERO ================= -->
 <div class="about-hero">
-    <h1>About <span>Dusa Films</span></h1>
-    <p>The Ocean of Free Movies — Watch & Download Anytime, Anywhere</p>
+    <h1>Welcome to <span>Dusa Films</span></h1>
+    <p>The Ultimate Destination for Free Movies — Stream, Download, and Enjoy Unlimited Entertainment</p>
+</div>
+
+<!-- ================= STATS ================= -->
+<div class="stats-container">
+    <div class="stat-box">
+        <div class="stat-number">10,000+</div>
+        <div class="stat-label">Movies Available</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Streaming Service</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Access</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Countries Served</div>
+    </div>
 </div>
 
 <!-- ================= WHAT IS DUSA FILMS ================= -->
 <div class="about-section">
     <div class="about-title">What is Dusa Films?</div>
     <p class="about-text">
-        <strong>Dusa Films</strong> is a global digital entertainment platform designed to bring
-        <strong>free movies to people all around the world</strong>.
-        We believe that entertainment should be accessible to everyone, without limits, without borders,
-        and without cost.
+        <strong>Dusa Films</strong> is a revolutionary digital entertainment platform dedicated to bringing 
+        <strong>premium movie experiences to everyone, everywhere, completely free</strong>. We've built 
+        the world's largest ocean of cinematic content where boundaries don't exist and entertainment flows freely.
     </p>
     <p class="about-text">
-        On Dusa Films, users can <strong>watch movies online for FREE</strong> and
-        <strong>download movies for FREE</strong>. From short films and drama to cinema and creative
-        storytelling, Dusa Films is truly an <strong>ocean of movies</strong>.
+        Our platform combines cutting-edge streaming technology with an ever-expanding library of films, 
+        creating a seamless experience for movie lovers worldwide. From the latest blockbusters to timeless 
+        classics, independent films to international cinema — Dusa Films is your gateway to endless entertainment.
     </p>
 </div>
 
 <!-- ================= HIGHLIGHTS ================= -->
 <div class="row mb-5">
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
         <div class="highlight-box">
-            <h4>🌍 Global Access</h4>
-            <p>Enjoy movies from anywhere in the world with no restrictions.</p>
+            <span class="highlight-icon">🌍</span>
+            <h4>Global Access</h4>
+            <p>Watch from anywhere in the world with optimized streaming for every region.</p>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
         <div class="highlight-box">
-            <h4>🎬 Free Forever</h4>
-            <p>Watch and download movies 100% free, no hidden costs.</p>
+            <span class="highlight-icon">🎬</span>
+            <h4>No Subscriptions</h4>
+            <p>100% free forever. No hidden fees, no trials, no credit cards required.</p>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
         <div class="highlight-box">
-            <h4>⚡ Instant Entertainment</h4>
-            <p>Stream or download instantly and enjoy without delays.</p>
+            <span class="highlight-icon">⚡</span>
+            <h4>Instant Streaming</h4>
+            <p>Advanced CDN technology ensures buffer-free, instant playback on any device.</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="highlight-box">
+            <span class="highlight-icon">📱</span>
+            <h4>Mobile Optimized</h4>
+            <p>Perfectly adapted for smartphones, tablets, and all mobile devices.</p>
         </div>
     </div>
 </div>
 
-<!-- ================= MISSION ================= -->
+<!-- ================= OUR STORY ================= -->
 <div class="about-section">
-    <div class="about-title">Our Mission</div>
+    <div class="about-title">Our Story</div>
     <p class="about-text">
-        Our mission is to make movies <strong>free, accessible, and enjoyable</strong> for everyone.
-        We aim to remove barriers to entertainment and give people the freedom to explore stories
-        from different cultures, creators, and perspectives.
+        Founded with a vision to democratize entertainment, Dusa Films began as a small project 
+        and has grown into a global phenomenon. We recognized that millions of movie enthusiasts 
+        around the world were limited by geographical restrictions, subscription costs, and 
+        platform limitations.
+    </p>
+    <p class="about-text">
+        Our team of developers, film enthusiasts, and digital innovators came together to create 
+        a solution — a platform where cinematic art could be appreciated by all, regardless of 
+        location or financial means. Today, we serve millions of users across continents, 
+        continually expanding our library and improving our technology.
     </p>
 </div>
 
-<!-- ================= VISION ================= -->
+<!-- ================= FEATURES ================= -->
 <div class="about-section">
-    <div class="about-title">Our Vision</div>
-    <p class="about-text">
-        To become the world’s largest <strong>free movie platform</strong> — a place where creativity,
-        storytelling, and entertainment flow freely like an ocean.
-    </p>
+    <div class="about-title">Why Choose Dusa Films?</div>
+    <ul class="feature-list">
+        <li><strong>Massive Library:</strong> Thousands of movies across all genres — action, drama, comedy, thriller, romance, horror, documentary, and more</li>
+        <li><strong>HD Quality:</strong> Stream in high definition with optimized bandwidth usage</li>
+        <li><strong>Download Option:</strong> Save movies offline to watch without internet</li>
+        <li><strong>Multi-language Support:</strong> Subtitles and dubbed versions available</li>
+        <li><strong>Regular Updates:</strong> New movies added daily to keep content fresh</li>
+        <li><strong>User-Friendly Interface:</strong> Easy navigation and personalized recommendations</li>
+        <li><strong>Community Features:</strong> Rate, review, and discuss movies with other users</li>
+        <li><strong>No Registration Required:</strong> Start watching immediately without sign-up</li>
+    </ul>
 </div>
 
-<!-- ================= WHAT YOU CAN DO ================= -->
+<!-- ================= MISSION & VISION ================= -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="about-section h-100">
+            <div class="about-title">Our Mission</div>
+            <p class="about-text">
+                To break down barriers in digital entertainment by providing <strong>universal access to quality movies</strong>. 
+                We believe that great stories should be available to everyone, everywhere, without limitations.
+            </p>
+            <p class="about-text">
+                We're committed to maintaining a sustainable, free platform while respecting copyright 
+                and supporting the film industry through innovative distribution models.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="about-section h-100">
+            <div class="about-title">Our Vision</div>
+            <p class="about-text">
+                To become the <strong>world's leading free entertainment platform</strong>, recognized for 
+                technological innovation, content diversity, and user satisfaction.
+            </p>
+            <p class="about-text">
+                We envision a future where geographical location and financial status no longer determine 
+                access to cinematic experiences — where anyone with an internet connection can explore 
+                the vast ocean of global cinema.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TECHNOLOGY ================= -->
 <div class="about-section">
-    <div class="about-title">What You Can Do on Dusa Films</div>
+    <div class="about-title">Our Technology</div>
     <p class="about-text">
-        ✔ Watch movies online for free<br>
-        ✔ Download movies for free<br>
-        ✔ Discover new films and categories<br>
-        ✔ Enjoy unlimited entertainment without subscriptions
+        Powered by state-of-the-art streaming infrastructure, Dusa Films delivers smooth, uninterrupted 
+        viewing experiences. Our adaptive streaming technology automatically adjusts video quality based 
+        on your internet speed, ensuring optimal performance whether you're on 5G or slower connections.
+    </p>
+    <p class="about-text">
+        We leverage cloud computing, edge networks, and advanced compression algorithms to make 
+        high-quality streaming accessible even in regions with limited bandwidth.
     </p>
 </div>
 
 <!-- ================= CTA ================= -->
 <div class="about-cta">
-    <h2>Need Help or Want to Talk to Us?</h2>
-    <p>Chat directly with Dusa Films admin on WhatsApp — we’re always ready to help.</p>
-    <a href="https://wa.me/250786844104?text=Hello%20Dusa%20Films,%20I%20need%20help" target="_blank">
-        💬 Chat with Us on WhatsApp
+    <h2>Join the Dusa Films Community</h2>
+    <p>
+        Experience the future of free entertainment today. Whether you're looking for the latest 
+        releases, timeless classics, or hidden cinematic gems — Dusa Films has something for everyone.
+    </p>
+    <a href="{% url 'movies:home' %}">
+        🎬 Start Exploring Movies Now
     </a>
+    <p style="margin-top: 30px; font-size: 1rem; opacity: 0.8;">
+        Need assistance? Our support team is available 24/7 via WhatsApp
+    </p>
+    <a href="https://wa.me/250786844104?text=Hello%20Dusa%20Films,%20I%20need%20help" 
+       target="_blank" 
+       style="background: linear-gradient(135deg, #25D366, #128C7E); margin-top: 15px;">
+        💬 WhatsApp Support
+    </a>
+</div>
+
+<!-- ================= WEBSITE MANAGER ================= -->
+<div class="manager-section">
+    <h2 class="manager-title">Meet Our Website Manager</h2>
+    
+    <div class="manager-profile">
+        <!-- Replace with your actual image path -->
+        <img src="{% static 'movies/manager.jpg' %}" 
+             alt="Dusa Films Manager" 
+             class="manager-image"
+             onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
+        
+        <h3 class="manager-name">Samuel Mugisha</h3>
+        <div class="manager-role">Founder & Website Manager</div>
+        
+        <p class="manager-bio">
+            With over 5 years of experience in web development and digital entertainment, 
+            Samuel leads the Dusa Films team with passion and innovation. His vision for 
+            democratizing entertainment has shaped Dusa Films into the platform it is today. 
+            Dedicated to providing seamless user experiences and constantly improving our 
+            streaming technology, Samuel ensures that Dusa Films remains at the forefront 
+            of free digital entertainment.
+        </p>
+        
+        <div class="manager-contact">
+            <a href="https://wa.me/250786844104" 
+               target="_blank" 
+               class="contact-btn whatsapp">
+                <i class="bi bi-whatsapp"></i> WhatsApp
+            </a>
+            
+            <a href="mailto:manager@dusafilms.com" 
+               class="contact-btn email">
+                <i class="bi bi-envelope"></i> Email
+            </a>
+            
+            <a href="https://linkedin.com/in/example" 
+               target="_blank" 
+               class="contact-btn">
+                <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
