@@ -13,140 +13,333 @@
         padding: 35px 0;
     }
 
-    /* NAVBAR */
-    .nav-links a {
-        color: white;
-        font-weight: bold;
-        margin-left: 20px;
-        text-decoration: none;
-        transition: 0.2s;
-    }
-    .nav-links a:hover { color: #3b82f6; }
-
     /* MOVIE DETAILS */
-    .movie-title { font-size: 32px; font-weight: bold; margin-bottom: 10px; }
-    .movie-meta { font-size: 15px; color: #a3a3a3; margin-bottom: 20px; }
+    .movie-title { 
+        font-size: 32px; 
+        font-weight: bold; 
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #ffffff, #ff2b2b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .movie-meta { 
+        font-size: 15px; 
+        color: #a3a3a3; 
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
 
     .video-box {
-        background: black;
-        border-radius: 12px;
+        background: #000;
+        border-radius: 16px;
         overflow: hidden;
         margin-bottom: 25px;
-        border: 1px solid #1f2937;
+        border: 1px solid rgba(255, 43, 43, 0.2);
         position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        transition: all 0.3s ease;
     }
-    video { width: 100%; max-height: 70vh; background: black; }
+    
+    .video-box:hover {
+        border-color: rgba(255, 43, 43, 0.4);
+        box-shadow: 0 25px 80px rgba(255, 43, 43, 0.3);
+    }
+    
+    video { 
+        width: 100%; 
+        max-height: 70vh; 
+        background: black;
+        display: block;
+        border-radius: 16px;
+    }
 
-    .buttons { margin-top: 20px; display: flex; gap: 15px; }
+    .buttons { 
+        margin-top: 20px; 
+        display: flex; 
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
     .btn-primary-custom {
-        background: #3b82f6;
-        padding: 12px 22px;
-        border-radius: 6px;
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        padding: 14px 26px;
+        border-radius: 8px;
         font-weight: bold;
         color: white;
         text-decoration: none;
-        transition: 0.2s;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
     }
-    .btn-primary-custom:hover { background: #2563eb; }
+    
+    .btn-primary-custom:hover { 
+        background: linear-gradient(135deg, #d41919, #b30000);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
+    }
+    
     .btn-download {
-        background: #ef4444;
-        padding: 12px 22px;
-        border-radius: 6px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        padding: 14px 26px;
+        border-radius: 8px;
         font-weight: bold;
         color: white;
         text-decoration: none;
-        transition: 0.2s;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
-    .btn-download:hover { background: #dc2626; }
+    
+    .btn-download:hover { 
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    }
 
     .section-title {
-        margin: 35px 0 15px;
-        font-size: 20px;
+        margin: 40px 0 20px;
+        font-size: 22px;
         font-weight: bold;
-        border-left: 4px solid #ef4444;
-        padding-left: 10px;
+        border-left: 5px solid #ff2b2b;
+        padding-left: 15px;
+        color: white;
+        position: relative;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100px;
+        height: 2px;
+        background: rgba(255, 43, 43, 0.3);
     }
 
     .movie-description {
         font-size: 16px;
-        line-height: 1.6;
+        line-height: 1.7;
         color: #d1d5db;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* RELATED MOVIES */
+    /* RELATED MOVIES - Enhanced */
     .grid {
         display: grid;
-        gap: 20px;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 25px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
+    
     .movie-card {
-        background: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
         overflow: hidden;
         text-decoration: none;
         color: white;
-        transition: 0.2s;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
     }
-    .movie-card:hover { transform: scale(1.04); border-color: #3b82f6; }
-    .movie-thumb { width: 100%; height: 220px; object-fit: cover; }
-    .movie-info { padding: 10px; }
-    .movie-title-small { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
-    .movie-meta-small { font-size: 13px; color: #9ca3af; }
+    
+    .movie-card:hover { 
+        transform: translateY(-8px) scale(1.02);
+        border-color: #ff2b2b;
+        box-shadow: 0 15px 40px rgba(255, 43, 43, 0.3);
+    }
+    
+    .movie-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent, rgba(255, 43, 43, 0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+    }
+    
+    .movie-card:hover::before {
+        transform: translateX(100%);
+    }
+    
+    .movie-thumb { 
+        width: 100%; 
+        height: 240px; 
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+    
+    .movie-card:hover .movie-thumb {
+        transform: scale(1.05);
+    }
+    
+    .movie-info { 
+        padding: 15px; 
+        background: rgba(17, 24, 39, 0.8);
+        backdrop-filter: blur(10px);
+    }
+    
+    .movie-title-small { 
+        font-size: 16px; 
+        font-weight: 600; 
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+    
+    .movie-meta-small { 
+        font-size: 13px; 
+        color: #9ca3af;
+        display: flex;
+        justify-content: space-between;
+    }
 
-    /* COMMENTS */
+    /* COMMENTS SECTION - Enhanced */
     textarea {
         width: 100%;
-        background: #0f172a;
+        background: rgba(255, 255, 255, 0.03);
         color: white;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #1f2937;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         resize: vertical;
-        min-height: 110px;
+        min-height: 120px;
+        font-size: 15px;
+        transition: all 0.3s ease;
     }
-    textarea:focus { outline: none; border-color: #3b82f6; }
+    
+    textarea:focus { 
+        outline: none; 
+        border-color: #ff2b2b;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 0 3px rgba(255, 43, 43, 0.1);
+    }
+    
+    textarea::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
 
     .btn-submit {
-        background: #3b82f6;
-        padding: 10px 18px;
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        padding: 14px 30px;
         color: white;
-        border-radius: 6px;
-        margin-top: 10px;
+        border-radius: 8px;
+        margin-top: 15px;
         border: none;
         cursor: pointer;
         font-weight: bold;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
-    .btn-submit:hover { background: #2563eb; }
+    
+    .btn-submit:hover { 
+        background: linear-gradient(135deg, #d41919, #b30000);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
+    }
+    
+    .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
 
-    /* 🔥 SCROLLABLE COMMENTS BOX */
+    /* 🔥 SCROLLABLE COMMENTS BOX - Enhanced */
     #commentsList {
-        max-height: 420px;
+        max-height: 450px;
         overflow-y: auto;
-        padding-right: 10px;
-        margin-top: 20px;
+        padding-right: 15px;
+        margin-top: 25px;
+    }
+
+    /* Custom scrollbar for comments */
+    #commentsList::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    #commentsList::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    
+    #commentsList::-webkit-scrollbar-thumb {
+        background: #ff2b2b;
+        border-radius: 10px;
+    }
+    
+    #commentsList::-webkit-scrollbar-thumb:hover {
+        background: #d41919;
     }
 
     .comment-box {
-        background: #111827;
-        padding: 18px;
-        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 20px;
+        border-radius: 12px;
         margin-bottom: 20px;
-        border: 1px solid #1f2937;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.4s ease forwards;
+        opacity: 0;
+        transform: translateY(10px);
     }
-    .comment-author { font-weight: bold; font-size: 15px; }
-    .comment-time { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
-    .comment-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+    
+    .comment-box:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 43, 43, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .comment-author { 
+        font-weight: 600; 
+        font-size: 16px; 
+        color: #ff2b2b;
+        margin-bottom: 5px;
+    }
+    
+    .comment-time { 
+        font-size: 13px; 
+        color: #9ca3af; 
+        margin-bottom: 10px;
+    }
+    
+    .comment-text { 
+        color: #d1d5db; 
+        font-size: 15px; 
+        line-height: 1.6;
+    }
 
-    /* Mobile overlay styles - UPDATED */
+    /* MOBILE OVERLAY - FIXED */
     .mobile-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.85);
+        background: rgba(0,0,0,0.9);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -154,26 +347,122 @@
         z-index: 100;
         color: white;
         text-align: center;
-        padding: 20px;
-        pointer-events: none; /* IMPORTANT: Lets clicks pass through to video */
+        padding: 25px;
     }
+    
     .mobile-overlay-content {
-        pointer-events: auto; /* But the content can be clicked */
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        max-width: 400px;
+        width: 90%;
     }
+    
     .mobile-play-btn {
-        background: #3b82f6;
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
         color: white;
         border: none;
-        padding: 15px 30px;
-        border-radius: 8px;
+        padding: 16px 35px;
+        border-radius: 10px;
         font-size: 18px;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 15px;
-        pointer-events: auto;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
     }
-    .mobile-play-btn:hover { background: #2563eb; }
+    
+    .mobile-play-btn:hover { 
+        background: linear-gradient(135deg, #d41919, #b30000);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
+    }
 
+    /* Loading animation for comments */
+    .loading-comment {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .movie-wrapper {
+            width: 95%;
+            padding: 20px 0;
+        }
+        
+        .movie-title {
+            font-size: 26px;
+        }
+        
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .movie-thumb {
+            height: 200px;
+        }
+        
+        .buttons {
+            flex-direction: column;
+        }
+        
+        .btn-primary-custom, .btn-download {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin: 30px 0 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .movie-title {
+            font-size: 22px;
+        }
+        
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+        
+        .movie-thumb {
+            height: 180px;
+        }
+        
+        .mobile-overlay-content {
+            padding: 20px;
+        }
+    }
+
+    /* CATEGORY BADGE */
+    .category-badge {
+        background: rgba(255, 43, 43, 0.1);
+        color: #ff2b2b;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 43, 43, 0.3);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .category-badge:hover {
+        background: rgba(255, 43, 43, 0.2);
+        border-color: #ff2b2b;
+        transform: translateY(-2px);
+    }
 </style>
 
 <div class="movie-wrapper">
@@ -181,7 +470,13 @@
     <!-- MOVIE INFO -->
     <div class="movie-title">{{ movie.title }}</div>
     <div class="movie-meta">
-        {{ movie.category.name }} • {{ movie.time_ago }} • 
+        {% if movie.category %}
+        <a href="{% url 'movies:category' movie.category.slug %}" class="category-badge">
+            {{ movie.category.name }}
+        </a>
+        {% endif %}
+        • 
+        {{ movie.time_ago }} • 
         <span id="commentsCount">{{ movie.comments_count }}</span> comments
     </div>
 
@@ -202,18 +497,20 @@
                 <source src="{{ movie.video_url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-            
-            <!-- MOBILE OVERLAY - Will be added by JavaScript -->
         {% endif %}
     </div>
 
     <!-- BUTTONS -->
     <div class="buttons">
         {% if movie.video_url %}
-            <a href="{{ movie.video_url }}" target="_blank" class="btn-primary-custom">Watch in Fullscreen</a>
+            <a href="{{ movie.video_url }}" target="_blank" class="btn-primary-custom">
+                <i class="fas fa-external-link-alt"></i> Watch in Fullscreen
+            </a>
         {% endif %}
         {% if movie.download_link %}
-            <a href="{{ movie.download_link }}" class="btn-download" download>Download</a>
+            <a href="{{ movie.download_link }}" class="btn-download" download>
+                <i class="fas fa-download"></i> Download
+            </a>
         {% endif %}
     </div>
 
@@ -229,7 +526,9 @@
     <form id="commentForm" method="POST" action="{% url 'movies:add_comment' movie.slug %}">
         {% csrf_token %}
         <textarea name="text" id="commentText" placeholder="Write your comment..."></textarea>
-        <button id="submitComment" class="btn-submit" type="submit">Post Comment</button>
+        <button id="submitComment" class="btn-submit" type="submit">
+            <i class="fas fa-paper-plane"></i> Post Comment
+        </button>
     </form>
 
     <!-- 🔥 SCROLLABLE COMMENTS -->
@@ -247,7 +546,10 @@
                 <div class="comment-text">{{ c.text }}</div>
             </div>
         {% empty %}
-            <p style="color:#9ca3af;">No comments yet. Be the first!</p>
+            <div class="comment-box" style="text-align: center; color: rgba(255,255,255,0.5);">
+                <i class="far fa-comments" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>No comments yet. Be the first!</p>
+            </div>
         {% endfor %}
     </div>
 
@@ -264,7 +566,10 @@
                     {% endif %}
                     <div class="movie-info">
                         <div class="movie-title-small">{{ m.title }}</div>
-                        <div class="movie-meta-small">{{ m.time_ago }} • {{ m.comments_count }} comments</div>
+                        <div class="movie-meta-small">
+                            <span>{{ m.time_ago }}</span>
+                            <span>{{ m.comments_count }} comments</span>
+                        </div>
                     </div>
                 </a>
             {% endfor %}
@@ -273,7 +578,7 @@
 
 </div>
 
-<!-- AJAX COMMENTING -->
+<!-- AJAX COMMENTING - EXACTLY THE SAME LOGIC -->
 <script>
 (function(){
   const form = document.getElementById('commentForm');
@@ -350,7 +655,7 @@
 })();
 </script>
 
-<!-- VIDEO PLAYBACK FIXES - UPDATED FOR MOBILE AUDIO -->
+<!-- VIDEO PLAYBACK FIXES - EXACTLY THE SAME LOGIC -->
 <script>
 (function() {
     const video = document.getElementById('mainPlayer');
@@ -359,13 +664,11 @@
     // Check if mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // CRITICAL FIX: For mobile, we need to handle audio permissions differently
+    // Mobile handling - EXACTLY THE SAME AS BEFORE
     if (isMobile) {
-        // Step 1: Initially hide controls and mute (mobile browsers often block unmuted autoplay)
         video.controls = false;
-        video.muted = true; // Start muted to bypass autoplay restrictions
+        video.muted = true;
         
-        // Step 2: Create a fake play button that actually clicks the VIDEO element
         const overlayHTML = `
             <div class="mobile-overlay">
                 <div class="mobile-overlay-content">
@@ -373,7 +676,7 @@
                         Tap Play to start video with audio
                     </div>
                     <button class="mobile-play-btn" id="mobilePlayTrigger">
-                        ▶ Tap to Play
+                        <i class="fas fa-play"></i> Tap to Play
                     </button>
                     <div style="margin-top: 10px; font-size: 14px; color: #ccc;">
                         (Audio will play after tapping)
@@ -385,30 +688,21 @@
         const videoContainer = document.querySelector('.video-box');
         videoContainer.insertAdjacentHTML('beforeend', overlayHTML);
         
-        // Step 3: When user clicks the button, actually click the VIDEO element
         document.getElementById('mobilePlayTrigger').addEventListener('click', function(e) {
             e.stopPropagation();
             
-            // First, show controls on video
             video.controls = true;
-            
-            // Now trigger a click on the VIDEO element itself
-            // This is what mobile browsers need for audio permission
             video.click();
-            
-            // Also try to play
             video.muted = false;
             video.play().then(() => {
                 console.log('Video playing with audio on mobile');
                 document.querySelector('.mobile-overlay').style.display = 'none';
             }).catch(error => {
                 console.log('Auto-play failed:', error);
-                // Show a message to tap the video
                 alert('Please tap the video player to start playback with audio');
             });
         });
         
-        // Step 4: Also allow clicking anywhere on the video
         video.addEventListener('click', function() {
             video.muted = false;
             video.controls = true;
@@ -417,7 +711,6 @@
             });
         });
         
-        // Step 5: Once video starts playing, remove overlay
         video.addEventListener('play', function() {
             const overlay = document.querySelector('.mobile-overlay');
             if (overlay) {
@@ -426,17 +719,14 @@
             }
         });
         
-        // Step 6: Handle user tapping the native play button in controls
         video.addEventListener('playing', function() {
-            // Ensure audio is unmuted when playing
             video.muted = false;
         });
     } else {
-        // For desktop: just add controls
         video.controls = true;
     }
     
-    // FIX for faster video start
+    // FIX for faster video start - EXACTLY THE SAME
     let hasPreloaded = false;
     const startPreload = function() {
         if (!hasPreloaded) {
@@ -448,7 +738,6 @@
     video.addEventListener('mouseenter', startPreload);
     video.addEventListener('touchstart', startPreload, { once: true });
     
-    // Also start after metadata loads
     video.addEventListener('loadedmetadata', function() {
         if (video.buffered.length === 0) {
             setTimeout(startPreload, 100);
@@ -456,5 +745,8 @@
     });
 })();
 </script>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 {% endblock %}
