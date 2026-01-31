@@ -4,178 +4,1064 @@
 
 {% block content %}
 <style>
-  .otp-wrapper {
-      min-height: 75vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  /* ===== CSS VARIABLES ===== */
+  :root {
+    --primary-blue: #1e90ff;
+    --primary-blue-dark: #0d6efd;
+    --primary-red: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --bg-dark: #0b0b0b;
+    --bg-card: #121212;
+    --text-light: #f8f8f8;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --gradient-blue: linear-gradient(135deg, #1e90ff 0%, #0d6efd 100%);
+    --gradient-success: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --shadow-2xl: 0 35px 60px -15px rgba(0, 0, 0, 0.6);
   }
 
-  .otp-card {
-      background: #121212;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
-      padding: 32px 26px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
-      color: var(--white);
-      transition: 0.3s ease;
+  /* ===== PAGE LAYOUT ===== */
+  .verify-page {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+    position: relative;
+    overflow: hidden;
   }
 
-  .otp-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.7);
+  /* ===== ANIMATED BACKGROUND ===== */
+  .verify-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
   }
 
-  .otp-card h3 {
-      font-weight: 900;
-      color: var(--blue);
-      margin-bottom: 22px;
-      text-align: center;
-      letter-spacing: 0.5px;
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: float 20s infinite linear;
   }
 
-  /* Inputs */
-  .otp-card input {
-      background: #0b0b0b;
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--white);
-      text-align: center;
-      letter-spacing: 4px;
-      font-size: 1.2rem;
+  .bg-circle:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    background: var(--primary-blue);
+    top: -150px;
+    left: -150px;
+    animation-delay: 0s;
   }
 
-  .otp-card input::placeholder {
-      color: #9ca3af;
-      letter-spacing: normal;
-      font-size: 0.95rem;
+  .bg-circle:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    background: var(--success);
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -5s;
   }
 
-  .otp-card input:focus {
-      background: #0b0b0b;
-      color: var(--white);
-      border-color: var(--blue);
-      box-shadow: none;
+  .bg-circle:nth-child(3) {
+    width: 150px;
+    height: 150px;
+    background: var(--primary-red);
+    top: 50%;
+    right: 10%;
+    animation-delay: -10s;
   }
 
-  .otp-card label {
-      font-weight: 600;
-      color: #cbd5f5;
+  @keyframes float {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(30px, -30px) rotate(120deg);
+    }
+    66% {
+      transform: translate(-20px, 20px) rotate(240deg);
+    }
   }
 
-  /* Buttons */
+  /* ===== MAIN CONTAINER ===== */
+  .verify-container {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== VERIFY CARD ===== */
+  .verify-card {
+    background: rgba(18, 18, 18, 0.95);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    padding: 56px 48px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .verify-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-2xl);
+    border-color: rgba(30, 144, 255, 0.3);
+  }
+
+  .verify-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--success), var(--primary-blue), var(--warning));
+  }
+
+  /* ===== HEADER SECTION ===== */
+  .verify-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .verify-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .verify-icon {
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 144, 255, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    font-size: 32px;
+    border: 2px solid rgba(30, 144, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verify-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, rgba(30, 144, 255, 0.4), transparent 30%);
+    animation: rotate 4s linear infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .verify-icon-inner {
+    position: relative;
+    z-index: 1;
+    background: rgba(18, 18, 18, 0.9);
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .verify-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--success) 0%, var(--primary-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+
+  .verify-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* ===== USER INFO ===== */
+  .user-info {
+    background: rgba(30, 144, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 32px;
+    border: 1px solid rgba(30, 144, 255, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-blue);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .user-details {
+    flex: 1;
+  }
+
+  .user-greeting {
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .user-instruction {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  /* ===== OTP INPUT ===== */
+  .otp-input-section {
+    margin-bottom: 40px;
+  }
+
+  .otp-label {
+    display: block;
+    color: #e5e7eb;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .otp-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .otp-input {
+    width: 60px !important;
+    height: 80px !important;
+    background: rgba(11, 11, 11, 0.8) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    color: var(--text-light) !important;
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    caret-color: var(--primary-blue) !important;
+    transition: all 0.3s ease !important;
+    padding: 0 !important;
+  }
+
+  .otp-input:focus {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 4px rgba(30, 144, 255, 0.2) !important;
+    transform: translateY(-4px) !important;
+    background: rgba(11, 11, 11, 0.9) !important;
+  }
+
+  .otp-input.filled {
+    border-color: var(--success) !important;
+    animation: pulse 0.5s ease;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .otp-instruction {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .otp-timer {
+    text-align: center;
+    color: var(--warning);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 20px;
+  }
+
+  /* ===== BUTTONS ===== */
+  .buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
   .btn-verify {
-      background: var(--blue);
-      border: none;
-      font-weight: 800;
-      padding: 11px 0;
-      border-radius: 10px;
-      letter-spacing: 0.5px;
-      transition: 0.3s;
+    background: var(--gradient-success);
+    color: white;
+    font-weight: 800;
+    border: none;
+    border-radius: 16px;
+    padding: 20px 32px;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-verify::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s;
   }
 
   .btn-verify:hover {
-      background: #1876d1;
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(34, 197, 94, 0.4);
+  }
+
+  .btn-verify:hover::before {
+    left: 100%;
   }
 
   .btn-resend {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: var(--white);
-      font-weight: 700;
-      padding: 10px 0;
-      border-radius: 10px;
-      transition: 0.3s;
+    background: transparent;
+    border: 2px solid rgba(30, 144, 255, 0.3);
+    color: var(--primary-blue);
+    font-weight: 700;
+    border-radius: 16px;
+    padding: 18px 32px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
   .btn-resend:hover {
-      background: #111827;
-      border-color: var(--blue);
+    background: rgba(30, 144, 255, 0.1);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(30, 144, 255, 0.2);
   }
 
-  /* Alerts */
-  .alert {
-      background: #0b0b0b;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--white);
+  .btn-resend:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
   }
 
-  .alert-success {
-      border-left: 4px solid #22c55e;
+  /* ===== BACK LINK ===== */
+  .back-link {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border-color);
   }
 
-  .alert-danger {
-      border-left: 4px solid var(--red);
+  .back-link-text {
+    color: var(--text-muted);
+    font-size: 1rem;
   }
 
-  /* Links */
-  .otp-card a {
-      color: var(--red);
-      font-weight: 700;
-      text-decoration: none;
+  .back-link-text a {
+    color: var(--primary-blue);
+    font-weight: 700;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+    padding: 4px 0;
   }
 
-  .otp-card a:hover {
-      color: #dc2626;
-      text-decoration: underline;
+  .back-link-text a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-blue);
+    transition: width 0.3s ease;
+  }
+
+  .back-link-text a:hover {
+    color: var(--primary-blue);
+  }
+
+  .back-link-text a:hover::after {
+    width: 100%;
+  }
+
+  /* ===== MESSAGES ALERTS ===== */
+  .messages-container {
+    margin-bottom: 32px;
+  }
+
+  .alert-card {
+    background: rgba(11, 11, 11, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.5s ease-out;
+    backdrop-filter: blur(5px);
+  }
+
+  .alert-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .alert-success::before {
+    background: var(--success);
+  }
+
+  .alert-danger::before {
+    background: var(--primary-red);
+  }
+
+  .alert-warning::before {
+    background: var(--warning);
+  }
+
+  .alert-message {
+    color: var(--text-light);
+    font-weight: 500;
+    margin: 0;
+    padding-right: 32px;
+    line-height: 1.5;
+  }
+
+  .alert-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .alert-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ===== LOADING STATES ===== */
+  .btn-verify.loading,
+  .btn-resend.loading {
+    color: transparent;
+    position: relative;
+  }
+
+  .btn-verify.loading::after,
+  .btn-resend.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .verify-page {
+      padding: 20px 16px;
+      min-height: calc(100vh - 140px);
+    }
+
+    .verify-card {
+      padding: 44px 32px;
+      border-radius: 22px;
+    }
+
+    .verify-title {
+      font-size: 2rem;
+    }
+
+    .verify-subtitle {
+      font-size: 1rem;
+    }
+
+    .verify-icon-wrapper {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 20px;
+    }
+
+    .otp-input {
+      width: 50px !important;
+      height: 70px !important;
+      font-size: 2rem !important;
+    }
+
+    .otp-input-container {
+      gap: 12px;
+    }
+
+    .btn-verify,
+    .btn-resend {
+      padding: 18px 24px;
+      font-size: 1.1rem;
+    }
+
+    .user-info {
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .verify-card {
+      padding: 36px 24px;
+      border-radius: 20px;
+    }
+
+    .verify-title {
+      font-size: 1.75rem;
+    }
+
+    .verify-header {
+      margin-bottom: 32px;
+    }
+
+    .otp-input {
+      width: 45px !important;
+      height: 60px !important;
+      font-size: 1.8rem !important;
+      border-radius: 12px !important;
+    }
+
+    .otp-input-container {
+      gap: 10px;
+    }
+
+    .btn-verify,
+    .btn-resend {
+      padding: 16px 20px;
+      font-size: 1rem;
+      border-radius: 14px;
+    }
+
+    .back-link {
+      padding-top: 28px;
+    }
+
+    .verify-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .bg-circle {
+      display: none;
+    }
+  }
+
+  /* ===== TABLET OPTIMIZATION ===== */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .verify-container {
+      max-width: 480px;
+    }
+
+    .verify-card {
+      padding: 48px 40px;
+    }
+  }
+
+  /* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+  @media (hover: none) and (pointer: coarse) {
+    .verify-card:hover {
+      transform: none;
+    }
+
+    .btn-verify:hover,
+    .btn-resend:hover {
+      transform: none;
+    }
+
+    .otp-input:focus {
+      transform: none !important;
+    }
+
+    .btn-verify,
+    .btn-resend {
+      min-height: 60px;
+    }
+
+    .alert-close {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .otp-input {
+      min-height: 70px;
+    }
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .verify-card,
+    .btn-verify,
+    .btn-resend,
+    .otp-input,
+    .back-link-text a::after,
+    .alert-card,
+    .bg-circle,
+    .verify-icon::before {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .verify-card:hover,
+    .btn-verify:hover,
+    .btn-resend:hover,
+    .otp-input:focus {
+      transform: none !important;
+    }
+
+    .btn-verify::before,
+    .btn-verify.loading::after,
+    .btn-resend.loading::after {
+      display: none;
+    }
   }
 </style>
 
-<div class="otp-wrapper">
-  <div class="otp-card">
-
-    <h3>Enter OTP</h3>
-
-    <!-- Messages -->
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3">
-          {{ message }}
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+<div class="verify-page">
+  <div class="verify-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+  
+  <div class="verify-container">
+    <div class="verify-card">
+      
+      <!-- Header -->
+      <div class="verify-header">
+        <div class="verify-icon-wrapper">
+          <div class="verify-icon">
+            <div class="verify-icon-inner">
+              <i class="bi bi-shield-check"></i>
+            </div>
+          </div>
         </div>
-      {% endfor %}
-    {% endif %}
-
-    <!-- Verify OTP -->
-    <form method="post">
-      {% csrf_token %}
-      <input type="hidden" name="username" value="{{ username }}">
-
-      <div class="mb-3">
-        <label for="otp" class="form-label">OTP Code</label>
-        <input
-          type="text"
-          name="otp"
-          id="otp"
-          class="form-control"
-          maxlength="6"
-          placeholder="Enter 6-digit code"
-          required
-        >
+        <h1 class="verify-title">Enter Verification Code</h1>
+        <p class="verify-subtitle">
+          Enter the 6-digit code sent to your email
+        </p>
       </div>
 
-      <button class="btn btn-verify w-100 mb-3" type="submit">
-        Verify & Login
-      </button>
-    </form>
+      <!-- Messages -->
+      <div class="messages-container">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert-card alert-{{ message.tags }}">
+              <div class="alert-message">{{ message }}</div>
+              <button type="button" class="alert-close" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
 
-    <!-- Resend OTP -->
-    <form method="post" action="{% url 'accounts:resend_otp' %}">
-      {% csrf_token %}
-      <input type="hidden" name="username" value="{{ username }}">
-      <button class="btn btn-resend w-100" type="submit">
-        Resend OTP
-      </button>
-    </form>
+      <!-- User Info -->
+      <div class="user-info">
+        <div class="user-avatar">
+          {{ username|slice:":1"|upper }}
+        </div>
+        <div class="user-details">
+          <div class="user-greeting">Hi, {{ username }}</div>
+          <div class="user-instruction">Enter the 6-digit code from your email to continue</div>
+        </div>
+      </div>
 
-    <div class="text-center mt-3">
-      <small>
-        Need to login with a different account?
-        <a href="{% url 'accounts:otp_login' %}">Go back</a>
-      </small>
+      <!-- OTP Input Form (VERIFY FORM) -->
+      <form method="post" id="verifyForm">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ username }}">
+
+        <div class="otp-input-section">
+          <label class="otp-label">6-Digit Verification Code</label>
+          
+          <div class="otp-input-container" id="otpContainer">
+            {% for i in "123456" %}
+            <input
+              type="text"
+              maxlength="1"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control otp-input"
+              data-index="{{ forloop.counter0 }}"
+              autocomplete="one-time-code"
+            >
+            {% endfor %}
+          </div>
+
+          <input type="hidden" name="otp" id="otpInput" value="">
+          
+          <p class="otp-instruction">
+            <i class="bi bi-info-circle me-1"></i>
+            Enter each digit. Code will auto-advance.
+          </p>
+
+          <div class="otp-timer" id="otpTimer">
+            <i class="bi bi-clock-history me-2"></i>
+            Code expires in: <span id="timer">05:00</span>
+          </div>
+        </div>
+
+        <!-- Verify Button -->
+        <div class="buttons-container">
+          <button class="btn btn-verify" type="submit" id="verifyBtn">
+            <i class="bi bi-check-circle me-2"></i>Verify & Login
+          </button>
+        </div>
+      </form>
+
+      <!-- Resend Form (SEPARATE FORM) -->
+      <form method="post" action="{% url 'accounts:resend_otp' %}" id="resendForm">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ username }}">
+        <div class="buttons-container" style="margin-top: -16px;">
+          <button class="btn btn-resend" type="submit" id="resendBtn">
+            <i class="bi bi-arrow-clockwise me-2"></i>Resend Code
+          </button>
+        </div>
+      </form>
+
+      <!-- Back Link -->
+      <div class="back-link">
+        <p class="back-link-text">
+          Need to login with a different account?
+          <a href="{% url 'accounts:otp_login' %}">Go back to login</a>
+        </p>
+      </div>
+
     </div>
-
   </div>
 </div>
+
+<!-- ===== ENHANCEMENT SCRIPTS ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const otpInputs = document.querySelectorAll('.otp-input');
+  const hiddenOtpInput = document.getElementById('otpInput');
+  const verifyForm = document.getElementById('verifyForm');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const resendForm = document.getElementById('resendForm');
+  const resendBtn = document.getElementById('resendBtn');
+  const timerElement = document.getElementById('timer');
+  const alertCards = document.querySelectorAll('.alert-card');
+  const closeButtons = document.querySelectorAll('.alert-close');
+  
+  // OTP input functionality
+  otpInputs.forEach((input, index) => {
+    // Focus on first input
+    if (index === 0) {
+      setTimeout(() => input.focus(), 300);
+    }
+    
+    // Handle input
+    input.addEventListener('input', function(e) {
+      const value = this.value;
+      
+      // Only allow numbers
+      if (!/^\d*$/.test(value)) {
+        this.value = '';
+        return;
+      }
+      
+      // If a digit is entered, move to next input
+      if (value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+        otpInputs[index + 1].select();
+      }
+      
+      // Update filled state
+      this.classList.toggle('filled', value.length === 1);
+      
+      // Update hidden input value
+      updateHiddenOtp();
+    });
+    
+    // Handle paste
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const pastedData = e.clipboardData.getData('text').slice(0, 6);
+      
+      // Fill all inputs with pasted data
+      pastedData.split('').forEach((char, idx) => {
+        if (otpInputs[idx] && /^\d$/.test(char)) {
+          otpInputs[idx].value = char;
+          otpInputs[idx].classList.add('filled');
+        }
+      });
+      
+      // Focus on next empty input or last one
+      const nextEmptyIndex = Array.from(otpInputs).findIndex(inp => !inp.value);
+      if (nextEmptyIndex > -1) {
+        otpInputs[nextEmptyIndex].focus();
+      } else {
+        otpInputs[5].focus();
+      }
+      
+      updateHiddenOtp();
+    });
+    
+    // Handle backspace
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && index > 0) {
+        otpInputs[index - 1].focus();
+        otpInputs[index - 1].select();
+      }
+    });
+    
+    // Handle arrow keys
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft' && index > 0) {
+        e.preventDefault();
+        otpInputs[index - 1].focus();
+        otpInputs[index - 1].select();
+      } else if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+        e.preventDefault();
+        otpInputs[index + 1].focus();
+        otpInputs[index + 1].select();
+      }
+    });
+  });
+  
+  // Update hidden OTP value
+  function updateHiddenOtp() {
+    const otpValue = Array.from(otpInputs).map(input => input.value).join('');
+    hiddenOtpInput.value = otpValue;
+    verifyBtn.disabled = otpValue.length !== 6;
+  }
+  
+  // Form submission for VERIFY
+  if (verifyForm) {
+    verifyForm.addEventListener('submit', function(e) {
+      const otpValue = hiddenOtpInput.value;
+      
+      if (otpValue.length !== 6) {
+        e.preventDefault();
+        showError('Please enter all 6 digits of the OTP code');
+        return;
+      }
+      
+      verifyBtn.classList.add('loading');
+      verifyBtn.disabled = true;
+    });
+  }
+  
+  // Form submission for RESEND
+  if (resendForm) {
+    resendForm.addEventListener('submit', function(e) {
+      // No need to prevent default - let it submit normally
+      resendBtn.classList.add('loading');
+      resendBtn.disabled = true;
+      resendBtn.innerHTML = '';
+      
+      // Auto-enable after 30 seconds (cooldown)
+      setTimeout(() => {
+        resendBtn.classList.remove('loading');
+        resendBtn.disabled = false;
+        resendBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Resend Code';
+      }, 30000);
+    });
+  }
+  
+  // Timer functionality (5 minutes)
+  let timeLeft = 5 * 60; // 5 minutes in seconds
+  
+  function updateTimer() {
+    if (timeLeft <= 0) {
+      timerElement.textContent = '00:00';
+      timerElement.style.color = 'var(--primary-red)';
+      showError('OTP has expired. Please request a new code.');
+      verifyBtn.disabled = true;
+      return;
+    }
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Change color when under 1 minute
+    if (timeLeft <= 60) {
+      timerElement.style.color = 'var(--warning)';
+    }
+    
+    timeLeft--;
+    setTimeout(updateTimer, 1000);
+  }
+  
+  // Start timer
+  updateTimer();
+  
+  // Auto-hide messages after 8 seconds
+  alertCards.forEach(alert => {
+    setTimeout(() => {
+      alert.style.opacity = '0';
+      alert.style.transform = 'translateY(-10px)';
+      setTimeout(() => alert.remove(), 300);
+    }, 8000);
+  });
+  
+  // Close buttons for alerts
+  closeButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const alert = this.closest('.alert-card');
+      alert.style.opacity = '0';
+      alert.style.transform = 'translateY(-10px)';
+      setTimeout(() => alert.remove(), 300);
+    });
+  });
+  
+  // Show error message function
+  function showError(message) {
+    const existingError = document.querySelector('.alert-danger');
+    if (existingError) existingError.remove();
+    
+    const errorAlert = document.createElement('div');
+    errorAlert.className = 'alert-card alert-danger';
+    errorAlert.innerHTML = `
+      <div class="alert-message">${message}</div>
+      <button type="button" class="alert-close" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    `;
+    
+    const messagesContainer = document.querySelector('.messages-container');
+    messagesContainer.prepend(errorAlert);
+    
+    // Add close functionality
+    errorAlert.querySelector('.alert-close').addEventListener('click', function() {
+      errorAlert.style.opacity = '0';
+      errorAlert.style.transform = 'translateY(-10px)';
+      setTimeout(() => errorAlert.remove(), 300);
+    });
+    
+    // Auto-hide error
+    setTimeout(() => {
+      if (errorAlert.parentNode) {
+        errorAlert.style.opacity = '0';
+        errorAlert.style.transform = 'translateY(-10px)';
+        setTimeout(() => errorAlert.remove(), 300);
+      }
+    }, 8000);
+  }
+  
+  // Touch device optimizations
+  if ('ontouchstart' in window) {
+    document.querySelectorAll('.otp-input, .btn-verify, .btn-resend, .alert-close').forEach(el => {
+      el.style.cursor = 'pointer';
+    });
+  }
+});
+
+// Add CSS for better mobile interactions
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    @media (max-width: 768px) {
+      /* Prevent zoom on iOS */
+      .otp-input {
+        font-size: 16px !important;
+      }
+      
+      /* Better tap targets */
+      .otp-input {
+        min-height: 70px;
+        min-width: 45px;
+      }
+      
+      .btn-verify, .btn-resend {
+        min-height: 56px;
+      }
+    }
+    
+    /* Input autofill styling */
+    .otp-input:-webkit-autofill,
+    .otp-input:-webkit-autofill:hover, 
+    .otp-input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text-light) !important;
+      -webkit-box-shadow: 0 0 0px 1000px #0b0b0b inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+  </style>
+`);
+</script>
+
 {% endblock %}

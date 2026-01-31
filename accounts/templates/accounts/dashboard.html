@@ -6,145 +6,315 @@
 <div class="container">
 
   <!-- ===== HEADER WITH PROFILE ===== -->
-  <div class="dashboard-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <div class="dashboard-header mb-5">
 
-    <!-- Left: Profile -->
-    <div class="d-flex align-items-center gap-3 flex-wrap profile-header">
-      {% if profile.profile_photo %}
-        <img src="{{ profile.profile_photo.url }}" class="profile-photo" alt="Profile">
-      {% else %}
-        <img src="{% static 'img/user-default.png' %}" class="profile-photo" alt="Profile">
-      {% endif %}
+    <!-- Profile Section -->
+    <div class="profile-section mb-4">
+      <div class="row g-4 align-items-center">
+        <!-- Profile Image -->
+        <div class="col-md-auto col-12">
+          <div class="profile-image-container">
+            {% if profile.profile_photo %}
+              <img src="{{ profile.profile_photo.url }}" class="profile-photo" alt="Profile" id="profilePreview">
+            {% else %}
+              <img src="{% static 'img/user-default.png' %}" class="profile-photo" alt="Profile" id="profilePreview">
+            {% endif %}
+            <div class="profile-badge">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+          </div>
+        </div>
 
-      <div class="profile-text">
-        <h2 class="fw-bold mb-1">Hello, {{ request.user.username }} 👋</h2>
-        <p class="text-muted small mb-0">Welcome to your activity dashboard</p>
-      </div>
-    </div>
+        <!-- Profile Info -->
+        <div class="col-md col-12">
+          <div class="profile-info">
+            <h1 class="profile-greeting mb-2">Welcome back, <span class="text-gradient">{{ request.user.username }}</span>!</h1>
+            <p class="profile-subtitle text-muted mb-3">Track your movie journey and activity</p>
+            <div class="profile-meta d-flex flex-wrap gap-3">
+              <span class="meta-item">
+                <i class="bi bi-calendar-check me-1"></i>
+                Member since {{ request.user.date_joined|date:"M Y" }}
+              </span>
+              <span class="meta-item">
+                <i class="bi bi-check-circle me-1"></i>
+                Active account
+              </span>
+            </div>
+          </div>
+        </div>
 
-    <!-- Right: Upload profile photo -->
-    <form method="POST" enctype="multipart/form-data" class="text-end upload-form">
-      {% csrf_token %}
-      {{ photo_form.profile_photo }}
-      <button class="btn btn-outline-light btn-sm mt-1 w-100">Update Photo</button>
-    </form>
-
-  </div>
-
-  <!-- ===== STATS GRID ===== -->
-  <div class="row g-4 mb-4">
-
-    <div class="col-lg-4 col-md-6 col-12">
-      <div class="studio-card">
-        <div class="studio-icon bg-primary">📝</div>
-        <div>
-          <p class="studio-label">Total Comments</p>
-          <h2 class="studio-value">{{ total_comments }}</h2>
+        <!-- Photo Upload -->
+        <div class="col-md-auto col-12">
+          <div class="photo-upload-card">
+            <h6 class="upload-title mb-3">
+              <i class="bi bi-camera me-2"></i>Update Profile Photo
+            </h6>
+            <form method="POST" enctype="multipart/form-data" id="photoUploadForm" class="upload-form">
+              {% csrf_token %}
+              <div class="file-input-container mb-3">
+                <label for="id_profile_photo" class="file-input-label">
+                  <i class="bi bi-cloud-arrow-up me-2"></i>
+                  <span>Choose Image</span>
+                </label>
+                {{ photo_form.profile_photo }}
+                <div class="file-name text-muted small mt-2" id="fileName">No file selected</div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100" id="uploadBtn" disabled>
+                <i class="bi bi-upload me-2"></i>Upload Photo
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-4 col-md-6 col-12">
-      <div class="studio-card">
-        <div class="studio-icon bg-success">🍿</div>
-        <div>
-          <p class="studio-label">Movies Watched</p>
-          <h2 class="studio-value">{{ movies_watched }}</h2>
+  </div>
+
+  <!-- ===== STATS DASHBOARD ===== -->
+  <div class="stats-dashboard mb-5">
+    <h3 class="section-title mb-4">
+      <i class="bi bi-speedometer2 me-2"></i>Your Activity Overview
+    </h3>
+    
+    <div class="row g-4">
+      <!-- Comments Card -->
+      <div class="col-xl-4 col-md-6 col-12">
+        <div class="stat-card stat-card-primary">
+          <div class="stat-icon">
+            <i class="bi bi-chat-dots"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Total Comments</div>
+            <div class="stat-value">{{ total_comments }}</div>
+            <div class="stat-trend">
+              <i class="bi bi-arrow-up-circle-fill me-1"></i>
+              Your movie insights
+            </div>
+          </div>
+          <div class="stat-decoration">
+            <div class="decoration-circle"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Movies Watched Card -->
+      <div class="col-xl-4 col-md-6 col-12">
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon">
+            <i class="bi bi-film"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Movies Watched</div>
+            <div class="stat-value">{{ movies_watched }}</div>
+            <div class="stat-trend">
+              <i class="bi bi-clock-history me-1"></i>
+              Your cinematic journey
+            </div>
+          </div>
+          <div class="stat-decoration">
+            <div class="decoration-circle"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engagement Card -->
+      <div class="col-xl-4 col-md-12 col-12">
+        <div class="stat-card stat-card-info">
+          <div class="stat-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Engagement Score</div>
+            <div class="stat-value">
+              {% if total_comments > 10 %}
+                High
+              {% elif total_comments > 5 %}
+                Medium
+              {% else %}
+                Growing
+              {% endif %}
+            </div>
+            <div class="stat-trend">
+              <i class="bi bi-activity me-1"></i>
+              Keep participating!
+            </div>
+          </div>
+          <div class="stat-decoration">
+            <div class="decoration-circle"></div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="col-lg-4 col-md-12 col-12">
-      <div class="studio-card">
-        <div class="studio-icon bg-info">🧑‍💻</div>
-        <div>
-          <p class="studio-label">Account Status</p>
-          <h2 class="studio-value text-success">Active</h2>
+  <!-- ===== QUICK ACTION ===== -->
+  <div class="quick-action mb-5">
+    <div class="action-card">
+      <div class="row align-items-center">
+        <div class="col-md-8 col-12">
+          <h4 class="action-title mb-2">
+            <i class="bi bi-search me-2"></i>Discover New Movies
+          </h4>
+          <p class="action-description text-muted mb-0">
+            Explore our collection and find your next favorite film.
+          </p>
+        </div>
+        <div class="col-md-4 col-12 text-md-end mt-3 mt-md-0">
+          <a href="{% url 'movies:home' %}" class="btn btn-gradient btn-lg">
+            <i class="bi bi-play-circle me-2"></i>Browse All Movies
+          </a>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ===== ACTION BUTTON ===== -->
-  <div class="row g-3 mb-5">
-    <div class="col-12">
-      <a href="{% url 'movies:home' %}" class="btn btn-primary w-100 py-3">
-        🎬 Browse Movies
-      </a>
-    </div>
-  </div>
-
-  <!-- ===== TWO-COLUMN ACTIVITY SECTION ===== -->
-  <div class="row g-4">
-
-    <div class="col-lg-6 col-12">
-      <div class="panel-box">
-        <h5 class="fw-bold mb-3">💬 Recent Comments</h5>
-
-        {% if recent_comments %}
-          <ul class="list-group list-group-flush">
-            {% for c in recent_comments %}
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item flex-wrap gap-2">
-                <div>
-                  <div class="fw-bold">{{ c.movie.title }}</div>
-                  <div class="text-muted small">{{ c.text|truncatechars:100 }}</div>
+  <!-- ===== RECENT ACTIVITY ===== -->
+  <div class="recent-activity mb-5">
+    <div class="row g-4">
+      <!-- Recent Comments -->
+      <div class="col-lg-6 col-12">
+        <div class="activity-card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-chat-square-text me-2"></i>Recent Comments
+            </h5>
+            <a href="#" class="view-all-link">View All</a>
+          </div>
+          <div class="card-body">
+            {% if recent_comments %}
+              <div class="activity-list">
+                {% for c in recent_comments %}
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="bi bi-chat-left-quote"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">
+                      <a href="{% url 'movies:detail' c.movie.slug %}" class="movie-title">{{ c.movie.title }}</a>
+                    </div>
+                    <div class="activity-text">{{ c.text|truncatechars:120 }}</div>
+                    <div class="activity-meta">
+                      <span class="meta-time">
+                        <i class="bi bi-clock me-1"></i>{{ c.time_ago }} ago
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div class="small text-muted">{{ c.time_ago }} ago</div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No comments yet.</p>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="col-lg-6 col-12">
-      <div class="panel-box">
-        <h5 class="fw-bold mb-3">⏱️ Recently Watched</h5>
-
-        {% if recent_watched %}
-          <ul class="list-group list-group-flush">
-            {% for w in recent_watched %}
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-start panel-item flex-wrap gap-2">
-                <div>
-                  <a href="{% url 'movies:detail' w.movie.slug %}" class="fw-bold">{{ w.movie.title }}</a>
-                  <div class="text-muted small">{{ w.watched_at|date:"M d, Y H:i" }}</div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="bi bi-chat-left-text"></i>
                 </div>
-                <span class="small text-muted">View</span>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No watched activity yet.</p>
-        {% endif %}
+                <h6 class="empty-title">No comments yet</h6>
+                <p class="empty-text text-muted">Start sharing your thoughts on movies!</p>
+                <a href="{% url 'movies:home' %}" class="btn btn-outline-primary btn-sm">
+                  Browse Movies
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Recently Watched -->
+      <div class="col-lg-6 col-12">
+        <div class="activity-card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-eye me-2"></i>Recently Watched
+            </h5>
+            <a href="#" class="view-all-link">View All</a>
+          </div>
+          <div class="card-body">
+            {% if recent_watched %}
+              <div class="activity-list">
+                {% for w in recent_watched %}
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="bi bi-play-circle"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">
+                      <a href="{% url 'movies:detail' w.movie.slug %}" class="movie-title">{{ w.movie.title }}</a>
+                    </div>
+                    <div class="activity-meta">
+                      <span class="meta-time">
+                        <i class="bi bi-calendar me-1"></i>{{ w.watched_at|date:"M d, Y" }}
+                      </span>
+                      <span class="meta-time">
+                        <i class="bi bi-clock me-1"></i>{{ w.watched_at|time:"H:i" }}
+                      </span>
+                    </div>
+                    <div class="activity-action">
+                      <a href="{% url 'movies:detail' w.movie.slug %}" class="btn-view">
+                        View Details <i class="bi bi-arrow-right"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="bi bi-film"></i>
+                </div>
+                <h6 class="empty-title">No watched movies</h6>
+                <p class="empty-text text-muted">Start watching movies to track your history!</p>
+                <a href="{% url 'movies:home' %}" class="btn btn-outline-primary btn-sm">
+                  Start Watching
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
-
   </div>
 
   <!-- ===== TOP COMMENTED MOVIES ===== -->
-  <div class="panel-box mt-4">
-    <h5 class="fw-bold mb-3">📊 Top Commented Movies</h5>
-
+  <div class="top-movies-section mb-5">
+    <div class="section-header mb-4">
+      <h3 class="section-title">
+        <i class="bi bi-trophy me-2"></i>Your Top Commented Movies
+      </h3>
+      <p class="section-subtitle text-muted">Movies you've engaged with the most</p>
+    </div>
+    
     {% if top_commented %}
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+      <div class="top-movies-grid">
         {% for t in top_commented %}
-          <div class="col">
-            <div class="top-movie-card">
-              <div>
-                <a href="{% url 'movies:detail' t.movie__slug %}" class="fw-bold">
-                  {{ t.movie__title }}
-                </a>
-                <p class="text-muted small">{{ t.cnt }} comments</p>
-              </div>
+        <div class="movie-card">
+          <div class="movie-rank">{{ forloop.counter }}</div>
+          <div class="movie-content">
+            <h6 class="movie-title">
+              <a href="{% url 'movies:detail' t.movie__slug %}">{{ t.movie__title }}</a>
+            </h6>
+            <div class="movie-stats">
+              <span class="stat-item">
+                <i class="bi bi-chat-fill me-1"></i>
+                {{ t.cnt }} comments
+              </span>
             </div>
           </div>
+          <div class="movie-action">
+            <a href="{% url 'movies:detail' t.movie__slug %}" class="btn-action">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
         {% endfor %}
       </div>
     {% else %}
-      <p class="text-muted">No data yet.</p>
+      <div class="empty-state empty-state-large">
+        <div class="empty-icon">
+          <i class="bi bi-bar-chart"></i>
+        </div>
+        <h6 class="empty-title">No activity data yet</h6>
+        <p class="empty-text text-muted">Your top movies will appear here as you comment more.</p>
+      </div>
     {% endif %}
   </div>
 
@@ -152,74 +322,627 @@
 
 <!-- ===== CUSTOM STYLES ===== -->
 <style>
+  /* ===== GLOBAL STYLES ===== */
+  :root {
+    --primary: #1e90ff;
+    --primary-dark: #0d6efd;
+    --success: #20c997;
+    --info: #0dcaf0;
+    --dark-bg: #0f0f0f;
+    --card-bg: #111;
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* ===== PROFILE SECTION ===== */
+  .profile-section {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+  }
+
+  .profile-image-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
   .profile-photo {
-    width: 85px;
-    height: 85px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #1e90ff;
+    border: 4px solid var(--primary);
+    box-shadow: 0 8px 25px rgba(30, 144, 255, 0.3);
   }
 
-  .studio-card {
-    background: #111;
-    padding: 18px;
-    border-radius: 14px;
+  .profile-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--success);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--dark-bg);
+  }
+
+  .profile-greeting {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff 0%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .profile-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .meta-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ===== PHOTO UPLOAD ===== */
+  .photo-upload-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+  }
+
+  .upload-title {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .file-input-container {
+    text-align: center;
+  }
+
+  .file-input-label {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(30, 144, 255, 0.1);
+    color: var(--primary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px dashed rgba(30, 144, 255, 0.3);
+  }
+
+  .file-input-label:hover {
+    background: rgba(30, 144, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  #id_profile_photo {
+    display: none;
+  }
+
+  /* ===== STATS CARDS ===== */
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  }
+
+  .stat-card-primary {
+    border-top: 4px solid var(--primary);
+  }
+
+  .stat-card-success {
+    border-top: 4px solid var(--success);
+  }
+
+  .stat-card-info {
+    border-top: 4px solid var(--info);
+  }
+
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card-primary .stat-icon {
+    background: rgba(30, 144, 255, 0.15);
+    color: var(--primary);
+  }
+
+  .stat-card-success .stat-icon {
+    background: rgba(32, 201, 151, 0.15);
+    color: var(--success);
+  }
+
+  .stat-card-info .stat-icon {
+    background: rgba(13, 202, 240, 0.15);
+    color: var(--info);
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .stat-trend {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .stat-decoration {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    opacity: 0.1;
+  }
+
+  .decoration-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ===== QUICK ACTION ===== */
+  .action-card {
+    background: linear-gradient(135deg, rgba(30, 144, 255, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(30, 144, 255, 0.2);
+  }
+
+  .action-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(30, 144, 255, 0.4);
+    color: white;
+  }
+
+  /* ===== ACTIVITY CARDS ===== */
+  .activity-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+    height: 100%;
+  }
+
+  .card-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-header h5 {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+  }
+
+  .view-all-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .card-body {
+    padding: 25px;
+  }
+
+  .activity-item {
     display: flex;
     gap: 15px;
-    align-items: center;
-    border: 1px solid rgba(255,255,255,0.08);
-    transition: 0.2s ease;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .studio-icon {
-    width: 50px;
-    height: 50px;
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(30, 144, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .activity-content {
+    flex: 1;
+  }
+
+  .movie-title {
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+  }
+
+  .movie-title:hover {
+    color: var(--primary);
+  }
+
+  .activity-text {
+    color: #bbb;
+    font-size: 0.95rem;
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  .activity-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .meta-time {
+    display: flex;
+    align-items: center;
+  }
+
+  .activity-action {
+    margin-top: 8px;
+  }
+
+  .btn-view {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ===== TOP MOVIES ===== */
+  .movie-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .movie-card:hover {
+    transform: translateX(8px);
+    border-color: rgba(30, 144, 255, 0.3);
+  }
+
+  .movie-rank {
+    width: 45px;
+    height: 45px;
+    background: var(--primary);
+    color: white;
     border-radius: 12px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 26px;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.3rem;
+    flex-shrink: 0;
   }
 
-  .panel-box {
-    background: #0d1117;
-    padding: 20px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.08);
+  .movie-content {
+    flex: 1;
   }
 
-  .top-movie-card {
-    background: #111;
-    padding: 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.08);
+  .movie-stats {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+
+  .stat-item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .movie-action {
+    flex-shrink: 0;
+  }
+
+  .btn-action {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-action:hover {
+    background: var(--primary);
+    transform: rotate(90deg);
+  }
+
+  /* ===== EMPTY STATES ===== */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .empty-state-large {
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    font-size: 3.5rem;
+    color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .empty-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  /* ===== GRID LAYOUTS ===== */
+  .top-movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
   }
 
   /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    .dashboard-header {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+  @media (max-width: 992px) {
+    .profile-greeting {
+      font-size: 1.7rem;
     }
-
-    .profile-header {
-      justify-content: center;
-      text-align: center;
+    
+    .stat-value {
+      font-size: 2.3rem;
     }
-
-    .profile-text h2 {
-      font-size: 1.5rem;
-    }
-
-    .upload-form {
-      width: 100%;
-    }
-
-    .studio-value {
-      font-size: 1.5rem;
+    
+    .top-movies-grid {
+      grid-template-columns: 1fr;
     }
   }
+
+  @media (max-width: 768px) {
+    .profile-section {
+      padding: 20px;
+    }
+    
+    .profile-image-container {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+    }
+    
+    .profile-info {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .profile-meta {
+      justify-content: center;
+    }
+    
+    .stat-card {
+      padding: 20px;
+    }
+    
+    .activity-item {
+      flex-direction: column;
+      text-align: center;
+      padding: 20px 0;
+    }
+    
+    .activity-icon {
+      margin: 0 auto;
+    }
+    
+    .activity-meta {
+      justify-content: center;
+    }
+    
+    .card-header {
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+    }
+    
+    .movie-card {
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+    }
+    
+    .movie-content {
+      width: 100%;
+    }
+    
+    .btn-gradient {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .profile-greeting {
+      font-size: 1.5rem;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+    }
+    
+    .action-card {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .action-title {
+      font-size: 1.3rem;
+    }
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-card, .activity-card, .movie-card {
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { animation-delay: 0.2s; }
 </style>
+
+<!-- ===== JAVASCRIPT FOR UPLOAD ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // File upload functionality
+  const fileInput = document.getElementById('id_profile_photo');
+  const fileName = document.getElementById('fileName');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const profilePreview = document.getElementById('profilePreview');
+  const photoForm = document.getElementById('photoUploadForm');
+  
+  if (fileInput) {
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        
+        if (!validTypes.includes(file.type)) {
+          alert('Please select a valid image file (JPEG, PNG, GIF, WebP)');
+          this.value = '';
+          fileName.textContent = 'No file selected';
+          uploadBtn.disabled = true;
+          return;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          alert('File size must be less than 5MB');
+          this.value = '';
+          fileName.textContent = 'No file selected';
+          uploadBtn.disabled = true;
+          return;
+        }
+        
+        fileName.textContent = file.name.length > 25 
+          ? file.name.substring(0, 25) + '...' 
+          : file.name;
+        uploadBtn.disabled = false;
+        
+        // Preview image
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          profilePreview.src = e.target.result;
+          profilePreview.classList.add('preview-animate');
+          setTimeout(() => profilePreview.classList.remove('preview-animate'), 300);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+  
+  // Form submission
+  if (photoForm) {
+    photoForm.addEventListener('submit', function(e) {
+      uploadBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Uploading...';
+      uploadBtn.disabled = true;
+    });
+  }
+  
+  // Add hover effect for cards on touch devices
+  if ('ontouchstart' in window) {
+    document.querySelectorAll('.stat-card, .movie-card').forEach(card => {
+      card.addEventListener('touchstart', function() {
+        this.classList.add('touch-active');
+      });
+      
+      card.addEventListener('touchend', function() {
+        setTimeout(() => this.classList.remove('touch-active'), 150);
+      });
+    });
+  }
+});
+
+// Add CSS for touch feedback
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    .touch-active {
+      transform: scale(0.98) !important;
+    }
+    
+    .preview-animate {
+      animation: pulse 0.3s ease;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+`);
+</script>
 
 {% endblock %}
