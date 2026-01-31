@@ -4,64 +4,725 @@
 {% block content %}
 
 <style>
-  .announcement-box {
-    background: #111827;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    padding: 22px;
-    margin-bottom: 22px;
-    transition: 0.25s ease;
+  /* ===== CSS VARIABLES ===== */
+  :root {
+    --primary-blue: #1e90ff;
+    --primary-blue-dark: #0d6efd;
+    --primary-red: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --bg-dark: #0b0b0b;
+    --bg-card: #111827;
+    --text-light: #f8f8f8;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --gradient-blue: linear-gradient(135deg, #1e90ff 0%, #0d6efd 100%);
+    --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
   }
 
-  .announcement-box:hover {
-    border-color: #1e90ff;
-    box-shadow: 0 0 10px rgba(30,144,255,0.25);
+  /* ===== PAGE LAYOUT ===== */
+  .announcements-page {
+    padding: 40px 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+    min-height: calc(100vh - 180px);
   }
 
-  .announcement-title {
-    font-size: 1.4rem;
+  /* ===== HEADER SECTION ===== */
+  .announcements-header {
+    margin-bottom: 48px;
+    text-align: center;
+    position: relative;
+  }
+
+  .header-decoration {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+    margin: 20px auto 0;
+    max-width: 300px;
+  }
+
+  .announcements-title {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--primary-blue), #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .announcements-subtitle {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-weight: 500;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .title-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(30, 144, 255, 0.1);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    font-size: 28px;
+    border: 2px solid rgba(30, 144, 255, 0.2);
+  }
+
+  /* ===== STATS BAR ===== */
+  .announcements-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 30px;
+    min-width: 200px;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-blue);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
     font-weight: 800;
+    color: var(--primary-blue);
+    line-height: 1;
     margin-bottom: 8px;
   }
 
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ===== ANNOUNCEMENTS LIST ===== */
+  .announcements-list {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .announcement-card {
+    background: rgba(17, 24, 39, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+  }
+
+  .announcement-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(30, 144, 255, 0.3);
+  }
+
+  .announcement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--gradient-blue);
+    border-radius: 5px 0 0 5px;
+  }
+
+  .announcement-card.new::before {
+    background: var(--gradient-purple);
+  }
+
+  .announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .announcement-title-wrapper {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .announcement-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    line-height: 1.3;
+    background: linear-gradient(90deg, var(--text-light), var(--primary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .announcement-badge {
+    display: inline-block;
+    background: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-left: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
   .announcement-meta {
-    font-size: 0.85rem;
-    color: #9ca3af;
-    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .meta-icon {
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+  }
+
+  .announcement-content {
+    margin-top: 24px;
+    position: relative;
   }
 
   .announcement-message {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 1.1rem;
+    line-height: 1.8;
     color: #e5e7eb;
     white-space: pre-line;
+    padding: 20px;
+    background: rgba(11, 11, 11, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .announcement-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+    margin: 24px 0;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(17, 24, 39, 0.6);
+    border: 2px dashed var(--border-color);
+    border-radius: 20px;
+    margin-top: 40px;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 24px;
+  }
+
+  .empty-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+
+  .empty-text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ===== PAGINATION ===== */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+  }
+
+  .pagination {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .page-link {
+    background: rgba(17, 24, 39, 0.8);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .page-link:hover {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    transform: translateY(-3px);
+  }
+
+  .page-link.active {
+    background: var(--gradient-blue);
+    border-color: var(--primary-blue);
+    color: white;
+  }
+
+  .page-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .announcements-page {
+      padding: 30px 0;
+    }
+
+    .announcements-title {
+      font-size: 2.2rem;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .title-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+    }
+
+    .announcements-subtitle {
+      font-size: 1.1rem;
+      padding: 0 20px;
+    }
+
+    .announcements-stats {
+      gap: 15px;
+      padding: 0 20px;
+    }
+
+    .stat-card {
+      min-width: 150px;
+      padding: 18px 20px;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+
+    .announcement-card {
+      padding: 24px;
+      margin: 0 20px 25px;
+      border-radius: 18px;
+    }
+
+    .announcement-header {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .announcement-title-wrapper {
+      min-width: 100%;
+    }
+
+    .announcement-title {
+      font-size: 1.5rem;
+    }
+
+    .announcement-meta {
+      gap: 15px;
+    }
+
+    .announcement-message {
+      font-size: 1rem;
+      padding: 16px;
+    }
+
+    .empty-state {
+      margin: 40px 20px 0;
+      padding: 40px 20px;
+    }
+
+    .empty-title {
+      font-size: 1.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .announcements-title {
+      font-size: 1.9rem;
+    }
+
+    .announcements-subtitle {
+      font-size: 1rem;
+    }
+
+    .stat-card {
+      min-width: calc(50% - 15px);
+    }
+
+    .announcement-card {
+      padding: 20px;
+      margin: 0 15px 20px;
+      border-radius: 16px;
+    }
+
+    .announcement-title {
+      font-size: 1.3rem;
+    }
+
+    .announcement-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .announcement-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .page-link {
+      width: 40px;
+      height: 40px;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* ===== TABLET OPTIMIZATION ===== */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .announcements-list {
+      max-width: 700px;
+    }
+
+    .announcement-card {
+      padding: 28px;
+    }
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .announcement-card {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  }
+
+  .announcement-card:nth-child(1) { animation-delay: 0.1s; }
+  .announcement-card:nth-child(2) { animation-delay: 0.2s; }
+  .announcement-card:nth-child(3) { animation-delay: 0.3s; }
+  .announcement-card:nth-child(4) { animation-delay: 0.4s; }
+  .announcement-card:nth-child(5) { animation-delay: 0.5s; }
+
+  /* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+  @media (hover: none) and (pointer: coarse) {
+    .announcement-card:hover {
+      transform: none;
+    }
+
+    .stat-card:hover {
+      transform: none;
+    }
+
+    .page-link:hover {
+      transform: none;
+    }
+
+    .announcement-card,
+    .stat-card,
+    .page-link {
+      min-height: 44px;
+    }
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .announcement-card,
+    .stat-card,
+    .page-link {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .announcement-card:hover,
+    .stat-card:hover,
+    .page-link:hover {
+      transform: none !important;
+    }
+  }
+
+  /* ===== DARK MODE SUPPORT ===== */
+  @media (prefers-color-scheme: dark) {
+    .announcement-card,
+    .stat-card,
+    .empty-state {
+      background: rgba(17, 24, 39, 0.9);
+    }
   }
 </style>
 
-<div class="container">
+<div class="announcements-page">
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="announcements-header">
+      <h1 class="announcements-title">
+        <span class="title-icon">📢</span>
+        Announcements
+      </h1>
+      <p class="announcements-subtitle">
+        Stay updated with the latest news, updates, and important information from Dusa Films
+      </p>
+      <div class="header-decoration"></div>
+    </div>
 
-  <h2 class="fw-bold mb-4">📢 Announcements</h2>
-
-  {% if announcements %}
-    {% for a in announcements %}
-      <div class="announcement-box">
-        <div class="announcement-title">
-          {{ a.title }}
-        </div>
-
-        <div class="announcement-meta">
-          Posted on {{ a.created_at|date:"M d, Y H:i" }}
-        </div>
-
-        <div class="announcement-message">
-          {{ a.message }}
-        </div>
+    <!-- Stats Bar -->
+    <div class="announcements-stats">
+      <div class="stat-card">
+        <div class="stat-number">{{ announcements|length }}</div>
+        <div class="stat-label">Total Announcements</div>
       </div>
-    {% endfor %}
-  {% else %}
-    <p class="text-muted">No announcements available at the moment.</p>
-  {% endif %}
+      <div class="stat-card">
+        <div class="stat-number">
+          {% if announcements %}
+            {{ announcements.0.created_at|date:"M d" }}
+          {% else %}
+            --
+          {% endif %}
+        </div>
+        <div class="stat-label">Latest Update</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">
+          {% if unread_announcements_count > 0 %}
+            {{ unread_announcements_count }}
+          {% else %}
+            0
+          {% endif %}
+        </div>
+        <div class="stat-label">Unread</div>
+      </div>
+    </div>
 
+    <!-- Announcements List -->
+    <div class="announcements-list">
+      {% if announcements %}
+        {% for announcement in announcements %}
+          <div class="announcement-card {% if announcement.is_new %}new{% endif %}">
+            
+            <!-- Header with title and badge -->
+            <div class="announcement-header">
+              <div class="announcement-title-wrapper">
+                <h3 class="announcement-title">
+                  {{ announcement.title }}
+                  {% if announcement.is_new %}
+                    <span class="announcement-badge">New</span>
+                  {% endif %}
+                </h3>
+              </div>
+            </div>
+
+            <!-- Meta information -->
+            <div class="announcement-meta">
+              <span class="meta-item">
+                <i class="bi bi-calendar3 meta-icon"></i>
+                Posted {{ announcement.created_at|timesince }} ago
+              </span>
+              <span class="meta-item">
+                <i class="bi bi-clock meta-icon"></i>
+                {{ announcement.created_at|date:"M d, Y • H:i" }}
+              </span>
+              {% if announcement.important %}
+              <span class="meta-item">
+                <i class="bi bi-exclamation-triangle-fill meta-icon" style="color: var(--warning);"></i>
+                Important
+              </span>
+              {% endif %}
+            </div>
+
+            <!-- Divider -->
+            <div class="announcement-divider"></div>
+
+            <!-- Content -->
+            <div class="announcement-content">
+              <div class="announcement-message">
+                {{ announcement.message }}
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-megaphone"></i>
+          </div>
+          <h3 class="empty-title">No Announcements Yet</h3>
+          <p class="empty-text">
+            There are no announcements at the moment. Check back later for updates, 
+            news, and important information about Dusa Films.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Pagination (if applicable) -->
+    {% if announcements.has_other_pages %}
+    <div class="pagination-container">
+      <div class="pagination">
+        {% if announcements.has_previous %}
+          <a href="?page={{ announcements.previous_page_number }}" class="page-link">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            <i class="bi bi-chevron-left"></i>
+          </span>
+        {% endif %}
+
+        {% for i in announcements.paginator.page_range %}
+          {% if announcements.number == i %}
+            <span class="page-link active">{{ i }}</span>
+          {% elif i > announcements.number|add:'-3' and i < announcements.number|add:'3' %}
+            <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if announcements.has_next %}
+          <a href="?page={{ announcements.next_page_number }}" class="page-link">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
 </div>
+
+<!-- ===== ENHANCEMENT SCRIPTS ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const announcementCards = document.querySelectorAll('.announcement-card');
+  
+  // Add click animation to cards
+  announcementCards.forEach(card => {
+    card.addEventListener('click', function() {
+      this.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+    });
+  });
+
+  // Mark announcements as read when viewed
+  const observerOptions = {
+    threshold: 0.5
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        // You could add AJAX call here to mark as read
+        card.classList.remove('new');
+        observer.unobserve(card);
+      }
+    });
+  }, observerOptions);
+
+  // Observe new announcement cards
+  document.querySelectorAll('.announcement-card.new').forEach(card => {
+    observer.observe(card);
+  });
+
+  // Add hover effect for touch devices
+  if ('ontouchstart' in window) {
+    announcementCards.forEach(card => {
+      card.addEventListener('touchstart', function() {
+        this.classList.add('touch-active');
+      });
+      
+      card.addEventListener('touchend', function() {
+        setTimeout(() => this.classList.remove('touch-active'), 150);
+      });
+    });
+  }
+});
+
+// Add CSS for touch feedback
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    .touch-active {
+      background: rgba(30, 144, 255, 0.1) !important;
+      border-color: var(--primary-blue) !important;
+    }
+    
+    @media (max-width: 768px) {
+      .announcement-card {
+        cursor: pointer;
+      }
+    }
+  </style>
+`);
+</script>
 
 {% endblock %}
