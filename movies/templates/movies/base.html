@@ -21,7 +21,7 @@
             --blue: #1e90ff;
             --white: #f8f8f8;
             --nav-height: 76px;
-            --footer-height: 180px; /* Approximate footer height */
+            --footer-height: 140px; /* UPDATED: Reduced from 180px to 140px */
         }
 
         html, body {
@@ -81,6 +81,17 @@
             color: white !important;
         }
 
+        /* UPDATED: Admin link yellow color */
+        .nav-link-strong.admin-yellow {
+            color: #ffd700 !important; /* Yellow color for admin */
+            font-weight: 800;
+        }
+        
+        .nav-link-strong.admin-yellow:hover {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700 !important;
+        }
+
         main.container {
             padding-top: calc(var(--nav-height) + 30px);
             padding-bottom: 40px;
@@ -114,6 +125,11 @@
                 transform: scale(0.97);
                 background: rgba(30,144,255,0.25);
             }
+            
+            /* UPDATED: Admin link on mobile */
+            .nav-link-strong.admin-yellow:active {
+                background: rgba(255, 215, 0, 0.25);
+            }
         }
 
         .site-footer {
@@ -121,10 +137,10 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: var(--footer-height);
+            height: var(--footer-height); /* UPDATED: Now 140px instead of 180px */
             background: linear-gradient(180deg, #000, #0a0a0a);
             border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 20px 0;
+            padding: 15px 0; /* UPDATED: Reduced from 20px 0 */
             text-align: center;
             z-index: 1020;
             display: flex;
@@ -141,7 +157,7 @@
         .footer-logo {
             height: 30px;
             width: auto;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* UPDATED: Reduced from 8px */
         }
 
         .footer-social {
@@ -149,7 +165,7 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 12px;
-            margin: 12px 0;
+            margin: 10px 0; /* UPDATED: Reduced from 12px 0 */
         }
 
         .footer-social a {
@@ -231,7 +247,7 @@
 
         /* Footer text styling - SAME as "Follow Us" */
         .footer-text {
-            margin-top: 8px;
+            margin-top: 6px; /* UPDATED: Reduced from 8px */
             font-size: 0.85rem;
             font-weight: 600;
             opacity: 0.9;
@@ -244,7 +260,7 @@
             color: #e5e7eb;
             font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* UPDATED: Reduced from 10px */
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -256,11 +272,11 @@
 
         @media (max-width: 768px) {
             :root {
-                --footer-height: 160px;
+                --footer-height: 130px; /* UPDATED: Reduced from 160px */
             }
             
             .site-footer {
-                padding: 15px 0;
+                padding: 12px 0; /* UPDATED: Reduced from 15px 0 */
             }
             
             .footer-social {
@@ -283,12 +299,13 @@
             
             .footer-social-title {
                 font-size: 0.85rem;
+                margin-bottom: 6px; /* UPDATED: Reduced */
             }
         }
 
         @media (max-width: 480px) {
             :root {
-                --footer-height: 150px;
+                --footer-height: 120px; /* UPDATED: Reduced from 150px */
             }
             
             .footer-social {
@@ -307,6 +324,7 @@
             
             .footer-social-title {
                 font-size: 0.8rem;
+                margin-bottom: 5px; /* UPDATED: Reduced */
             }
         }
     </style>
@@ -355,7 +373,8 @@
 
                         {% if user.is_staff %}
                         <li class="nav-item">
-                            <a class="nav-link nav-link-strong text-warning fw-bold"
+                            <!-- UPDATED: Added admin-yellow class for yellow color -->
+                            <a class="nav-link nav-link-strong admin-yellow"
                                href="{% url 'admin:index' %}">
                                 Admin
                             </a>
@@ -412,8 +431,7 @@
         
         <div class="footer-social">
             <!-- WhatsApp -->
-            <a href="https://wa.me/250788548878"
-               target="_blank" class="social-whatsapp" 
+            <a href="https://wa.me/250786844104" target="_blank" class="social-whatsapp" 
                title="WhatsApp">
                 <i class="bi bi-whatsapp"></i>
             </a>

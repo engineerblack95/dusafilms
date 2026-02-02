@@ -1,0 +1,191 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Dusa Films Administration{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --dusa-blue: #2563eb;       /* Primary blue */
+        --dusa-green: #10b981;      /* Primary green */
+        --dusa-dark: #0f172a;       /* Dark blue background */
+        --dusa-light: #e0f2fe;      /* Light blue for accents */
+    }
+    
+    /* Header styling */
+    #header {
+        background: linear-gradient(135deg, var(--dusa-dark), #1e293b);
+        color: white;
+        border-bottom: 3px solid var(--dusa-blue);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Branding - Dusa Films text */
+    #branding h1 {
+        color: #ffffff; /* White color for contrast */
+        font-weight: 800;
+        font-size: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    #branding h1 a {
+        color: #ffffff !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    #branding h1 a:hover {
+        color: var(--dusa-light) !important;
+        text-shadow: 0 0 10px rgba(224, 242, 254, 0.5);
+    }
+    
+    /* Module headers - Blue color */
+    .module h2, .module caption, .inline-group h2 {
+        background: linear-gradient(135deg, var(--dusa-blue), #1d4ed8);
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Breadcrumbs - Green accent */
+    div.breadcrumbs {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+        color: var(--dusa-green);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        font-weight: 500;
+    }
+    
+    div.breadcrumbs a {
+        color: var(--dusa-blue) !important;
+        font-weight: 600;
+    }
+    
+    div.breadcrumbs a:hover {
+        color: #1d4ed8 !important;
+        text-decoration: underline;
+    }
+    
+    /* Buttons - Green color */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: linear-gradient(135deg, var(--dusa-green), #059669);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover,
+    .submit-row input:hover, a.button:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* Delete button stays red for danger actions */
+    .deletelink {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    }
+    
+    .deletelink:hover {
+        background: linear-gradient(135deg, #e23c3c, #b91c1c) !important;
+    }
+    
+    /* Links throughout admin */
+    a:link, a:visited {
+        color: var(--dusa-blue);
+    }
+    
+    a:hover {
+        color: #1d4ed8;
+    }
+    
+    /* Selected items - Blue highlight */
+    .selected {
+        background: rgba(37, 99, 235, 0.1) !important;
+        border-left: 4px solid var(--dusa-blue) !important;
+    }
+    
+    /* Table headers */
+    thead th {
+        background: linear-gradient(135deg, var(--dusa-blue), #1d4ed8) !important;
+        color: white !important;
+    }
+    
+    /* Pagination */
+    .paginator a:link, .paginator a:visited {
+        background: var(--dusa-green) !important;
+        color: white !important;
+    }
+    
+    /* Object tools */
+    .object-tools a {
+        background: var(--dusa-green) !important;
+        color: white !important;
+    }
+    
+    .object-tools a:hover {
+        background: #059669 !important;
+    }
+    
+    /* Recent actions sidebar */
+    #recent-actions-module h2 {
+        background: linear-gradient(135deg, var(--dusa-green), #059669) !important;
+        color: white !important;
+    }
+    
+    /* Login page specific */
+    .login #header {
+        background: linear-gradient(135deg, var(--dusa-dark), #1e293b) !important;
+    }
+    
+    .login .submit-row input {
+        background: linear-gradient(135deg, var(--dusa-green), #059669) !important;
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1rem;
+    }
+    
+    /* Dashboard specific */
+    .dashboard #content {
+        background: #f8fafc;
+    }
+    
+    /* Make sure text is readable on dark backgrounds */
+    body {
+        background: #f8fafc;
+        color: #1e293b;
+    }
+    
+    /* Form fields focus state */
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--dusa-blue) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+    }
+    
+    /* Calendar and time icons */
+    .calendarbox, .clockbox {
+        border: 2px solid var(--dusa-blue) !important;
+    }
+    
+    .calendarnav-previous, .calendarnav-next {
+        background: var(--dusa-blue) !important;
+    }
+    
+    .calendar-cancel {
+        background: var(--dusa-green) !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        Dusa Films Administration
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
