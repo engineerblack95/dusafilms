@@ -308,41 +308,79 @@
 .movie-card:nth-child(8) { animation-delay: 0.8s; }
 
 /* ================= CATEGORY CARDS ================= */
+/* UPDATED: Smaller category cards */
 .category-card {
     background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-    border-radius: 16px;
+    border-radius: 12px; /* Reduced from 16px */
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Faster transition */
     border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%; /* Ensure full height */
 }
 
-.category-card:hover {
-    transform: translateY(-8px);
-    border-color: #ff2b2b;
-    box-shadow: 0 15px 30px rgba(255, 43, 43, 0.25);
+/* Smaller image container for category cards */
+.category-card .movie-card-image {
+    height: 160px; /* Reduced from 260px */
 }
 
-.category-card img {
-    transition: transform 0.8s ease;
+/* Smaller content padding for category cards */
+.category-card .movie-card-content {
+    padding: 12px 15px; /* Reduced from 20px */
 }
 
-.category-card:hover img {
-    transform: scale(1.05);
+/* Smaller title for category cards */
+.category-card .movie-card-title {
+    font-size: 0.95rem; /* Reduced from 1.1rem */
+    margin-bottom: 5px;
 }
 
+/* Smaller meta info for category cards */
+.category-card .movie-card-meta {
+    margin-bottom: 0;
+}
+
+/* Smaller count badge */
 .category-count {
     background: rgba(74, 163, 255, 0.1);
     color: #4aa3ff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    padding: 3px 10px; /* Reduced padding */
+    border-radius: 16px; /* Slightly smaller */
+    font-size: 0.8rem; /* Smaller font */
     border: 1px solid rgba(74, 163, 255, 0.3);
+}
+
+/* Hover effects for category cards (scaled down) */
+.category-card:hover {
+    transform: translateY(-5px) scale(1.01); /* Less lift than movie cards */
+    border-color: #ff2b2b;
+    box-shadow: 0 10px 20px rgba(255, 43, 43, 0.2); /* Smaller shadow */
+}
+
+.category-card img {
+    transition: transform 0.6s ease; /* Slightly slower than before */
+}
+
+.category-card:hover img {
+    transform: scale(1.03); /* Less zoom than movie cards */
 }
 
 /* ================= RESPONSIVE DESIGN ================= */
 @media (max-width: 576px) {
     .movie-card-image {
         height: 220px;
+    }
+    
+    /* Smaller category cards on mobile */
+    .category-card .movie-card-image {
+        height: 140px; /* Even smaller on mobile */
+    }
+    
+    .category-card .movie-card-content {
+        padding: 10px 12px;
+    }
+    
+    .category-card .movie-card-title {
+        font-size: 0.9rem;
     }
     
     .movie-card-content {
@@ -373,11 +411,21 @@
     .movie-card-image {
         height: 240px;
     }
+    
+    /* Adjust category cards for tablet */
+    .category-card .movie-card-image {
+        height: 150px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
     .movie-card-image {
         height: 250px;
+    }
+    
+    /* Adjust category cards for desktop */
+    .category-card .movie-card-image {
+        height: 160px;
     }
 }
 
@@ -385,20 +433,27 @@
     .movie-card-image {
         height: 260px;
     }
+    
+    /* Keep category cards smaller on large screens */
+    .category-card .movie-card-image {
+        height: 160px;
+    }
 }
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-    .movie-card:hover {
+    .movie-card:hover,
+    .category-card:hover {
         transform: none;
         border-color: rgba(255, 255, 255, 0.05);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
-    .movie-card:active {
+    .movie-card:active,
+    .category-card:active {
         transform: scale(0.98);
         border-color: #ff2b2b;
-        box-shadow: 0 0 20px rgba(255, 43, 43, 0.3);
+        box-shadow: 0 0 15px rgba(255, 43, 43, 0.3);
     }
     
     .movie-card-play-btn {
@@ -423,7 +478,8 @@
         animation: none;
     }
     
-    .movie-card:hover img {
+    .movie-card:hover img,
+    .category-card:hover img {
         transform: none;
     }
 }

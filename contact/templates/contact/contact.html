@@ -27,7 +27,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    background: linear-gradient(45deg, transparent, rgba(255, 43, 67, 0.1), transparent);
     animation: shimmer 3s infinite;
 }
 
@@ -46,8 +46,8 @@
 }
 
 .contact-hero span {
-    color: #3b82f6;
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    color: #ff2b43;
+    text-shadow: 0 0 20px rgba(255, 43, 67, 0.5);
 }
 
 .contact-hero p {
@@ -94,13 +94,13 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(90deg, #ff2b43, #ff6b8b);
 }
 
 .contact-form-box:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 20px 40px rgba(255, 43, 67, 0.2);
+    border-color: rgba(255, 43, 67, 0.3);
 }
 
 .form-title {
@@ -119,7 +119,7 @@
     left: 0;
     width: 60px;
     height: 3px;
-    background: linear-gradient(90deg, #3b82f6, transparent);
+    background: linear-gradient(90deg, #ff2b43, transparent);
 }
 
 .form-subtitle {
@@ -144,7 +144,7 @@
 }
 
 .form-label i {
-    color: #3b82f6;
+    color: #ff2b43;
     font-size: 1.1rem;
 }
 
@@ -161,8 +161,8 @@
 .form-control:focus {
     background: rgba(15, 23, 42, 0.9);
     color: #f8fafc;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    border-color: #ff2b43;
+    box-shadow: 0 0 0 3px rgba(255, 43, 67, 0.25);
     transform: translateY(-1px);
 }
 
@@ -170,6 +170,21 @@ textarea.form-control {
     min-height: 160px;
     resize: vertical;
     line-height: 1.6;
+}
+
+/* Form Error Styling */
+.form-control.is-invalid {
+    border-color: #ff2b43;
+    background: rgba(255, 43, 67, 0.05);
+}
+
+.invalid-feedback {
+    color: #ff6b8b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 /* ================= SUCCESS MESSAGE ================= */
@@ -204,7 +219,7 @@ textarea.form-control {
 
 /* ================= SUBMIT BUTTON ================= */
 .btn-send {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #ff2b43, #d41930);
     border: none;
     color: white;
     font-weight: 800;
@@ -220,6 +235,7 @@ textarea.form-control {
     width: 100%;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .btn-send::before {
@@ -235,12 +251,18 @@ textarea.form-control {
 
 .btn-send:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 15px 30px rgba(255, 43, 67, 0.4);
+    background: linear-gradient(135deg, #d41930, #b3001e);
 }
 
 .btn-send:hover::before {
     left: 100%;
+}
+
+.btn-send:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
 /* ================= CONTACT INFO ================= */
@@ -268,7 +290,7 @@ textarea.form-control {
     left: 0;
     width: 60px;
     height: 3px;
-    background: linear-gradient(90deg, #ef4444, transparent);
+    background: linear-gradient(90deg, #ff2b43, transparent);
 }
 
 .info-item {
@@ -285,14 +307,15 @@ textarea.form-control {
 
 .info-item:hover {
     transform: translateX(5px);
-    border-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(255, 43, 67, 0.3);
     background: rgba(15, 23, 42, 0.7);
+    box-shadow: 0 10px 20px rgba(255, 43, 67, 0.1);
 }
 
 .info-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #ff2b43, #d41930);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -300,6 +323,11 @@ textarea.form-control {
     flex-shrink: 0;
     font-size: 1.3rem;
     color: white;
+    transition: transform 0.3s ease;
+}
+
+.info-item:hover .info-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .info-content h4 {
@@ -316,14 +344,17 @@ textarea.form-control {
 }
 
 .info-content a {
-    color: #60a5fa;
+    color: #ff6b8b;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .info-content a:hover {
-    color: #3b82f6;
+    color: #ff2b43;
     text-decoration: underline;
 }
 
@@ -366,41 +397,57 @@ textarea.form-control {
 }
 
 .contact-btn.email {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: linear-gradient(135deg, #ff2b43, #d41930);
+    color: white;
+}
+
+.contact-btn.call {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: white;
 }
 
 .contact-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .contact-btn.whatsapp:hover {
-    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4);
 }
 
 .contact-btn.email:hover {
-    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 10px 20px rgba(255, 43, 67, 0.4);
+}
+
+.contact-btn.call:hover {
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
 }
 
 /* ================= RESPONSE TIME ================= */
 .response-time {
     margin-top: 30px;
     padding: 20px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    background: linear-gradient(135deg, rgba(255, 43, 67, 0.1), rgba(255, 107, 139, 0.1));
     border-radius: 12px;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(255, 43, 67, 0.2);
     text-align: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 43, 67, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 43, 67, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 43, 67, 0); }
 }
 
 .response-time i {
-    color: #3b82f6;
+    color: #ff2b43;
     font-size: 1.2rem;
     margin-right: 8px;
 }
 
 .response-time span {
-    color: #60a5fa;
+    color: #ff6b8b;
     font-weight: 700;
 }
 
@@ -422,7 +469,7 @@ textarea.form-control {
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    background: linear-gradient(90deg, #ff2b43, #ff6b8b, #25D366);
 }
 
 .faq-title {
@@ -442,7 +489,7 @@ textarea.form-control {
     transform: translateX(-50%);
     width: 100px;
     height: 4px;
-    background: linear-gradient(90deg, #3b82f6, transparent);
+    background: linear-gradient(90deg, #ff2b43, transparent);
 }
 
 .faq-grid {
@@ -458,12 +505,13 @@ textarea.form-control {
     padding: 25px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .faq-item:hover {
     transform: translateY(-5px);
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+    border-color: rgba(255, 43, 67, 0.3);
+    box-shadow: 0 10px 25px rgba(255, 43, 67, 0.1);
 }
 
 .faq-item h5 {
@@ -477,7 +525,7 @@ textarea.form-control {
 }
 
 .faq-item h5 i {
-    color: #3b82f6;
+    color: #ff2b43;
 }
 
 .faq-item p {
@@ -495,7 +543,7 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(135deg, #ff2b43, #d41930);
     color: white;
     padding: 14px 28px;
     border-radius: 10px;
@@ -506,7 +554,46 @@ textarea.form-control {
 
 .faq-cta a:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 25px rgba(255, 43, 67, 0.3);
+}
+
+/* ================= SOCIAL CONNECT ================= */
+.social-connect {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.social-connect h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #f8fafc;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.social-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--color), var(--color-dark));
+}
+
+.social-icon:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* ================= RESPONSIVE ================= */
@@ -558,6 +645,26 @@ textarea.form-control {
     .faq-grid {
         grid-template-columns: 1fr;
     }
+    
+    .social-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .contact-hero::before,
+    .info-item,
+    .contact-btn,
+    .btn-send,
+    .faq-item,
+    .social-icon,
+    .response-time {
+        animation: none;
+        transition: none;
+    }
 }
 </style>
 
@@ -591,7 +698,7 @@ textarea.form-control {
             {% endfor %}
         {% endif %}
 
-        <form method="POST" novalidate>
+        <form method="POST" novalidate id="contactForm">
             {% csrf_token %}
 
             <div class="form-group">
@@ -600,6 +707,12 @@ textarea.form-control {
                     {{ form.name.label }}
                 </label>
                 {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="invalid-feedback">
+                        <i class="bi bi-exclamation-circle"></i>
+                        {{ form.name.errors.0 }}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="form-group">
@@ -608,6 +721,12 @@ textarea.form-control {
                     {{ form.email.label }}
                 </label>
                 {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        <i class="bi bi-exclamation-circle"></i>
+                        {{ form.email.errors.0 }}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="form-group">
@@ -616,11 +735,17 @@ textarea.form-control {
                     {{ form.message.label }}
                 </label>
                 {{ form.message }}
+                {% if form.message.errors %}
+                    <div class="invalid-feedback">
+                        <i class="bi bi-exclamation-circle"></i>
+                        {{ form.message.errors.0 }}
+                    </div>
+                {% endif %}
             </div>
 
-            <button type="submit" class="btn-send">
+            <button type="submit" class="btn-send" id="submitBtn">
                 <i class="bi bi-send"></i>
-                Send Message
+                <span id="submitText">Send Message</span>
             </button>
         </form>
     </div>
@@ -636,7 +761,9 @@ textarea.form-control {
             <div class="info-content">
                 <h4>WhatsApp Support</h4>
                 <p>Fastest response time for urgent issues</p>
-                <a href="https://wa.me/250786844104" target="_blank">+250 786 844 104</a>
+                <a href="https://wa.me/250788548878" target="_blank">
+                    <i class="bi bi-whatsapp"></i> +250 788548878
+                </a>
             </div>
         </div>
 
@@ -647,18 +774,22 @@ textarea.form-control {
             <div class="info-content">
                 <h4>Email Us</h4>
                 <p>For detailed inquiries and partnerships</p>
-                <a href="mailto:support@dusafilms.com">support@dusafilms.com</a>
+                <a href="mailto:filmsdusa@gmail.com">
+                    <i class="bi bi-envelope"></i> filmsdusa@gmail.com
+                </a>
             </div>
         </div>
 
         <div class="info-item">
             <div class="info-icon">
-                <i class="bi bi-clock"></i>
+                <i class="bi bi-telephone"></i>
             </div>
             <div class="info-content">
-                <h4>Response Time</h4>
-                <p><strong>WhatsApp:</strong> Within 1-2 hours</p>
-                <p><strong>Email/Form:</strong> Within 24 hours</p>
+                <h4>Call Us</h4>
+                <p>Available Monday to Friday, 9AM - 5PM</p>
+                <a href="tel:+250788548878">
+                    <i class="bi bi-telephone"></i> +250 788548878
+                </a>
             </div>
         </div>
 
@@ -675,6 +806,11 @@ textarea.form-control {
                 <a href="mailto:support@dusafilms.com" 
                    class="contact-btn email">
                     <i class="bi bi-envelope"></i> Email
+                </a>
+                
+                <a href="tel:+250786844104" 
+                   class="contact-btn call">
+                    <i class="bi bi-telephone"></i> Call
                 </a>
             </div>
         </div>
@@ -719,4 +855,127 @@ textarea.form-control {
     </div>
 </div>
 
+<!-- ================= SOCIAL CONNECT ================= -->
+<div class="social-connect">
+    <h3>Follow Us</h3>
+    <div class="social-icons">
+        <a href="https://facebook.com" target="_blank" class="social-icon" 
+           style="--color: #1877F2; --color-dark: #166FE5;">
+            <i class="bi bi-facebook"></i>
+        </a>
+        <a href="https://instagram.com" target="_blank" class="social-icon"
+           style="--color: #E1306C; --color-dark: #C13584;">
+            <i class="bi bi-instagram"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank" class="social-icon"
+           style="--color: #000000; --color-dark: #14171A;">
+            <i class="bi bi-twitter-x"></i>
+        </a>
+        <a href="https://youtube.com" target="_blank" class="social-icon"
+           style="--color: #FF0000; --color-dark: #CC0000;">
+            <i class="bi bi-youtube"></i>
+        </a>
+        <a href="https://tiktok.com" target="_blank" class="social-icon"
+           style="--color: #000000; --color-dark: #222222;">
+            <i class="bi bi-tiktok"></i>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form submission enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            // Simple form validation
+            const name = document.getElementById('id_name');
+            const email = document.getElementById('id_email');
+            const message = document.getElementById('id_message');
+            
+            let isValid = true;
+            
+            // Reset previous error states
+            [name, email, message].forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+            
+            // Validate name
+            if (!name.value.trim()) {
+                name.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Validate message
+            if (!message.value.trim() || message.value.length < 10) {
+                message.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Show loading state
+                submitBtn.disabled = true;
+                submitText.textContent = 'Sending...';
+                
+                // Form is valid, allow submission
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitText.textContent = 'Send Message';
+                }, 3000);
+            } else {
+                e.preventDefault();
+            }
+        });
+        
+        // Real-time validation
+        const formFields = contactForm.querySelectorAll('.form-control');
+        formFields.forEach(field => {
+            field.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        });
+    }
+    
+    // FAQ item click effect
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        item.addEventListener('click', function() {
+            this.style.transform = 'translateY(-5px)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 300);
+        });
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

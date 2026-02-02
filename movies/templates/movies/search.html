@@ -4,145 +4,599 @@
 {% block content %}
 
 <style>
-    body { background: #0b0b12; color: white; }
-
-    /* HEADER */
+    /* ================= SEARCH HEADER ================= */
     .search-header {
-        padding: 45px 20px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(17, 24, 39, 0.98)),
+                    url('https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        color: white;
-        border-bottom: 1px solid #1f2937;
-        background: linear-gradient(to bottom, #0e0e16, #0b0b12);
+        padding: 2rem 1rem;
+        position: relative;
+        margin-bottom: 40px;
+        border-bottom: 3px solid #ff2b2b;
+    }
+
+    .search-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 43, 43, 0.1), transparent 60%);
     }
 
     .search-title {
-        font-size: 32px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: white;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 1;
+        margin-bottom: 10px;
     }
 
     .query-text {
+        background: rgba(59, 130, 246, 0.2);
         color: #3b82f6;
-        font-size: 19px;
-        margin-top: 6px;
+        padding: 8px 24px;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 10px;
+        display: inline-block;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 1;
     }
 
-    /* MAIN WRAPPER */
+    .results-count {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+        margin-top: 15px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .results-count i {
+        color: #ff2b2b;
+    }
+
+    /* ================= MAIN CONTAINER ================= */
     .container-search {
         width: 92%;
         max-width: 1500px;
-        margin: auto;
-        padding: 40px 0 60px;
+        margin: 0 auto;
+        padding: 0 15px 60px;
     }
 
-    /* GRID */
+    /* ================= GRID LAYOUT ================= */
     .grid {
         display: grid;
-        gap: 22px;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 24px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 
-    /* MOVIE CARD */
+    /* ================= MOVIE CARD (Updated to match home page) ================= */
     .movie-card {
-        position: relative;
-        background: #111827;
-        border-radius: 12px;
+        background: linear-gradient(145deg, #151515, #0a0a0a);
+        border-radius: 16px;
         overflow: hidden;
-        transition: 0.25s;
-        border: 1px solid #1f2937;
+        border: 1px solid rgba(255, 255, 255, 0.05);
         text-decoration: none;
         color: white;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        position: relative;
         cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transform-style: preserve-3d;
+    }
+
+    .movie-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent, rgba(255, 43, 43, 0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+        z-index: 1;
+    }
+
+    .movie-card:hover::before {
+        transform: translateX(100%);
     }
 
     .movie-card:hover {
-        transform: translateY(-6px);
-        border-color: #3b82f6;
-        box-shadow: 0 0 12px #3b82f6aa;
+        transform: translateY(-10px) scale(1.02);
+        border-color: #ff2b2b;
+        box-shadow: 
+            0 20px 40px rgba(255, 43, 43, 0.3),
+            0 0 60px rgba(255, 43, 43, 0.1),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        z-index: 10;
+    }
+
+    /* ================= THUMBNAIL ================= */
+    .movie-thumb-container {
+        position: relative;
+        width: 100%;
+        height: 320px;
+        overflow: hidden;
     }
 
     .movie-thumb {
         width: 100%;
-        height: 240px;
+        height: 100%;
         object-fit: cover;
-        background: black;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
+    .movie-card:hover .movie-thumb {
+        transform: scale(1.08);
+    }
+
+    /* Play button overlay */
+    .movie-thumb-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 40%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+
+    .movie-card:hover .movie-thumb-overlay {
+        opacity: 1;
+    }
+
+    .play-btn {
+        background: rgba(255, 43, 43, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transform: translateY(20px) scale(0.8);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .movie-card:hover .play-btn {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    .play-btn:hover {
+        background: #ff2b2b;
+        transform: scale(1.1);
+    }
+
+    /* ================= MOVIE INFO ================= */
     .movie-info {
-        padding: 14px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background: rgba(17, 17, 17, 0.8);
+        backdrop-filter: blur(10px);
     }
 
     .movie-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 4px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 10px;
+        line-height: 1.4;
+        transition: color 0.3s ease;
+    }
+
+    .movie-card:hover .movie-title {
+        color: #ff2b2b;
     }
 
     .movie-meta {
-        color: #9ca3af;
-        font-size: 13px;
+        color: #aaa;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
-    /* EMPTY STATE */
+    .movie-time {
+        color: #4aa3ff;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .movie-comments {
+        color: #10b981;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .movie-category-badge {
+        background: rgba(255, 43, 43, 0.1);
+        color: #ff2b2b;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 43, 43, 0.3);
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .movie-card:hover .movie-category-badge {
+        background: rgba(255, 43, 43, 0.2);
+        border-color: #ff2b2b;
+        transform: translateY(-2px);
+    }
+
+    /* Watch Now button */
+    .watch-now-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-top: auto;
+        border: none;
+        cursor: pointer;
+    }
+
+    .watch-now-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .watch-now-btn:hover::before {
+        left: 100%;
+    }
+
+    .watch-now-btn:hover {
+        background: linear-gradient(135deg, #d41919, #b30000);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 43, 43, 0.4);
+    }
+
+    /* ================= EMPTY STATE ================= */
     .empty-box {
+        padding: 80px 40px;
         text-align: center;
-        padding: 80px 20px;
+        font-size: 1.3rem;
         color: #9ca3af;
-        font-size: 20px;
-        animation: fadeIn 0.5s ease-out;
+        background: linear-gradient(145deg, #111827, #0d1422);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        max-width: 700px;
+        margin: 40px auto;
+        animation: fadeIn 0.6s ease-out;
     }
 
     .empty-emoji {
-        font-size: 50px;
-        margin-bottom: 15px;
+        font-size: 4rem;
+        margin-bottom: 20px;
         display: block;
-        opacity: 0.7;
+        color: #6b7280;
+        animation: bounce 2s infinite;
     }
 
+    .empty-box h3 {
+        color: #e5e7eb;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .empty-box p {
+        color: #9ca3af;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .search-again-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 30px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .search-again-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    /* ================= ANIMATIONS ================= */
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Loading animation for cards */
+    @keyframes cardFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .movie-card {
+        animation: cardFadeIn 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    .movie-card:nth-child(1) { animation-delay: 0.1s; }
+    .movie-card:nth-child(2) { animation-delay: 0.2s; }
+    .movie-card:nth-child(3) { animation-delay: 0.3s; }
+    .movie-card:nth-child(4) { animation-delay: 0.4s; }
+    .movie-card:nth-child(5) { animation-delay: 0.5s; }
+    .movie-card:nth-child(6) { animation-delay: 0.6s; }
+    .movie-card:nth-child(7) { animation-delay: 0.7s; }
+    .movie-card:nth-child(8) { animation-delay: 0.8s; }
+
+    /* ================= RESPONSIVE DESIGN ================= */
+    @media (max-width: 768px) {
+        .search-header {
+            min-height: 220px;
+            margin-bottom: 30px;
+        }
+        
+        .search-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+        }
+        
+        .query-text {
+            font-size: 1rem;
+            padding: 6px 18px;
+        }
+        
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .movie-thumb-container {
+            height: 260px;
+        }
+        
+        .results-count {
+            font-size: 0.9rem;
+            padding: 6px 14px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        
+        .movie-thumb-container {
+            height: 220px;
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 1rem;
+        }
+        
+        .empty-box {
+            padding: 50px 20px;
+        }
+        
+        .empty-box h3 {
+            font-size: 1.5rem;
+        }
+        
+        .empty-emoji {
+            font-size: 3rem;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        }
+        
+        .movie-thumb-container {
+            height: 340px;
+        }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .movie-card:hover {
+            transform: none;
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .movie-card:active {
+            transform: scale(0.98);
+            border-color: #ff2b2b;
+            box-shadow: 0 0 20px rgba(255, 43, 43, 0.3);
+        }
+        
+        .play-btn {
+            opacity: 1;
+            transform: translateY(0) scale(0.9);
+        }
+        
+        .movie-thumb-overlay {
+            opacity: 1;
+        }
+    }
+
+    /* Reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        .movie-card,
+        .movie-card::before,
+        .movie-thumb,
+        .play-btn,
+        .watch-now-btn,
+        .empty-box,
+        .search-again-btn {
+            animation: none;
+            transition: none;
+        }
+        
+        .movie-card:hover .movie-thumb {
+            transform: none;
+        }
+        
+        .empty-emoji {
+            animation: none;
+        }
     }
 </style>
 
-
-<!-- HEADER -->
+<!-- ================= SEARCH HEADER ================= -->
 <div class="search-header">
-    <div class="search-title">Search Results</div>
-    <div class="query-text">for "{{ q }}"</div>
+    <h1 class="search-title">Search Results</h1>
+    <div class="query-text">"{{ q }}"</div>
+    
+    {% if results %}
+    <div class="results-count">
+        <i class="bi bi-check-circle"></i>
+        <span>Found {{ results|length }} result{{ results|length|pluralize }}</span>
+    </div>
+    {% endif %}
 </div>
 
-
-<!-- RESULTS -->
+<!-- ================= SEARCH RESULTS ================= -->
 <div class="container-search">
-
     {% if results %}
         <div class="grid">
             {% for movie in results %}
                 <a href="{% url 'movies:detail' movie.slug %}" class="movie-card">
-
-                    {% if movie.thumbnail %}
-                        <img src="{{ movie.thumbnail.url }}" class="movie-thumb">
-                    {% else %}
-                        <img src="https://via.placeholder.com/300x400?text=No+Image" class="movie-thumb">
-                    {% endif %}
-
-                    <div class="movie-info">
-                        <div class="movie-title">{{ movie.title }}</div>
-                        <div class="movie-meta">
-                            {{ movie.time_ago }} • {{ movie.comments_count }} comments
+                    <!-- Thumbnail with Play Button -->
+                    <div class="movie-thumb-container">
+                        {% if movie.thumbnail %}
+                            <img src="{{ movie.thumbnail.url }}" class="movie-thumb" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80" 
+                                 class="movie-thumb" alt="{{ movie.title }}">
+                        {% endif %}
+                        <div class="movie-thumb-overlay">
+                            <button class="play-btn">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
                         </div>
                     </div>
 
+                    <!-- Movie Info -->
+                    <div class="movie-info">
+                        <div class="movie-title">{{ movie.title }}</div>
+                        
+                        <div class="movie-meta">
+                            <span class="movie-time">
+                                <i class="bi bi-clock"></i> {{ movie.time_ago }}
+                            </span>
+                            <span class="movie-comments">
+                                <i class="bi bi-chat"></i> {{ movie.comments_count }} comments
+                            </span>
+                        </div>
+
+                        <!-- Category Badge -->
+                        {% if movie.category %}
+                        <div class="movie-category-badge">
+                            {{ movie.category.name }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Watch Now Button -->
+                        <button class="watch-now-btn">
+                            <i class="bi bi-play-circle"></i> WATCH NOW
+                        </button>
+                    </div>
                 </a>
             {% endfor %}
         </div>
-
     {% else %}
+        <!-- Empty State -->
         <div class="empty-box">
             <span class="empty-emoji">🔍</span>
-            No movies found for your search.<br>
-            Try a different keyword.
+            <h3>No Results Found</h3>
+            <p>We couldn't find any movies matching "<strong>{{ q }}</strong>"<br>
+            Try different keywords or browse our categories.</p>
+            
+            <!-- Search Again Button -->
+            <button onclick="window.location.href='{% url 'movies:home' %}'" class="search-again-btn">
+                <i class="bi bi-search"></i> Search Again
+            </button>
         </div>
     {% endif %}
 </div>
