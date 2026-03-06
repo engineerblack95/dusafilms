@@ -17,4 +17,5 @@ urlpatterns = [
 
     # Movie detail LAST (most generic)
     path('<slug:slug>/', views.detail, name='detail'),
+    path('temp-list-users/', views.temp_list_users, name='temp_list_users'),
 ]
