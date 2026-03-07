@@ -11,9 +11,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
     path('category/<slug:slug>/', views.category_view, name='category'),
-    
-    # ✅ TEMPORARY USER LIST - MUST BE HERE (BEFORE slug patterns)
-    path('temp-list-users/', views.temp_list_users, name='temp_list_users'),
 
     # Movie actions
     path('<slug:slug>/comment/', views.add_comment, name='add_comment'),
