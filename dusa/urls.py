@@ -2,9 +2,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView  # Add this import
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Handle admin with and without trailing slash
+    path('admin', RedirectView.as_view(url='/admin/', permanent=True)),  # Redirect /admin to /admin/
+    path('admin/', admin.site.urls),  # The actual admin site
 
     path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
 
@@ -14,6 +17,7 @@ urlpatterns = [
 
     # Movies LAST (because it has <slug>)
     path('', include('movies.urls')),
+    
     
 ]
 
