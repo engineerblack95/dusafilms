@@ -1,0 +1,442 @@
+{% extends "movies/base.html" %}
+{% block title %}Edit Comment - Dusa Films{% endblock %}
+
+{% block content %}
+<style>
+    .edit-comment-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #111, #1a1a1a);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 43, 43, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .edit-comment-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(255, 43, 43, 0.3);
+    }
+    
+    .edit-comment-title {
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fff, #ff2b2b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .edit-comment-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+    
+    .movie-info-card {
+        background: rgba(255, 43, 43, 0.05);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left: 4px solid #ff2b2b;
+        transition: all 0.3s ease;
+    }
+    
+    .movie-info-card:hover {
+        background: rgba(255, 43, 43, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .movie-info-label {
+        color: #ff2b2b;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .movie-info-label i {
+        font-size: 14px;
+    }
+    
+    .movie-info-title {
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.3;
+    }
+    
+    .movie-info-meta {
+        margin-top: 12px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .movie-info-meta span {
+        color: #9ca3af;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .comment-form {
+        margin-top: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        color: #e5e7eb;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .form-label i {
+        color: #ff2b2b;
+        margin-right: 8px;
+    }
+    
+    .comment-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        resize: vertical;
+        min-height: 180px;
+        font-size: 15px;
+        line-height: 1.6;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    
+    .comment-textarea:focus {
+        outline: none;
+        border-color: #ff2b2b;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(255, 43, 43, 0.1);
+    }
+    
+    .comment-textarea::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .char-count {
+        text-align: right;
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 8px;
+    }
+    
+    .char-count span {
+        color: #ff2b2b;
+        font-weight: 600;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
+        background: linear-gradient(135deg, #d41919, #b30000);
+    }
+    
+    .btn-save:active {
+        transform: translateY(0);
+    }
+    
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+        border-color: rgba(255, 43, 43, 0.3);
+    }
+    
+    /* Warning Message */
+    .warning-message {
+        background: rgba(255, 43, 43, 0.1);
+        border-left: 4px solid #ff2b2b;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #ff9999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .warning-message i {
+        font-size: 18px;
+        color: #ff2b2b;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .edit-comment-container {
+            margin: 20px;
+            padding: 20px;
+        }
+        
+        .edit-comment-title {
+            font-size: 24px;
+        }
+        
+        .movie-info-title {
+            font-size: 18px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-save, .btn-cancel {
+            width: 100%;
+            padding: 12px 24px;
+        }
+        
+        .movie-info-meta {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .edit-comment-container {
+            margin: 15px;
+            padding: 15px;
+        }
+        
+        .edit-comment-title {
+            font-size: 20px;
+        }
+        
+        .comment-textarea {
+            min-height: 150px;
+            padding: 15px;
+        }
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .edit-comment-container {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    /* Loading state */
+    .btn-save.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    .btn-save.loading i {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="edit-comment-container">
+    <div class="edit-comment-header">
+        <h1 class="edit-comment-title">
+            <i class="fas fa-edit"></i> Edit Your Comment
+        </h1>
+        <p class="edit-comment-subtitle">
+            Make changes to your feedback and share your thoughts
+        </p>
+    </div>
+    
+    <!-- Movie Information Card -->
+    <div class="movie-info-card">
+        <div class="movie-info-label">
+            <i class="fas fa-film"></i>
+            MOVIE DETAILS
+        </div>
+        <h2 class="movie-info-title">{{ comment.movie.title }}</h2>
+        <div class="movie-info-meta">
+            <span>
+                <i class="fas fa-clock"></i>
+                Original comment: {{ comment.created_at|date:"M d, Y" }}
+            </span>
+            <span>
+                <i class="fas fa-tag"></i>
+                Category: {{ comment.movie.category.name }}
+            </span>
+        </div>
+    </div>
+    
+    <!-- Warning Message -->
+    <div class="warning-message">
+        <i class="fas fa-info-circle"></i>
+        <span>Your comment will be visible to everyone. Please be respectful and follow our community guidelines.</span>
+    </div>
+    
+    <!-- Edit Comment Form -->
+    <form method="POST" class="comment-form" id="editCommentForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-comment-dots"></i>
+                YOUR COMMENT
+            </label>
+            <textarea 
+                name="text" 
+                id="commentText" 
+                class="comment-textarea" 
+                required 
+                placeholder="What are your thoughts about this movie?">{{ comment.text }}</textarea>
+            <div class="char-count">
+                <span id="charCount">{{ comment.text|length }}</span> characters
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-save" id="saveButton">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a href="{% url 'movies:detail' comment.movie.slug %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript for Character Counter and Loading State -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('commentText');
+    const charCountSpan = document.getElementById('charCount');
+    const form = document.getElementById('editCommentForm');
+    const saveButton = document.getElementById('saveButton');
+    
+    // Character counter
+    function updateCharCount() {
+        const length = textarea.value.length;
+        charCountSpan.textContent = length;
+        
+        // Add warning if comment is too long (over 1000 chars)
+        if (length > 1000) {
+            charCountSpan.style.color = '#ff2b2b';
+        } else {
+            charCountSpan.style.color = '#ff2b2b';
+        }
+    }
+    
+    // Initial count
+    updateCharCount();
+    
+    // Update on input
+    textarea.addEventListener('input', updateCharCount);
+    
+    // Form submission loading state
+    form.addEventListener('submit', function() {
+        saveButton.classList.add('loading');
+        saveButton.innerHTML = '<i class="fas fa-spinner"></i> Saving...';
+        saveButton.disabled = true;
+    });
+    
+    // Auto-resize textarea (optional)
+    function autoResize() {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 300) + 'px';
+    }
+    
+    textarea.addEventListener('input', autoResize);
+    autoResize();
+    
+    // Warn before leaving if changes are unsaved
+    let formChanged = false;
+    const originalText = textarea.value;
+    
+    textarea.addEventListener('input', function() {
+        formChanged = this.value !== originalText;
+    });
+    
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            return 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+    
+    // Remove warning on form submit
+    form.addEventListener('submit', function() {
+        window.removeEventListener('beforeunload', function() {});
+        formChanged = false;
+    });
+});
+</script>
+
+<!-- Font Awesome (already in base template, but adding for safety) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+{% endblock %}

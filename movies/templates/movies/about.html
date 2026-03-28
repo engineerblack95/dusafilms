@@ -328,8 +328,8 @@
     background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
-/* ================= WEBSITE MANAGER ================= */
-.manager-section {
+/* ================= TEAM SECTION ================= */
+.team-section {
     background: linear-gradient(135deg, #0f172a, #1e293b);
     border-radius: 20px;
     padding: 40px 20px;
@@ -340,7 +340,7 @@
     overflow: hidden;
 }
 
-.manager-section::before {
+.team-section::before {
     content: '';
     position: absolute;
     top: 0;
@@ -350,7 +350,7 @@
     background: linear-gradient(90deg, #ef4444, #3b82f6, #10b981);
 }
 
-.manager-title {
+.team-title {
     font-size: clamp(1.8rem, 5vw, 2.2rem);
     font-weight: 900;
     margin-bottom: 30px;
@@ -360,7 +360,7 @@
     line-height: 1.2;
 }
 
-.manager-title::after {
+.team-title::after {
     content: '';
     position: absolute;
     bottom: -10px;
@@ -371,114 +371,149 @@
     background: linear-gradient(90deg, #ef4444, transparent);
 }
 
-.manager-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 800px;
-    margin: 0 auto;
+/* Grid layout for multiple team members */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    margin-top: 30px;
 }
 
-.manager-image {
-    width: clamp(150px, 40vw, 200px);
-    height: clamp(150px, 40vw, 200px);
+.team-member-card {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.team-member-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.1);
+}
+
+.team-member-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ef4444, #3b82f6);
+}
+
+.team-member-image {
+    width: clamp(120px, 30vw, 160px);
+    height: clamp(120px, 30vw, 160px);
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid #ef4444;
-    margin-bottom: 25px;
-    box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3);
+    border: 4px solid #ef4444;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
-.manager-image:active {
+.team-member-image:active {
     transform: scale(0.95);
 }
 
-.manager-image:hover {
+.team-member-image:hover {
     transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.4);
+    box-shadow: 0 15px 35px rgba(239, 68, 68, 0.3);
 }
 
-.manager-name {
-    font-size: clamp(1.5rem, 4vw, 2rem);
+.team-member-name {
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
     font-weight: 800;
     color: #f8fafc;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     line-height: 1.2;
-    padding: 0 10px;
 }
 
-.manager-role {
-    font-size: clamp(1rem, 3vw, 1.3rem);
+.team-member-role {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     color: #ef4444;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    line-height: 1.3;
-    padding: 0 10px;
 }
 
-.manager-bio {
-    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+.team-member-bio {
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
     line-height: 1.6;
     color: #cbd5e1;
-    max-width: 700px;
-    margin: 0 auto 25px;
-    padding: 0 10px;
+    margin: 0 auto 20px;
+    padding: 0 5px;
 }
 
-.manager-contact {
+.team-member-contact {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
     flex-wrap: wrap;
-    margin-top: 25px;
-    padding: 0 10px;
+    margin-top: 15px;
 }
 
-.contact-btn {
+.team-contact-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    gap: 6px;
+    background: rgba(59, 130, 246, 0.1);
     color: white;
-    padding: clamp(12px, 3vw, 15px) clamp(20px, 4vw, 30px);
-    border-radius: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
-    font-size: clamp(0.9rem, 2.5vw, 1rem);
-    min-width: 140px;
-    min-height: 48px;
-    text-align: center;
+    font-size: 0.85rem;
+    min-width: 100px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.contact-btn:active {
+.team-contact-btn:active {
     transform: scale(0.95);
 }
 
-.contact-btn.whatsapp {
-    background: linear-gradient(135deg, #25D366, #128C7E);
+.team-contact-btn.whatsapp {
+    background: rgba(37, 211, 102, 0.1);
+    border-color: rgba(37, 211, 102, 0.3);
 }
 
-.contact-btn.email {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+.team-contact-btn.whatsapp:hover {
+    background: rgba(37, 211, 102, 0.2);
+    transform: translateY(-2px);
 }
 
-.contact-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+.team-contact-btn.email {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
 }
 
-.contact-btn.whatsapp:hover {
-    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+.team-contact-btn.email:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
 }
 
-.contact-btn.email:hover {
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+.team-contact-btn.linkedin {
+    background: rgba(0, 119, 181, 0.1);
+    border-color: rgba(0, 119, 181, 0.3);
+}
+
+.team-contact-btn.linkedin:hover {
+    background: rgba(0, 119, 181, 0.2);
+    transform: translateY(-2px);
+}
+
+.team-contact-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
 }
 
 /* ================= TOUCH DEVICE OPTIMIZATIONS ================= */
@@ -487,16 +522,16 @@
     .highlight-box:hover,
     .stat-box:hover,
     .about-cta:hover,
-    .manager-image:hover,
-    .contact-btn:hover {
+    .team-member-image:hover,
+    .team-contact-btn:hover {
         transform: none;
     }
     
     .highlight-box:active,
     .stat-box:active,
     .about-cta:active,
-    .manager-image:active,
-    .contact-btn:active,
+    .team-member-image:active,
+    .team-contact-btn:active,
     .about-cta a:active {
         transform: scale(0.95);
     }
@@ -518,8 +553,8 @@
     .highlight-box,
     .about-section,
     .stat-box,
-    .manager-image,
-    .contact-btn,
+    .team-member-image,
+    .team-contact-btn,
     .about-cta a {
         animation: none;
         transition: none;
@@ -559,19 +594,25 @@
         border-radius: 16px;
     }
     
-    .manager-section {
+    .team-section {
         margin-top: 40px;
         padding: 30px 15px;
         border-radius: 16px;
     }
     
-    .manager-contact {
-        gap: 12px;
+    .team-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
     
-    .contact-btn {
-        min-width: 120px;
-        flex: 1;
+    .team-member-contact {
+        gap: 10px;
+    }
+    
+    .team-contact-btn {
+        min-width: 90px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
 }
 
@@ -607,15 +648,15 @@
         margin-right: 0;
     }
     
-    .manager-contact {
+    .team-member-contact {
         flex-direction: column;
         width: 100%;
-        max-width: 250px;
+        max-width: 200px;
         margin-left: auto;
         margin-right: auto;
     }
     
-    .contact-btn {
+    .team-contact-btn {
         width: 100%;
         min-width: unset;
     }
@@ -640,8 +681,8 @@
         margin-bottom: 10px;
     }
     
-    .manager-contact {
-        gap: 10px;
+    .team-member-contact {
+        gap: 8px;
     }
 }
 </style>
@@ -816,48 +857,90 @@
     </a>
 </div>
 
-<!-- ================= WEBSITE MANAGER ================= -->
-<div class="manager-section">
-    <h2 class="manager-title">Meet Our Website Manager</h2>
+<!-- ================= OUR TEAM ================= -->
+<div class="team-section">
+    <h2 class="team-title">Meet Our Team</h2>
     
-    <div class="manager-profile">
-        <!-- Replace with your actual image path -->
-        <img src="{% static 'movies/manager.jpg' %}" 
-             alt="Dusa Films Manager" 
-             class="manager-image"
-             onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
-        
-        <h3 class="manager-name">Samuel Mugisha</h3>
-        <div class="manager-role">Founder & Website Manager</div>
-        
-        <p class="manager-bio">
-            With over 5 years of experience in web development and digital entertainment, 
-            Samuel leads the Dusa Films team with passion and innovation. His vision for 
-            democratizing entertainment has shaped Dusa Films into the platform it is today. 
-            Dedicated to providing seamless user experiences and constantly improving our 
-            streaming technology, Samuel ensures that Dusa Films remains at the forefront 
-            of free digital entertainment.
-        </p>
-        
-        <div class="manager-contact">
-            <a href="https://wa.me/250788548878" 
-               target="_blank" 
-               class="contact-btn whatsapp">
-                <i class="bi bi-whatsapp"></i> WhatsApp
-            </a>
-            
-            <a href="mailto:filmsdusa@gmail.com" 
-               class="contact-btn email">
-                <i class="bi bi-envelope"></i> Email
-            </a>
-            
-            <a href="https://linkedin.com/in/example" 
-               target="_blank" 
-               class="contact-btn">
-                <i class="bi bi-linkedin"></i> LinkedIn
-            </a>
+    {% if team_members %}
+        <div class="team-grid">
+            {% for member in team_members %}
+                <div class="team-member-card">
+                    <!-- Profile Image -->
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" 
+                             alt="{{ member.name }}" 
+                             class="team-member-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="{{ member.name }}" 
+                             class="team-member-image">
+                    {% endif %}
+                    
+                    <!-- Name and Role -->
+                    <h3 class="team-member-name">{{ member.name }}</h3>
+                    <div class="team-member-role">{{ member.get_role_display }}</div>
+                    
+                    <!-- Bio -->
+                    <p class="team-member-bio">{{ member.bio|truncatechars:200 }}</p>
+                    
+                    <!-- Contact Links -->
+                    <div class="team-member-contact">
+                        {% if member.whatsapp %}
+                            <a href="https://wa.me/{{ member.whatsapp }}" 
+                               target="_blank" 
+                               class="team-contact-btn whatsapp">
+                                <i class="bi bi-whatsapp"></i> WhatsApp
+                            </a>
+                        {% endif %}
+                        
+                        {% if member.email %}
+                            <a href="mailto:{{ member.email }}" 
+                               class="team-contact-btn email">
+                                <i class="bi bi-envelope"></i> Email
+                            </a>
+                        {% endif %}
+                        
+                        {% if member.linkedin %}
+                            <a href="{{ member.linkedin }}" 
+                               target="_blank" 
+                               class="team-contact-btn linkedin">
+                                <i class="bi bi-linkedin"></i> LinkedIn
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <!-- Fallback if no team members in database -->
+        <div class="team-member-card" style="max-width: 400px; margin: 0 auto;">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                 alt="Samuel Mugisha" 
+                 class="team-member-image">
+            <h3 class="team-member-name">Samuel Mugisha</h3>
+            <div class="team-member-role">Founder & Website Manager</div>
+            <p class="team-member-bio">
+                With over 5 years of experience in web development and digital entertainment, 
+                Samuel leads the Dusa Films team with passion and innovation. His vision for 
+                democratizing entertainment has shaped Dusa Films into the platform it is today.
+            </p>
+            <div class="team-member-contact">
+                <a href="https://wa.me/250788548878" 
+                   target="_blank" 
+                   class="team-contact-btn whatsapp">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                </a>
+                <a href="mailto:filmsdusa@gmail.com" 
+                   class="team-contact-btn email">
+                    <i class="bi bi-envelope"></i> Email
+                </a>
+            </div>
+        </div>
+        <p style="text-align: center; color: #9ca3af; margin-top: 30px;">
+            More team members will be added soon. <a href="{% url 'contact:contact' %}" style="color: #ef4444;">Contact us</a> to join our team!
+        </p>
+    {% endif %}
 </div>
 
 {% endblock %}

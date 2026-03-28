@@ -139,97 +139,26 @@
             background: rgba(32, 201, 151, 0.15);
         }
 
-        /* Search Button */
-        .search-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
-            padding: 8px 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* ==================== SEARCH BAR SECTION ==================== */
+        .search-section {
+            margin-top: var(--nav-height);
+            padding: 20px 0;
+            background: linear-gradient(135deg, #0a0a0a, #111111);
+            border-bottom: 1px solid rgba(255, 43, 43, 0.2);
+            position: sticky;
+            top: var(--nav-height);
+            z-index: 1020;
         }
 
-        .search-btn:hover {
-            background: rgba(255, 43, 43, 0.1);
-            border-color: #ff2b2b;
-            transform: translateY(-2px);
-        }
-
-        .search-btn i {
-            color: #ff2b2b;
-        }
-
-        main.container {
-            padding-top: calc(var(--nav-height) + 30px);
-            padding-bottom: 60px;
-        }
-
-        /* ==================== LIVE SEARCH MODAL ==================== */
-        .search-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 2000;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .search-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .search-modal-content {
-            width: 100%;
+        .search-container {
             max-width: 800px;
-            margin-top: 100px;
-            padding: 0 20px;
-        }
-
-        .search-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .search-modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .close-search {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-search:hover {
-            background: #ff2b2b;
-            transform: rotate(90deg);
+            margin: 0 auto;
+            position: relative;
         }
 
         .search-input-wrapper {
             position: relative;
-            margin-bottom: 30px;
+            width: 100%;
         }
 
         .search-input-wrapper i {
@@ -239,72 +168,86 @@
             transform: translateY(-50%);
             font-size: 1.2rem;
             color: #ff2b2b;
+            z-index: 1;
         }
 
-        .search-input {
+        .search-input-large {
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 60px;
-            padding: 18px 20px 18px 55px;
+            border-radius: 50px;
+            padding: 16px 20px 16px 55px;
             color: white;
             font-size: 1.1rem;
             transition: all 0.3s ease;
         }
 
-        .search-input:focus {
+        .search-input-large:focus {
             outline: none;
             border-color: #ff2b2b;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(255, 43, 43, 0.2);
         }
 
-        .search-input::placeholder {
+        .search-input-large::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
 
-        .search-results {
-            max-height: 500px;
+        /* Search Results Dropdown */
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #111111;
+            border-radius: 16px;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 43, 43, 0.3);
+            max-height: 400px;
             overflow-y: auto;
-            padding-right: 10px;
+            z-index: 2000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: none;
         }
 
-        .search-results::-webkit-scrollbar {
-            width: 6px;
+        .search-results-dropdown.show {
+            display: block;
+            animation: fadeInDown 0.3s ease;
         }
 
-        .search-results::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .search-results::-webkit-scrollbar-thumb {
-            background: #ff2b2b;
-            border-radius: 10px;
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .search-result-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 15px;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            padding: 12px 20px;
             text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
         }
 
         .search-result-item:hover {
             background: rgba(255, 43, 43, 0.1);
-            border-color: #ff2b2b;
-            transform: translateX(8px);
         }
 
         .search-result-thumb {
-            width: 50px;
-            height: 70px;
+            width: 45px;
+            height: 65px;
             border-radius: 8px;
             object-fit: cover;
             background: #1a1a1a;
@@ -317,36 +260,41 @@
         .search-result-title {
             font-weight: 700;
             color: white;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .search-result-category {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #ff2b2b;
         }
 
         .search-result-meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #9ca3af;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .search-loading {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #9ca3af;
         }
 
         .search-empty {
             text-align: center;
-            padding: 60px;
+            padding: 40px;
             color: #9ca3af;
         }
 
         .search-empty i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 10px;
             opacity: 0.5;
+        }
+
+        main.container {
+            padding-top: 30px;
+            padding-bottom: 60px;
         }
 
         /* ==================== FOOTER STYLES ==================== */
@@ -400,65 +348,18 @@
             text-decoration: none;
         }
 
-        /* Social Media Colors */
-        .social-whatsapp {
-            background: #25D366;
-            color: white;
-        }
-        .social-whatsapp:hover {
-            background: #128C7E;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-        }
-
-        .social-youtube {
-            background: #FF0000;
-            color: white;
-        }
-        .social-youtube:hover {
-            background: #CC0000;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
-        }
-
-        .social-facebook {
-            background: #1877F2;
-            color: white;
-        }
-        .social-facebook:hover {
-            background: #166FE5;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(24, 119, 242, 0.4);
-        }
-
-        .social-instagram {
-            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
-            color: white;
-        }
-        .social-instagram:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(225, 48, 108, 0.4);
-        }
-
-        .social-tiktok {
-            background: #000000;
-            color: white;
-        }
-        .social-tiktok:hover {
-            background: #222222;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .social-twitter {
-            background: #000000;
-            color: white;
-        }
-        .social-twitter:hover {
-            background: #222222;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        }
+        .social-whatsapp { background: #25D366; color: white; }
+        .social-whatsapp:hover { background: #128C7E; transform: translateY(-3px); }
+        .social-youtube { background: #FF0000; color: white; }
+        .social-youtube:hover { background: #CC0000; transform: translateY(-3px); }
+        .social-facebook { background: #1877F2; color: white; }
+        .social-facebook:hover { background: #166FE5; transform: translateY(-3px); }
+        .social-instagram { background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); color: white; }
+        .social-instagram:hover { transform: translateY(-3px); }
+        .social-tiktok { background: #000000; color: white; }
+        .social-tiktok:hover { background: #222222; transform: translateY(-3px); }
+        .social-twitter { background: #000000; color: white; }
+        .social-twitter:hover { background: #222222; transform: translateY(-3px); }
 
         .footer-text {
             margin-top: 20px;
@@ -468,7 +369,7 @@
             color: #9ca3af;
         }
 
-        /* ==================== RESPONSIVE ==================== */
+        /* Responsive */
         @media (max-width: 991px) {
             .navbar-collapse {
                 margin-top: 14px;
@@ -477,44 +378,28 @@
                 padding: 14px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             }
-
             .navbar-nav {
                 text-align: center;
             }
-
             .navbar-nav .nav-item {
                 margin-bottom: 8px;
             }
-
             .nav-link-strong {
                 width: 100%;
                 display: block;
                 background: #181818;
                 border: 1px solid rgba(255,255,255,0.06);
             }
-
             .nav-link-strong::after {
                 display: none;
             }
-
-            .search-btn {
-                justify-content: center;
-                margin-top: 10px;
+            .search-section {
+                padding: 15px 0;
             }
-
-            .search-modal-content {
-                margin-top: 60px;
-            }
-
-            .search-input {
-                padding: 14px 16px 14px 50px;
+            .search-input-large {
+                padding: 12px 16px 12px 45px;
                 font-size: 1rem;
             }
-
-            .search-result-item {
-                padding: 12px 15px;
-            }
-
             .search-result-thumb {
                 width: 40px;
                 height: 56px;
@@ -522,66 +407,18 @@
         }
 
         @media (max-width: 768px) {
-            .site-footer {
-                padding: 30px 0 20px;
+            .search-container {
+                padding: 0 15px;
             }
-            
             .footer-social {
                 gap: 12px;
             }
-            
             .footer-social a {
                 width: 38px;
                 height: 38px;
-                font-size: 1rem;
-            }
-            
-            .footer-logo {
-                height: 35px;
             }
         }
 
-        @media (max-width: 576px) {
-            .footer-social {
-                gap: 10px;
-            }
-            
-            .footer-social a {
-                width: 36px;
-                height: 36px;
-                font-size: 0.9rem;
-            }
-            
-            .footer-logo {
-                height: 30px;
-            }
-            
-            .footer-text {
-                font-size: 0.75rem;
-            }
-            
-            .footer-social-title {
-                font-size: 0.85rem;
-                margin-bottom: 12px;
-            }
-        }
-
-        /* ==================== ANIMATIONS ==================== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .search-result-item {
-            animation: fadeInUp 0.3s ease forwards;
-        }
-        
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -609,19 +446,16 @@
 
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto">
-
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">
                             <i class="bi bi-house-door"></i> Home
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'movies:about' %}">
                             <i class="bi bi-info-circle"></i> About
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'announcements:list' %}">
                             <i class="bi bi-megaphone"></i> Announcements
@@ -632,69 +466,66 @@
                             {% endif %}
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'contact:contact' %}">
                             <i class="bi bi-envelope"></i> Contact
                         </a>
                     </li>
 
-                    <!-- Search Button -->
-                    <li class="nav-item">
-                        <div class="search-btn" onclick="openSearchModal()">
-                            <i class="bi bi-search"></i>
-                            <span>Search</span>
-                        </div>
-                    </li>
-
                     {% if user.is_authenticated %}
-
                         {% if user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong admin-yellow" href="{% url 'admin:index' %}">
                                 <i class="bi bi-shield-lock"></i> Admin
                             </a>
                         </li>
-                        
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong analytics-link" href="{% url 'analytics:dashboard' %}">
                                 <i class="bi bi-graph-up"></i> Analytics
                             </a>
                         </li>
                         {% endif %}
-
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong" href="{% url 'accounts:dashboard' %}">
                                 <i class="bi bi-person-circle"></i> Dashboard
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
-
                     {% else %}
-
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">
                                 <i class="bi bi-box-arrow-in-right"></i> Login
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong" href="{% url 'accounts:register' %}">
                                 <i class="bi bi-person-plus"></i> Register
                             </a>
                         </li>
-
                     {% endif %}
-
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Prominent Search Bar Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" 
+                       id="liveSearchInput" 
+                       class="search-input-large" 
+                       placeholder="Search movies by title, category, or description..."
+                       autocomplete="off">
+                <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+            </div>
+        </div>
+    </div>
 
     <main class="container">
         {% block content %}{% endblock %}
@@ -704,9 +535,7 @@
 <footer class="site-footer">
     <div class="footer-content">
         <img src="{% static 'movies/samu1.png' %}" class="footer-logo" alt="Dusa Films">
-        
         <div class="footer-social-title">Follow Us</div>
-        
         <div class="footer-social">
             <a href="https://wa.me/250788548878" target="_blank" class="social-whatsapp" title="WhatsApp">
                 <i class="bi bi-whatsapp"></i>
@@ -727,98 +556,42 @@
                 <i class="bi bi-twitter-x"></i>
             </a>
         </div>
-
         <div class="footer-text">
             © {% now "Y" %} Dusa Films — All Rights Reserved
         </div>
     </div>
 </footer>
 
-<!-- Live Search Modal -->
-<div id="searchModal" class="search-modal">
-    <div class="search-modal-content">
-        <div class="search-modal-header">
-            <h3 class="search-modal-title">
-                <i class="bi bi-search"></i> Search Movies
-            </h3>
-            <button class="close-search" onclick="closeSearchModal()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        
-        <div class="search-input-wrapper">
-            <i class="bi bi-search"></i>
-            <input type="text" 
-                   id="searchInput" 
-                   class="search-input" 
-                   placeholder="Search by title, category, or description..."
-                   autocomplete="off">
-        </div>
-        
-        <div id="searchResults" class="search-results">
-            <div class="search-loading" style="display: none;">
-                <i class="bi bi-arrow-repeat spin"></i> Searching...
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     // ==================== LIVE SEARCH FUNCTIONALITY ====================
     let searchTimeout;
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const searchModal = document.getElementById('searchModal');
-    
-    function openSearchModal() {
-        searchModal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => {
-            searchInput.focus();
-        }, 100);
-    }
-    
-    function closeSearchModal() {
-        searchModal.classList.remove('show');
-        document.body.style.overflow = '';
-        searchInput.value = '';
-        searchResults.innerHTML = '';
-    }
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && searchModal.classList.contains('show')) {
-            closeSearchModal();
-        }
-    });
-    
-    // Close modal when clicking outside
-    searchModal.addEventListener('click', function(e) {
-        if (e.target === searchModal) {
-            closeSearchModal();
-        }
-    });
+    const searchInput = document.getElementById('liveSearchInput');
+    const searchResults = document.getElementById('searchResultsDropdown');
     
     // Live search function
-    async function performSearch() {
+    async function performLiveSearch() {
         const query = searchInput.value.trim();
         
         if (query.length < 2) {
+            searchResults.classList.remove('show');
             if (query.length === 0) {
-                searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-search"></i><p>Type at least 2 characters to search</p></div>';
+                searchResults.innerHTML = '';
             } else {
-                searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-search"></i><p>Type more characters to search...</p></div>';
+                searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-search"></i><p>Type at least 2 characters to search</p></div>';
+                searchResults.classList.add('show');
             }
             return;
         }
         
         // Show loading
-        searchResults.innerHTML = '<div class="search-loading"><i class="bi bi-arrow-repeat spin"></i> Searching...</div>';
+        searchResults.innerHTML = '<div class="search-loading"><i class="bi bi-arrow-repeat spin"></i> Searching movies...</div>';
+        searchResults.classList.add('show');
         
         try {
-            const response = await fetch(`/movies/api/search/?q=${encodeURIComponent(query)}`, {
+            // FIXED: Use the correct API URL without the /movies/ prefix
+            const response = await fetch(`/api/search/?q=${encodeURIComponent(query)}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -831,7 +604,7 @@
                 let resultsHtml = '';
                 data.results.forEach(movie => {
                     resultsHtml += `
-                        <a href="/movies/${movie.slug}/" class="search-result-item" onclick="closeSearchModal()">
+                        <a href="/movies/${movie.slug}/" class="search-result-item">
                             ${movie.thumbnail ? 
                                 `<img src="${movie.thumbnail}" class="search-result-thumb" alt="${movie.title}">` : 
                                 `<div class="search-result-thumb" style="display: flex; align-items: center; justify-content: center; background: #1a1a1a;">
@@ -868,7 +641,21 @@
     // Debounced search
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(performSearch, 300);
+        searchTimeout = setTimeout(performLiveSearch, 300);
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('show');
+        }
+    });
+    
+    // Show dropdown on focus if there are results
+    searchInput.addEventListener('focus', function() {
+        if (searchInput.value.trim().length >= 2 && searchResults.innerHTML && !searchResults.innerHTML.includes('search-empty')) {
+            searchResults.classList.add('show');
+        }
     });
     
     function escapeHtml(unsafe) {

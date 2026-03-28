@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from movies.models import Movie, Comment, WatchedMovie
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
@@ -15,12 +15,10 @@ import random
 from .models import Profile
 from .forms import UserRegisterForm, OTPLoginForm, ProfilePhotoForm
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
-from django.conf import settings
-
 
 
 # ----------------------------
@@ -396,55 +394,97 @@ def verify_otp(request):
 
     return render(request, "accounts/verify_otp.html", {"username": username})
 
+
 # ----------------------------
-# Dashboard
+# Dashboard (UPDATED with full activity overview)
 # ----------------------------
 @login_required
 def dashboard(request):
+    """User dashboard with activity overview - matches the template"""
+    
     profile = request.user.profile
 
+    # Handle photo upload
     if request.method == "POST":
         photo_form = ProfilePhotoForm(request.POST, request.FILES, instance=profile)
         if photo_form.is_valid():
             photo_form.save()
             messages.success(request, "Profile photo updated successfully!")
             return redirect("accounts:dashboard")
+        else:
+            for error in photo_form.errors.get('profile_photo', []):
+                messages.error(request, error)
     else:
         photo_form = ProfilePhotoForm(instance=profile)
 
-    all_comments = Comment.objects.filter(user=request.user).order_by('-created_at')
-    all_watched = WatchedMovie.objects.filter(user=request.user).order_by('-watched_at')
-
-    total_comments = all_comments.count()
-
-    movies_watched = (
-        all_watched
-        .values("movie")
-        .distinct()
-        .count()
-    )
-
-    recent_comments = all_comments[:5]
-    recent_watched = all_watched[:5]
-
-    top_commented = (
-        all_comments
-        .values('movie__title', 'movie__slug')
-        .annotate(cnt=Count('id'))
-        .order_by('-cnt')[:6]
-    )
+    # Get user's comments with movie details
+    user_comments = Comment.objects.filter(
+        user=request.user
+    ).select_related('movie').order_by('-created_at')[:10]
+    
+    # Get user's watched movies
+    watched_movies = WatchedMovie.objects.filter(
+        user=request.user
+    ).select_related('movie').order_by('-watched_at')[:10]
+    
+    # Get total counts
+    total_comments = Comment.objects.filter(user=request.user).count()
+    movies_watched = WatchedMovie.objects.filter(user=request.user).count()
+    
+    # Get top commented movies (aggregated)
+    top_commented = Comment.objects.filter(
+        user=request.user
+    ).values(
+        'movie__id', 'movie__title', 'movie__slug'
+    ).annotate(
+        cnt=Count('id')
+    ).order_by('-cnt')[:5]
 
     context = {
         "profile": profile,
         "photo_form": photo_form,
         "total_comments": total_comments,
         "movies_watched": movies_watched,
-        "recent_comments": recent_comments,
-        "recent_watched": recent_watched,
+        "recent_comments": user_comments,
+        "recent_watched": watched_movies,
         "top_commented": top_commented,
     }
 
     return render(request, "accounts/dashboard.html", context)
+
+
+# ----------------------------
+# Delete Comment
+# ----------------------------
+@login_required
+def delete_comment(request, comment_id):
+    """Allow user to delete their own comment"""
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    movie_slug = comment.movie.slug
+    comment.delete()
+    messages.success(request, "Your comment has been deleted.")
+    return redirect('movies:detail', slug=movie_slug)
+
+
+# ----------------------------
+# Edit Comment
+# ----------------------------
+@login_required
+def edit_comment(request, comment_id):
+    """Allow user to edit their own comment"""
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    
+    if request.method == 'POST':
+        new_text = request.POST.get('text', '').strip()
+        if new_text:
+            comment.text = new_text
+            comment.save()
+            messages.success(request, "Comment updated successfully!")
+            return redirect('movies:detail', slug=comment.movie.slug)
+        else:
+            messages.error(request, "Comment cannot be empty.")
+    
+    return render(request, 'accounts/edit_comment.html', {'comment': comment})
 
 
 # ----------------------------
@@ -456,6 +496,9 @@ def logout_view(request):
     return redirect("accounts:otp_login")
 
 
+# ----------------------------
+# Debug Views
+# ----------------------------
 @staff_member_required
 def debug_admin_users(request):
     users = list(
@@ -465,12 +508,13 @@ def debug_admin_users(request):
     )
     return JsonResponse(users, safe=False)
 
-# Temporary view to list all users (safe for free Render plan)
+
 def list_users(request):
     users = list(
         User.objects.values("id", "username", "email", "is_staff", "is_superuser")
     )
     return JsonResponse(users, safe=False)
+
 
 def list_users_debug(request):
     # Simple protection with secret key
@@ -488,5 +532,6 @@ def list_users_debug(request):
         )
 
     return HttpResponse("<br>".join(output))
+
 
 User = get_user_model()

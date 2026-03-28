@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from cloudinary.models import CloudinaryField  # Add this if using Cloudinary
 
 
 # -----------------------------
@@ -10,7 +11,10 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(null=True, blank=True)
+    # Use CloudinaryField for production, ImageField for local
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True, default=None)
+    # Or use CloudinaryField:
+    # profile_photo = CloudinaryField('image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -28,15 +32,11 @@ class Profile(models.Model):
         return f"profile of {self.user.username}"
 
 
-# ----------------------------------------------------
-# REMOVE duplicate Comment model (use movies.Comment)
-# ----------------------------------------------------
-
-
 # -----------------------------
-# User Watched Movies
+# User Watched Movies (using movies.WatchedMovie instead)
+# Note: Keep this or remove if using movies.WatchedMovie
 # -----------------------------
-class WatchedMovie(models.Model):
+class UserWatchedMovie(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="account_user_watched_movies")
     movie = models.ForeignKey('movies.Movie', on_delete=models.CASCADE, related_name="account_movie_watched")
     watched_at = models.DateTimeField(auto_now_add=True)

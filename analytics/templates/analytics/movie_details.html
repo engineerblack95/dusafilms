@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% block title %}{{ movie.title }} Analytics • Dusa Films{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-film"></i> {{ movie.title }} - Analytics
+        </h1>
+        <a href="{% url 'analytics:dashboard' %}" style="color: var(--primary-red);">← Back to Dashboard</a>
+    </div>
+    
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ analytics.total_watch_hours|floatformat:1 }} hrs</div>
+            <div class="stat-title">Total Watch Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ analytics.unique_viewers }}</div>
+            <div class="stat-title">Unique Viewers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ analytics.total_sessions }}</div>
+            <div class="stat-title">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ analytics.total_downloads }}</div>
+            <div class="stat-title">Total Downloads</div>
+        </div>
+    </div>
+    
+    <!-- Add more detailed analytics here -->
+</div>
+{% endblock %}

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notification - Dusa Films</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #000000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a0000 100%);
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 3px solid #ff0000;
+        }
+        
+        .logo h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+        
+        .logo span {
+            color: #ff0000;
+        }
+        
+        .test-badge {
+            display: inline-block;
+            background: #ff0000;
+            color: #ffffff;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            background: #000000;
+        }
+        
+        .icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 0, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            }
+        }
+        
+        .checkmark svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+        
+        .greeting {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .greeting span {
+            color: #ff0000;
+        }
+        
+        .message {
+            text-align: center;
+            color: #cccccc;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .info-card {
+            background: #111111;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #ff0000;
+        }
+        
+        .info-item {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            background: #ff0000;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+        
+        .info-text {
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            background: #ff0000;
+            color: #ffffff;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background: #0a0a0a;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #ff0000;
+        }
+        
+        .footer-text {
+            color: #666666;
+            font-size: 12px;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+            .content {
+                padding: 30px 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>DUSA <span>FILMS</span></h1>
+            </div>
+            <div class="test-badge">TEST NOTIFICATION</div>
+        </div>
+        
+        <div class="content">
+            <div class="icon">
+                <div class="checkmark">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="greeting">
+                Hello <span>{{ user.get_full_name|default:user.username }}</span>! ✅
+            </div>
+            
+            <div class="message">
+                This is a test notification to confirm that your email notification settings are working correctly.
+            </div>
+            
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+                </div>
+                
+                {% if category %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-6h4v-2h-4v2zm0-4h4V8h-4v2z"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">Following Category</div>
+                        <div class="info-value">{{ category.name }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">Notification Status</div>
+                        <div class="info-value" style="color: #00ff00;">Active & Working ✅</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{{ site_url }}/movies/" class="btn-primary">🎬 Explore Movies</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-text">
+                <p>This is a test notification from Dusa Films.</p>
+                <p>If you received this, your notification settings are working correctly!</p>
+                <p>© {% now "Y" %} Dusa Films. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

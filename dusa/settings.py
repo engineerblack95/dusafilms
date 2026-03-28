@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     ".onrender.com",
     "localhost",
     "127.0.0.1",
+    
 ]
 
 USE_X_FORWARDED_HOST = True
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     'movies',
     'contact',
     'announcements',
+    'analytics',
 ]
 
 # ==================================================
@@ -72,6 +74,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+      'analytics.middleware.WatchSessionMiddleware',
     
 ]
 

@@ -56,6 +56,141 @@
         z-index: 1;
     }
 
+    /* ================= FOLLOW BUTTON STYLES ================= */
+    .follow-section {
+        margin: -30px auto 30px;
+        max-width: 1200px;
+        padding: 0 20px;
+    }
+    
+    .follow-card {
+        background: linear-gradient(135deg, rgba(255, 43, 43, 0.1), rgba(0, 0, 0, 0.8));
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 43, 43, 0.3);
+        border-radius: 16px;
+        padding: 20px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .follow-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .follow-icon {
+        background: rgba(255, 43, 43, 0.2);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .follow-text h3 {
+        color: white;
+        font-size: 1.1rem;
+        margin: 0 0 5px 0;
+    }
+    
+    .follow-text p {
+        color: #9ca3af;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .follow-buttons {
+        display: flex;
+        gap: 12px;
+    }
+    
+    .btn-follow {
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-follow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 43, 43, 0.4);
+        color: white;
+    }
+    
+    .btn-unfollow {
+        background: transparent;
+        color: #ff2b2b;
+        border: 2px solid #ff2b2b;
+        padding: 12px 28px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-unfollow:hover {
+        background: rgba(255, 43, 43, 0.1);
+        transform: translateY(-2px);
+        color: #ff2b2b;
+    }
+    
+    .btn-notification {
+        background: rgba(255, 43, 43, 0.2);
+        border: 1px solid rgba(255, 43, 43, 0.4);
+        padding: 12px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-notification:hover {
+        background: rgba(255, 43, 43, 0.3);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .notification-badge {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .notification-badge .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff2b2b;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     /* ================= CONTENT CONTAINER ================= */
     .container-custom {
         width: 92%;
@@ -92,7 +227,7 @@
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 
-    /* ================= MOVIE CARD (Updated to match home page) ================= */
+    /* ================= MOVIE CARD ================= */
     .movie-card {
         background: linear-gradient(145deg, #151515, #0a0a0a);
         border-radius: 16px;
@@ -156,7 +291,6 @@
         transform: scale(1.08);
     }
 
-    /* Play button overlay */
     .movie-thumb-overlay {
         position: absolute;
         top: 0;
@@ -259,6 +393,8 @@
         border: 1px solid rgba(255, 43, 43, 0.3);
         transition: all 0.3s ease;
         display: inline-block;
+        width: fit-content;
+        margin-bottom: 12px;
     }
 
     .movie-card:hover .movie-category-badge {
@@ -267,7 +403,6 @@
         transform: translateY(-2px);
     }
 
-    /* Watch Now button */
     .watch-now-btn {
         display: inline-flex;
         align-items: center;
@@ -370,6 +505,20 @@
             font-size: clamp(1.8rem, 4vw, 2.5rem);
         }
         
+        .follow-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .follow-info {
+            justify-content: center;
+        }
+        
+        .follow-buttons {
+            width: 100%;
+            justify-content: center;
+        }
+        
         .grid {
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
@@ -407,6 +556,11 @@
             font-size: 0.9rem;
             padding: 5px 16px;
         }
+        
+        .btn-follow, .btn-unfollow, .btn-notification {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
     }
 
     @media (min-width: 1200px) {
@@ -419,7 +573,6 @@
         }
     }
 
-    /* Touch device optimizations */
     @media (hover: none) and (pointer: coarse) {
         .movie-card:hover {
             transform: none;
@@ -443,7 +596,6 @@
         }
     }
 
-    /* Reduced motion preferences */
     @media (prefers-reduced-motion: reduce) {
         .movie-card,
         .movie-card::before,
@@ -465,6 +617,45 @@
         <h1>{{ category.name }}</h1>
         <div class="category-badge">
             <i class="bi bi-collection-play"></i> Movie Category
+        </div>
+    </div>
+</div>
+
+<!-- ================= FOLLOW SECTION (NEW) ================= -->
+<div class="follow-section">
+    <div class="follow-card">
+        <div class="follow-info">
+            <div class="follow-icon">
+                <i class="bi bi-bell-fill"></i>
+            </div>
+            <div class="follow-text">
+                <h3>Get notified about new {{ category.name }} movies</h3>
+                <p>Receive email alerts when new movies are added to this category</p>
+            </div>
+        </div>
+        <div class="follow-buttons">
+            {% if user.is_authenticated %}
+                {% if user_follows %}
+                    <a href="{% url 'movies:unfollow_category' slug=category.slug %}?next={{ request.path }}" 
+                       class="btn-unfollow">
+                        <i class="bi bi-bell-slash-fill"></i> Unfollow
+                    </a>
+                    <a href="{% url 'movies:toggle_notifications' slug=category.slug %}" 
+                       class="btn-notification">
+                        <i class="bi bi-envelope"></i> Manage Emails
+                    </a>
+                {% else %}
+                    <a href="{% url 'movies:follow_category' slug=category.slug %}?next={{ request.path }}" 
+                       class="btn-follow">
+                        <i class="bi bi-bell-fill"></i> Follow & Get Notified
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}" 
+                   class="btn-follow">
+                    <i class="bi bi-box-arrow-in-right"></i> Login to Follow
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -535,5 +726,4 @@
     {% endif %}
 </div>
 
-<!-- Bootstrap Icons (already included in base.html) -->
 {% endblock %}
