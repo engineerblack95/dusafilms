@@ -269,10 +269,10 @@
         margin-left: 6px;
     }
 
-    /* Website Logo Watermark on Video */
+    /* Website Logo Watermark on Video - Top Right Corner */
     .video-watermark {
         position: absolute;
-        bottom: 20px;
+        top: 20px;
         right: 20px;
         z-index: 15;
         background: rgba(0, 0, 0, 0.6);
@@ -282,7 +282,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border-left: 3px solid #ff2b2b;
+        border-right: 3px solid #ff2b2b;
         transition: all 0.3s ease;
         opacity: 0.8;
     }
@@ -314,7 +314,7 @@
         margin: 0 2px;
     }
 
-    /* Custom Video Controls Overlay (on hover) */
+    /* Video Controls Overlay - Always Visible with Better Design */
     .video-controls-overlay {
         position: absolute;
         bottom: 0;
@@ -322,7 +322,7 @@
         right: 0;
         background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
         padding: 20px 15px 15px;
-        opacity: 0;
+        opacity: 1;
         transition: opacity 0.3s ease;
         pointer-events: none;
         z-index: 20;
@@ -372,10 +372,37 @@
     .time-display {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         color: white;
         font-size: 12px;
         font-family: monospace;
         pointer-events: auto;
+    }
+
+    .control-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .control-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+    }
+
+    .control-btn:hover {
+        background: #ff2b2b;
+        transform: scale(1.1);
     }
 
     .buttons { 
@@ -383,33 +410,12 @@
         display: flex; 
         gap: 15px;
         flex-wrap: wrap;
-    }
-
-    .btn-primary-custom {
-        background: linear-gradient(135deg, #ff2b2b, #d41919);
-        padding: 12px 22px;
-        border-radius: 8px;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .btn-primary-custom:hover { 
-        background: linear-gradient(135deg, #d41919, #b30000);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
+        justify-content: center;
     }
 
     .btn-download {
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        padding: 12px 22px;
+        background: linear-gradient(135deg, #ff2b2b, #d41919);
+        padding: 12px 28px;
         border-radius: 8px;
         font-weight: bold;
         color: white;
@@ -418,12 +424,15 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-download:hover { 
-        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        background: linear-gradient(135deg, #d41919, #b30000);
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
     }
 
     .section-title {
@@ -973,6 +982,8 @@
             font-size: 30px;
         }
         .video-watermark {
+            top: 12px;
+            right: 12px;
             padding: 5px 12px;
         }
         .video-watermark span {
@@ -980,6 +991,11 @@
         }
         .video-watermark img {
             height: 22px;
+        }
+        .control-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
         }
     }
 </style>
@@ -1017,10 +1033,7 @@
                         <video id="mainPlayer" 
                             playsinline 
                             webkit-playsinline 
-                            muted="muted"
                             preload="metadata"
-                            controls
-                            controlsList="nodownload"
                             {% if movie.thumbnail %}
                                 poster="{{ movie.thumbnail.url }}"
                             {% else %}
@@ -1042,35 +1055,39 @@
                         </div>
                     </div>
                     
-                    <!-- Website Logo Watermark with CORRECT LOGO -->
+                    <!-- Website Logo Watermark - Top Right Corner -->
                     <div class="video-watermark">
                         <img src="{% static 'movies/samu1.png' %}" alt="Dusa Films">
                         <span>DUSA <span class="dot">•</span> FILMS</span>
                     </div>
                     
-                    <!-- Custom Controls Overlay -->
+                    <!-- Custom Controls Overlay with Fullscreen and Mute -->
                     <div class="video-controls-overlay" id="videoControls">
                         <div class="progress-bar-container" id="progressContainer">
                             <div class="progress-bar" id="progressBar"></div>
                         </div>
                         <div class="time-display">
-                            <span id="currentTime">0:00</span>
-                            <span id="duration">0:00</span>
+                            <div class="control-buttons">
+                                <button class="control-btn" id="muteBtn" onclick="toggleMute()">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <button class="control-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- BUTTONS -->
+            <!-- DOWNLOAD BUTTON ONLY -->
             <div class="buttons">
-                {% if movie.video_url %}
-                    <a href="{{ movie.video_url }}" target="_blank" class="btn-primary-custom" id="watchButton">
-                        <i class="fas fa-external-link-alt"></i> Watch in Fullscreen
-                    </a>
-                {% endif %}
                 {% if movie.download_link %}
                     <a href="{{ movie.download_link }}" class="btn-download" download id="downloadButton">
-                        <i class="fas fa-download"></i> Download
+                        <i class="fas fa-download"></i> Download Movie
                     </a>
                 {% endif %}
             </div>
@@ -1305,7 +1322,7 @@
     window.isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
     window.userName = "{% if user.is_authenticated %}{{ user.username|escapejs }}{% else %}{% endif %}";
     
-    // ==================== PROFESSIONAL VIDEO PLAYER CONTROLS WITH MOBILE AUDIO FIX ====================
+    // ==================== PROFESSIONAL VIDEO PLAYER CONTROLS ====================
     document.addEventListener('DOMContentLoaded', function() {
         const video = document.getElementById('mainPlayer');
         const posterOverlay = document.getElementById('videoPosterOverlay');
@@ -1314,11 +1331,10 @@
         const progressContainer = document.getElementById('progressContainer');
         const currentTimeSpan = document.getElementById('currentTime');
         const durationSpan = document.getElementById('duration');
+        const muteBtn = document.getElementById('muteBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
         
         if (!video) return;
-        
-        // Mobile audio fix: Track user interaction for unmuting
-        let isUserInteracted = false;
         
         // Format time (seconds to MM:SS)
         function formatTime(seconds) {
@@ -1337,44 +1353,52 @@
             }
         }
         
-        // Function to unmute and play (required for mobile browsers)
-        function unmuteAndPlay() {
-            if (!isUserInteracted) {
-                video.muted = false;
-                isUserInteracted = true;
-                
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Playback started with sound');
-                        posterOverlay.classList.add('hide');
-                    }).catch(error => {
-                        console.log('Playback failed:', error);
-                    });
-                }
+        // Update mute button icon
+        function updateMuteIcon() {
+            if (video.muted) {
+                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
             } else {
-                // Toggle play/pause
-                if (video.paused) {
-                    video.play();
-                    posterOverlay.classList.add('hide');
-                } else {
-                    video.pause();
-                }
+                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
             }
         }
+        
+        // Toggle mute function
+        window.toggleMute = function() {
+            video.muted = !video.muted;
+            updateMuteIcon();
+        };
+        
+        // Toggle fullscreen function
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                video.requestFullscreen();
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        };
+        
+        // Update fullscreen button on change
+        document.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
         
         // Set duration when metadata loaded
         video.addEventListener('loadedmetadata', function() {
             durationSpan.textContent = formatTime(video.duration);
+            updateMuteIcon();
             
-            // Try to autoplay with mute (required for mobile)
+            // Try to autoplay
             const autoplayPromise = video.play();
             if (autoplayPromise !== undefined) {
                 autoplayPromise.then(() => {
-                    console.log('Autoplay started (muted)');
                     posterOverlay.classList.add('hide');
-                }).catch(error => {
-                    console.log('Autoplay prevented:', error);
+                }).catch(() => {
                     posterOverlay.classList.remove('hide');
                 });
             }
@@ -1401,29 +1425,25 @@
             currentTimeSpan.textContent = '0:00';
         });
         
-        // Play button click - handles unmute on mobile
+        // Play button click
         playBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            unmuteAndPlay();
+            video.play();
+            posterOverlay.classList.add('hide');
         });
         
-        // Click on video to play/pause with unmute on first interaction
+        // Click on video to play/pause
         video.addEventListener('click', function(e) {
             e.stopPropagation();
-            
-            if (!isUserInteracted) {
-                unmuteAndPlay();
+            if (video.paused) {
+                video.play();
+                posterOverlay.classList.add('hide');
             } else {
-                if (video.paused) {
-                    video.play();
-                    posterOverlay.classList.add('hide');
-                } else {
-                    video.pause();
-                }
+                video.pause();
             }
         });
         
-        // Progress bar seeking (desktop)
+        // Progress bar seeking
         if (progressContainer) {
             progressContainer.addEventListener('click', function(e) {
                 const rect = progressContainer.getBoundingClientRect();
@@ -1445,39 +1465,10 @@
             });
         }
         
-        // Auto-hide controls
-        let controlsTimeout;
-        const controlsOverlay = document.getElementById('videoControls');
-        
-        function showControls() {
-            if (controlsOverlay) controlsOverlay.style.opacity = '1';
-            clearTimeout(controlsTimeout);
-            controlsTimeout = setTimeout(function() {
-                if (!video.paused && controlsOverlay) controlsOverlay.style.opacity = '0';
-            }, 2000);
-        }
-        
-        if (controlsOverlay) {
-            video.addEventListener('mousemove', showControls);
-            video.addEventListener('play', showControls);
-            video.addEventListener('click', showControls);
-            video.addEventListener('touchstart', showControls);
-        }
-        
         // Handle video errors
         video.addEventListener('error', function(e) {
             console.error('Video error:', e);
         });
-        
-        // iOS specific fix: Enable audio on first touch
-        document.body.addEventListener('touchstart', function() {
-            if (!isUserInteracted && video) {
-                video.muted = true;
-                video.play().then(() => {
-                    video.pause();
-                }).catch(() => {});
-            }
-        }, { once: true });
     });
 </script>
 
