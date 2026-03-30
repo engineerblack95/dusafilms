@@ -36,27 +36,31 @@ class Movie(models.Model):
 
     thumbnail = CloudinaryField('image', null=True, blank=True)
 
-    # ✅ VIDEO AS URL (NOT FILE UPLOAD)
+    # VIDEO AS URL (NOT FILE UPLOAD)
     video_url = models.URLField(max_length=500, blank=True, null=True)
     download_link = models.URLField(max_length=500, blank=True, null=True)
 
     slug = models.SlugField(blank=True, unique=True)
     upload_time = models.DateTimeField(default=now)
     
-    # ADD DATABASE FIELD FOR COMMENT COUNT - FIXES THE ADMIN ERROR
+    # Database field for comment count (cached value)
     comments_count = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-upload_time']
 
+    def update_comments_count(self):
+        """Update the cached comments count from actual comments"""
+        self.comments_count = self.movie_comments.filter(is_approved=True).count()
+        self.save(update_fields=['comments_count'])
+    
     def get_comments_count(self):
         """Return the cached comment count from database"""
         return self.comments_count
     
-    # Keep property for backward compatibility in templates
     @property
     def total_comments(self):
-        """Alternative property name to avoid confusion with database field"""
+        """Alternative property name for templates"""
         return self.comments_count
 
     @property
@@ -142,6 +146,13 @@ class Comment(models.Model):
     def replies_count(self):
         """Get the number of replies to this comment"""
         return self.replies.count()
+    
+    def save(self, *args, **kwargs):
+        """Update movie's comments_count when comment is saved"""
+        super().save(*args, **kwargs)
+        # Update the movie's cached comment count
+        if self.is_approved:
+            self.movie.update_comments_count()
 
 
 class Reply(models.Model):
@@ -185,6 +196,13 @@ class Reply(models.Model):
         if self.user:
             return f"{self.user.username} replied to comment {self.comment.id}"
         return f"{self.guest_name} replied to comment {self.comment.id}"
+    
+    def save(self, *args, **kwargs):
+        """Update movie's comments_count when reply is saved"""
+        super().save(*args, **kwargs)
+        # Update the movie's cached comment count via the parent comment
+        if self.is_approved:
+            self.comment.movie.update_comments_count()
 
 
 class WatchedMovie(models.Model):

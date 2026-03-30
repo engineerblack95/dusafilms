@@ -33,16 +33,10 @@ class Profile(models.Model):
 
 
 # -----------------------------
-# User Watched Movies (using movies.WatchedMovie instead)
-# Note: Keep this or remove if using movies.WatchedMovie
+# REMOVED: UserWatchedMovie
+# This is now handled by movies.WatchedMovie to avoid duplication
 # -----------------------------
-class UserWatchedMovie(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="account_user_watched_movies")
-    movie = models.ForeignKey('movies.Movie', on_delete=models.CASCADE, related_name="account_movie_watched")
-    watched_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-watched_at']
-
-    def __str__(self):
-        return f"{self.user.username} watched {self.movie.title}"
+# The WatchedMovie model in movies app handles tracking watched movies
+# If you need to reference watched movies from accounts, use:
+# user.user_watched_movies.all() or user.account_user_watched_movies.all()
+# depending on your related_name

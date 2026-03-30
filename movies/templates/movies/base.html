@@ -82,6 +82,22 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Mobile menu toggle button */
+        .navbar-toggler {
+            border: 1px solid rgba(255, 43, 43, 0.5);
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-toggler:hover {
+            background: rgba(255, 43, 43, 0.1);
+            border-color: #ff2b2b;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 43, 43, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
         .nav-link-strong {
             font-weight: 700;
             font-size: 1.05rem;
@@ -90,6 +106,13 @@
             border-radius: 10px;
             transition: all 0.25s ease;
             position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link-strong i {
+            font-size: 1.1rem;
         }
 
         .nav-link-strong::after {
@@ -139,214 +162,91 @@
             background: rgba(32, 201, 151, 0.15);
         }
 
-        /* Search Button */
-        .search-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
-            padding: 8px 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Logout link - Red color */
+        .nav-link-strong.logout-link {
+            color: #ff4444 !important;
+        }
+        
+        .nav-link-strong.logout-link::after {
+            background: #ff4444;
+        }
+        
+        .nav-link-strong.logout-link:hover {
+            background: rgba(255, 68, 68, 0.15);
         }
 
-        .search-btn:hover {
-            background: rgba(255, 43, 43, 0.1);
-            border-color: #ff2b2b;
-            transform: translateY(-2px);
-        }
-
-        .search-btn i {
-            color: #ff2b2b;
-        }
-
-        main.container {
-            padding-top: calc(var(--nav-height) + 30px);
-            padding-bottom: 60px;
-        }
-
-        /* ==================== LIVE SEARCH MODAL ==================== */
-        .search-modal {
+        /* Search Bar Section - Direct Search Form */
+        .search-section {
             position: fixed;
-            top: 0;
+            top: var(--nav-height);
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 2000;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+            right: 0;
+            background: linear-gradient(135deg, #0a0a0a, #0f0f0f);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px 0;
+            z-index: 1020;
+            backdrop-filter: blur(10px);
         }
 
-        .search-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .search-modal-content {
-            width: 100%;
-            max-width: 800px;
-            margin-top: 100px;
-            padding: 0 20px;
-        }
-
-        .search-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .search-modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .close-search {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-search:hover {
-            background: #ff2b2b;
-            transform: rotate(90deg);
-        }
-
-        .search-input-wrapper {
+        .search-form {
+            max-width: 600px;
+            margin: 0 auto;
             position: relative;
-            margin-bottom: 30px;
         }
 
-        .search-input-wrapper i {
+        .search-form i {
             position: absolute;
-            left: 20px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 1.2rem;
             color: #ff2b2b;
+            z-index: 1;
         }
 
-        .search-input {
+        .search-input-field {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 60px;
-            padding: 18px 20px 18px 55px;
+            border-radius: 50px;
+            padding: 12px 20px 12px 50px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
-        .search-input:focus {
+        .search-input-field:focus {
             outline: none;
             border-color: #ff2b2b;
             background: rgba(255, 255, 255, 0.08);
         }
 
-        .search-input::placeholder {
+        .search-input-field::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
 
-        .search-results {
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .search-results::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .search-results::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .search-results::-webkit-scrollbar-thumb {
-            background: #ff2b2b;
-            border-radius: 10px;
-        }
-
-        .search-result-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .search-result-item:hover {
-            background: rgba(255, 43, 43, 0.1);
-            border-color: #ff2b2b;
-            transform: translateX(8px);
-        }
-
-        .search-result-thumb {
-            width: 50px;
-            height: 70px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: #1a1a1a;
-        }
-
-        .search-result-info {
-            flex: 1;
-        }
-
-        .search-result-title {
-            font-weight: 700;
+        .search-submit-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #ff2b2b, #d41919);
+            border: none;
             color: white;
-            margin-bottom: 5px;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        .search-result-category {
-            font-size: 0.8rem;
-            color: #ff2b2b;
+        .search-submit-btn:hover {
+            background: linear-gradient(135deg, #d41919, #b30000);
+            transform: translateY(-50%) scale(1.02);
         }
 
-        .search-result-meta {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            margin-top: 5px;
-        }
-
-        .search-loading {
-            text-align: center;
-            padding: 40px;
-            color: #9ca3af;
-        }
-
-        .search-empty {
-            text-align: center;
-            padding: 60px;
-            color: #9ca3af;
-        }
-
-        .search-empty i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
+        main.container {
+            padding-top: calc(var(--nav-height) + 85px);
+            padding-bottom: 60px;
         }
 
         /* ==================== FOOTER STYLES ==================== */
@@ -468,56 +368,97 @@
             color: #9ca3af;
         }
 
+        /* Badge styles */
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: #ff2b2b;
+        }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 991px) {
             .navbar-collapse {
-                margin-top: 14px;
-                background: #111;
-                border-radius: 16px;
-                padding: 14px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+                position: fixed;
+                top: var(--nav-height);
+                left: -100%;
+                width: 280px;
+                height: calc(100vh - var(--nav-height));
+                background: linear-gradient(180deg, #0f0f0f, #0a0a0a);
+                border-right: 1px solid rgba(255, 43, 43, 0.3);
+                padding: 20px;
+                transition: left 0.3s ease;
+                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+                overflow-y: auto;
+            }
+
+            .navbar-collapse.show {
+                left: 0;
             }
 
             .navbar-nav {
-                text-align: center;
+                flex-direction: column;
+                gap: 8px;
             }
 
             .navbar-nav .nav-item {
-                margin-bottom: 8px;
+                width: 100%;
             }
 
             .nav-link-strong {
                 width: 100%;
-                display: block;
-                background: #181818;
-                border: 1px solid rgba(255,255,255,0.06);
+                justify-content: flex-start;
+                padding: 12px 16px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 12px;
             }
 
             .nav-link-strong::after {
                 display: none;
             }
 
-            .search-btn {
-                justify-content: center;
-                margin-top: 10px;
+            .nav-link-strong:hover {
+                background: rgba(255, 43, 43, 0.1);
+                transform: translateX(5px);
             }
 
-            .search-modal-content {
-                margin-top: 60px;
+            /* Overlay when menu is open */
+            .menu-overlay {
+                position: fixed;
+                top: var(--nav-height);
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 1020;
+                display: none;
             }
 
-            .search-input {
-                padding: 14px 16px 14px 50px;
-                font-size: 1rem;
+            .menu-overlay.show {
+                display: block;
             }
 
-            .search-result-item {
-                padding: 12px 15px;
+            .search-section {
+                padding: 12px 0;
             }
 
-            .search-result-thumb {
-                width: 40px;
-                height: 56px;
+            .search-form {
+                max-width: 90%;
+                margin: 0 auto;
+            }
+
+            .search-input-field {
+                padding: 10px 100px 10px 45px;
+                font-size: 0.9rem;
+            }
+
+            .search-submit-btn {
+                padding: 6px 15px;
+                font-size: 0.85rem;
+            }
+
+            main.container {
+                padding-top: calc(var(--nav-height) + 75px);
             }
         }
 
@@ -538,6 +479,15 @@
             
             .footer-logo {
                 height: 35px;
+            }
+
+            .logo-text {
+                font-size: 1.3rem;
+            }
+
+            .navbar-brand img {
+                height: 40px;
+                width: 40px;
             }
         }
 
@@ -564,31 +514,45 @@
                 font-size: 0.85rem;
                 margin-bottom: 12px;
             }
+
+            .logo-text {
+                font-size: 1.1rem;
+                margin-left: 8px;
+            }
+
+            main.container {
+                padding-top: calc(var(--nav-height) + 70px);
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .search-input-field {
+                font-size: 0.85rem;
+                padding: 10px 80px 10px 40px;
+            }
+
+            .search-submit-btn {
+                padding: 5px 12px;
+                font-size: 0.75rem;
+            }
+
+            .search-form i {
+                left: 15px;
+                font-size: 1rem;
+            }
         }
 
-        /* ==================== ANIMATIONS ==================== */
-        @keyframes fadeInUp {
+        @keyframes slideIn {
             from {
-                opacity: 0;
-                transform: translateY(20px);
+                transform: translateX(-100%);
             }
             to {
-                opacity: 1;
-                transform: translateY(0);
+                transform: translateX(0);
             }
         }
 
-        .search-result-item {
-            animation: fadeInUp 0.3s ease forwards;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .spin {
-            animation: spin 1s linear infinite;
-            display: inline-block;
+        .navbar-collapse.show {
+            animation: slideIn 0.3s ease forwards;
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -603,13 +567,12 @@
                 <span class="logo-text">Dusa Films 🔥</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto">
-
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'movies:home' %}">
                             <i class="bi bi-house-door"></i> Home
@@ -624,7 +587,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link nav-link-strong" href="{% url 'announcements:list' %}">
-                            <i class="bi bi-megaphone"></i> Announcements
+                            <i class="bi bi-megaphone"></i> Message
                             {% if unread_announcements_count > 0 %}
                             <span class="badge bg-danger rounded-pill ms-1">
                                 {{ unread_announcements_count }}
@@ -639,16 +602,7 @@
                         </a>
                     </li>
 
-                    <!-- Search Button -->
-                    <li class="nav-item">
-                        <div class="search-btn" onclick="openSearchModal()">
-                            <i class="bi bi-search"></i>
-                            <span>Search</span>
-                        </div>
-                    </li>
-
                     {% if user.is_authenticated %}
-
                         {% if user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong admin-yellow" href="{% url 'admin:index' %}">
@@ -670,13 +624,12 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link fw-bold text-danger" href="{% url 'accounts:logout' %}">
+                            <a class="nav-link nav-link-strong logout-link" href="{% url 'accounts:logout' %}">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
 
                     {% else %}
-
                         <li class="nav-item">
                             <a class="nav-link nav-link-strong" href="{% url 'accounts:otp_login' %}">
                                 <i class="bi bi-box-arrow-in-right"></i> Login
@@ -688,18 +641,34 @@
                                 <i class="bi bi-person-plus"></i> Register
                             </a>
                         </li>
-
                     {% endif %}
-
                 </ul>
             </div>
         </div>
     </nav>
 
+    <!-- Search Form Section - Direct Search -->
+    <div class="search-section">
+        <form class="search-form" action="{% url 'movies:search' %}" method="get">
+            <i class="bi bi-search"></i>
+            <input type="text" 
+                   name="q" 
+                   class="search-input-field" 
+                   placeholder="Search movies by title, category, or description..." 
+                   value="{{ request.GET.q|default:'' }}">
+            <button type="submit" class="search-submit-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>
 </div>
+
+<!-- Overlay for mobile menu -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMobileMenu()"></div>
 
 <footer class="site-footer">
     <div class="footer-content">
@@ -734,151 +703,49 @@
     </div>
 </footer>
 
-<!-- Live Search Modal -->
-<div id="searchModal" class="search-modal">
-    <div class="search-modal-content">
-        <div class="search-modal-header">
-            <h3 class="search-modal-title">
-                <i class="bi bi-search"></i> Search Movies
-            </h3>
-            <button class="close-search" onclick="closeSearchModal()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        
-        <div class="search-input-wrapper">
-            <i class="bi bi-search"></i>
-            <input type="text" 
-                   id="searchInput" 
-                   class="search-input" 
-                   placeholder="Search by title, category, or description..."
-                   autocomplete="off">
-        </div>
-        
-        <div id="searchResults" class="search-results">
-            <div class="search-loading" style="display: none;">
-                <i class="bi bi-arrow-repeat spin"></i> Searching...
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // ==================== LIVE SEARCH FUNCTIONALITY ====================
-    let searchTimeout;
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const searchModal = document.getElementById('searchModal');
+    // ==================== MOBILE MENU HANDLING ====================
+    const navbarCollapse = document.getElementById('mainNavbar');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const navbarToggler = document.querySelector('.navbar-toggler');
     
-    function openSearchModal() {
-        searchModal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => {
-            searchInput.focus();
-        }, 100);
-    }
-    
-    function closeSearchModal() {
-        searchModal.classList.remove('show');
-        document.body.style.overflow = '';
-        searchInput.value = '';
-        searchResults.innerHTML = '';
-    }
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && searchModal.classList.contains('show')) {
-            closeSearchModal();
-        }
-    });
-    
-    // Close modal when clicking outside
-    searchModal.addEventListener('click', function(e) {
-        if (e.target === searchModal) {
-            closeSearchModal();
-        }
-    });
-    
-    // Live search function
-    async function performSearch() {
-        const query = searchInput.value.trim();
-        
-        if (query.length < 2) {
-            if (query.length === 0) {
-                searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-search"></i><p>Type at least 2 characters to search</p></div>';
-            } else {
-                searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-search"></i><p>Type more characters to search...</p></div>';
-            }
-            return;
-        }
-        
-        // Show loading
-        searchResults.innerHTML = '<div class="search-loading"><i class="bi bi-arrow-repeat spin"></i> Searching...</div>';
-        
-        try {
-            const response = await fetch(`/movies/api/search/?q=${encodeURIComponent(query)}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+    function closeMobileMenu() {
+        if (navbarCollapse.classList.contains('show')) {
+            const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+                toggle: false
             });
-            
-            const data = await response.json();
-            
-            if (data.results && data.results.length > 0) {
-                let resultsHtml = '';
-                data.results.forEach(movie => {
-                    resultsHtml += `
-                        <a href="/movies/${movie.slug}/" class="search-result-item" onclick="closeSearchModal()">
-                            ${movie.thumbnail ? 
-                                `<img src="${movie.thumbnail}" class="search-result-thumb" alt="${movie.title}">` : 
-                                `<div class="search-result-thumb" style="display: flex; align-items: center; justify-content: center; background: #1a1a1a;">
-                                    <i class="bi bi-film" style="font-size: 24px; color: #ff2b2b;"></i>
-                                </div>`
-                            }
-                            <div class="search-result-info">
-                                <div class="search-result-title">${escapeHtml(movie.title)}</div>
-                                <div class="search-result-category">${escapeHtml(movie.category)}</div>
-                                <div class="search-result-meta">
-                                    <i class="bi bi-clock"></i> ${movie.time_ago} • 
-                                    <i class="bi bi-chat"></i> ${movie.comments_count} comments
-                                </div>
-                            </div>
-                        </a>
-                    `;
-                });
-                searchResults.innerHTML = resultsHtml;
-            } else {
-                searchResults.innerHTML = `
-                    <div class="search-empty">
-                        <i class="bi bi-film"></i>
-                        <p>No movies found matching "${escapeHtml(query)}"</p>
-                        <small style="color: #666;">Try different keywords or browse categories</small>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Search error:', error);
-            searchResults.innerHTML = '<div class="search-empty"><i class="bi bi-exclamation-triangle"></i><p>Search failed. Please try again.</p></div>';
+            bsCollapse.hide();
+            menuOverlay.classList.remove('show');
         }
     }
     
-    // Debounced search
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(performSearch, 300);
+    // Handle mobile menu open/close
+    if (navbarToggler) {
+        navbarToggler.addEventListener('click', function() {
+            setTimeout(() => {
+                if (navbarCollapse.classList.contains('show')) {
+                    menuOverlay.classList.add('show');
+                } else {
+                    menuOverlay.classList.remove('show');
+                }
+            }, 100);
+        });
+    }
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('.nav-link-strong').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 991) {
+                closeMobileMenu();
+            }
+        });
     });
     
-    function escapeHtml(unsafe) {
-        if (!unsafe) return '';
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+    // Close overlay when clicked
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', closeMobileMenu);
     }
 </script>
 

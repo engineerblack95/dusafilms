@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Count, Q, Avg 
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -394,7 +395,7 @@ def api_delete_reply(request, reply_id):
 
 
 # ============================================
-# LIVE SEARCH API ENDPOINT
+# LIVE SEARCH API ENDPOINT - CORRECTED VERSION
 # ============================================
 
 def api_search(request):
@@ -404,11 +405,15 @@ def api_search(request):
     if len(q) < 2:
         return JsonResponse({'results': []})
     
+    # Search in title, description, and category name
+    # Use annotate to get the actual comment count from the database
     results = Movie.objects.filter(
         Q(title__icontains=q) |
         Q(description__icontains=q) |
         Q(category__name__icontains=q)
-    ).select_related('category')[:20]
+    ).select_related('category').annotate(
+        real_comments_count=Count('movie_comments', filter=Q(movie_comments__is_approved=True))
+    ).order_by('-upload_time')[:20]
     
     results_data = []
     for movie in results:
@@ -419,7 +424,7 @@ def api_search(request):
             'thumbnail': movie.thumbnail.url if movie.thumbnail else None,
             'category': movie.category.name,
             'time_ago': movie.time_ago,
-            'comments_count': movie.comments_count,
+            'comments_count': movie.real_comments_count,  # This gets actual comment count from database
         })
     
     return JsonResponse({'results': results_data})
@@ -451,16 +456,26 @@ def category_view(request, slug):
 # SEARCH PAGE
 # -----------------------------
 def search(request):
-    q = request.GET.get("q", "")
+    q = request.GET.get("q", "").strip()
     
     # Get filter parameters
     category_filter = request.GET.get("category", "")
     sort_by = request.GET.get("sort", "-upload_time")
     
-    results = Movie.objects.filter(
-        Q(title__icontains=q) |
-        Q(description__icontains=q) |
-        Q(category__name__icontains=q)
+    # Start with base queryset
+    results = Movie.objects.all()
+    
+    # Apply search filter if query exists
+    if q:
+        results = results.filter(
+            Q(title__icontains=q) |
+            Q(description__icontains=q) |
+            Q(category__name__icontains=q)
+        )
+    
+    # Annotate with comment count (using a unique name)
+    results = results.select_related('category').annotate(
+        approved_comments_count=Count('movie_comments', filter=Q(movie_comments__is_approved=True))
     )
     
     # Apply category filter
@@ -469,22 +484,28 @@ def search(request):
     
     # Apply sorting
     if sort_by == "rating":
-        results = results.annotate(avg_rating=Count('ratings')).order_by('-avg_rating')
+        results = results.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')
+    elif sort_by == "title":
+        results = results.order_by('title')
+    elif sort_by == "-title":
+        results = results.order_by('-title')
+    elif sort_by == "upload_time":
+        results = results.order_by('upload_time')
     else:
-        results = results.order_by(sort_by)
+        results = results.order_by('-upload_time')  # Default: newest first
     
     # Get all categories for filter dropdown
     categories = Category.objects.all()
-
-    return render(request, "movies/search.html", {
+    
+    context = {
         "results": results,
         "q": q,
         "categories": categories,
         "selected_category": category_filter,
         "selected_sort": sort_by,
-    })
-
-
+    }
+    
+    return render(request, "movies/search.html", context)
 # -----------------------------
 # ABOUT PAGE - UPDATED to fetch team members
 # -----------------------------

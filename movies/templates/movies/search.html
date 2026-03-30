@@ -92,7 +92,7 @@
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 
-    /* ================= MOVIE CARD (Updated to match home page) ================= */
+    /* ================= MOVIE CARD ================= */
     .movie-card {
         background: linear-gradient(145deg, #151515, #0a0a0a);
         border-radius: 16px;
@@ -168,7 +168,9 @@
         transition: opacity 0.4s ease;
         display: flex;
         align-items: flex-end;
+        justify-content: flex-start;
         padding: 20px;
+        pointer-events: none;
     }
 
     .movie-card:hover .movie-thumb-overlay {
@@ -190,6 +192,7 @@
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         opacity: 0;
         cursor: pointer;
+        pointer-events: auto;
     }
 
     .movie-card:hover .play-btn {
@@ -259,6 +262,8 @@
         border: 1px solid rgba(255, 43, 43, 0.3);
         transition: all 0.3s ease;
         display: inline-block;
+        align-self: flex-start;
+        margin-bottom: 15px;
     }
 
     .movie-card:hover .movie-category-badge {
@@ -267,8 +272,8 @@
         transform: translateY(-2px);
     }
 
-    /* Watch Now button */
-    .watch-now-btn {
+    /* Watch Now link (replacing button) */
+    .watch-now-link {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -288,7 +293,7 @@
         cursor: pointer;
     }
 
-    .watch-now-btn::before {
+    .watch-now-link::before {
         content: '';
         position: absolute;
         top: 0;
@@ -299,14 +304,15 @@
         transition: left 0.6s ease;
     }
 
-    .watch-now-btn:hover::before {
+    .watch-now-link:hover::before {
         left: 100%;
     }
 
-    .watch-now-btn:hover {
+    .watch-now-link:hover {
         background: linear-gradient(135deg, #d41919, #b30000);
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(255, 43, 43, 0.4);
+        color: white;
     }
 
     /* ================= EMPTY STATE ================= */
@@ -365,6 +371,7 @@
     .search-again-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        color: white;
     }
 
     /* ================= ANIMATIONS ================= */
@@ -378,7 +385,6 @@
         50% { transform: translateY(-10px); }
     }
 
-    /* Loading animation for cards */
     @keyframes cardFadeIn {
         from {
             opacity: 0;
@@ -506,7 +512,7 @@
         .movie-card::before,
         .movie-thumb,
         .play-btn,
-        .watch-now-btn,
+        .watch-now-link,
         .empty-box,
         .search-again-btn {
             animation: none;
@@ -531,7 +537,7 @@
     {% if results %}
     <div class="results-count">
         <i class="bi bi-check-circle"></i>
-        <span>Found {{ results|length }} result{{ results|length|pluralize }}</span>
+        <span>Found {{ results.count }} result{{ results.count|pluralize }}</span>
     </div>
     {% endif %}
 </div>
@@ -541,7 +547,7 @@
     {% if results %}
         <div class="grid">
             {% for movie in results %}
-                <a href="{% url 'movies:detail' movie.slug %}" class="movie-card">
+                <div class="movie-card" onclick="window.location.href='{% url 'movies:detail' movie.slug %}'">
                     <!-- Thumbnail with Play Button -->
                     <div class="movie-thumb-container">
                         {% if movie.thumbnail %}
@@ -551,7 +557,7 @@
                                  class="movie-thumb" alt="{{ movie.title }}">
                         {% endif %}
                         <div class="movie-thumb-overlay">
-                            <button class="play-btn">
+                            <button class="play-btn" onclick="event.stopPropagation(); window.location.href='{% url 'movies:detail' movie.slug %}'">
                                 <i class="bi bi-play-fill"></i>
                             </button>
                         </div>
@@ -566,7 +572,7 @@
                                 <i class="bi bi-clock"></i> {{ movie.time_ago }}
                             </span>
                             <span class="movie-comments">
-                                <i class="bi bi-chat"></i> {{ movie.comments_count }} comments
+                                <i class="bi bi-chat"></i> {{ movie.comments_count|default:0 }} comments
                             </span>
                         </div>
 
@@ -577,12 +583,12 @@
                         </div>
                         {% endif %}
 
-                        <!-- Watch Now Button -->
-                        <button class="watch-now-btn">
+                        <!-- Watch Now Link -->
+                        <a href="{% url 'movies:detail' movie.slug %}" class="watch-now-link" onclick="event.stopPropagation()">
                             <i class="bi bi-play-circle"></i> WATCH NOW
-                        </button>
+                        </a>
                     </div>
-                </a>
+                </div>
             {% endfor %}
         </div>
     {% else %}
@@ -594,9 +600,9 @@
             Try different keywords or browse our categories.</p>
             
             <!-- Search Again Button -->
-            <button onclick="window.location.href='{% url 'movies:home' %}'" class="search-again-btn">
+            <a href="{% url 'movies:home' %}" class="search-again-btn">
                 <i class="bi bi-search"></i> Search Again
-            </button>
+            </a>
         </div>
     {% endif %}
 </div>

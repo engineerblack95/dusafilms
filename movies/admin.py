@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django import forms
+from django.db.models import Count, Avg
 from .models import (
-    Category, Movie, Comment, WatchedMovie, 
+    Category, Movie, Comment, Reply, WatchedMovie, 
     UserCategoryFollow, WatchLater, MovieRating, WatchProgress, 
     NotificationLog, TeamMember
 )
@@ -70,8 +71,17 @@ class MovieAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("upload_time",)
     
-    # Add help text for fields
+    def get_queryset(self, request):
+        """Optimize queryset with annotations for ratings"""
+        queryset = super().get_queryset(request)
+        # Annotate with ratings count and average (comments_count is already a field)
+        return queryset.annotate(
+            _ratings_count=Count('ratings', distinct=True),
+            _average_rating=Avg('ratings__rating')
+        )
+    
     def get_form(self, request, obj=None, **kwargs):
+        """Add help text for fields"""
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['thumbnail'].help_text = "Upload a thumbnail image (JPG, PNG, GIF) - Max 5MB. DO NOT upload videos here."
         form.base_fields['video_url'].help_text = "Enter the video URL (YouTube, Vimeo, or direct video link)."
@@ -79,25 +89,34 @@ class MovieAdmin(admin.ModelAdmin):
         return form
     
     def display_comments_count(self, obj):
-        """Display number of comments"""
+        """Display number of comments from cached field"""
         return obj.comments_count
     display_comments_count.short_description = "Comments"
-    display_comments_count.admin_order_field = "upload_time"
+    display_comments_count.admin_order_field = "comments_count"
     
     def display_ratings_count(self, obj):
         """Display number of ratings"""
-        return obj.ratings_count
+        # Use annotated value if available, otherwise calculate
+        if hasattr(obj, '_ratings_count'):
+            return obj._ratings_count
+        return obj.ratings.count()
     display_ratings_count.short_description = "Ratings"
-    display_ratings_count.admin_order_field = "upload_time"
+    display_ratings_count.admin_order_field = "_ratings_count"
     
     def display_average_rating(self, obj):
         """Display average rating with stars"""
-        avg = obj.average_rating
-        if avg > 0:
-            return f"{avg} ⭐"
+        # Use annotated value if available, otherwise calculate
+        if hasattr(obj, '_average_rating') and obj._average_rating:
+            avg = obj._average_rating
+            return f"{avg:.1f} ⭐"
+        
+        # Fallback to calculation
+        avg = obj.ratings.aggregate(avg=Avg('rating'))['avg']
+        if avg:
+            return f"{avg:.1f} ⭐"
         return "No ratings"
     display_average_rating.short_description = "Avg Rating"
-    display_average_rating.admin_order_field = "upload_time"
+    display_average_rating.admin_order_field = "_average_rating"
 
 
 @admin.register(Comment)
@@ -106,6 +125,12 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "text", "guest_name")
     list_filter = ("movie", "is_approved", "created_at")
     list_editable = ("is_approved",)
+    
+    def get_queryset(self, request):
+        """Optimize queryset with select_related and annotations"""
+        return super().get_queryset(request).select_related('user', 'movie').annotate(
+            _likes_count=Count('likes', distinct=True)
+        )
     
     def user_name(self, obj):
         """
@@ -120,6 +145,8 @@ class CommentAdmin(admin.ModelAdmin):
     
     def likes_count(self, obj):
         """Display number of likes"""
+        if hasattr(obj, '_likes_count'):
+            return obj._likes_count
         return obj.likes.count()
     likes_count.short_description = "Likes"
     
@@ -128,14 +155,45 @@ class CommentAdmin(admin.ModelAdmin):
     def approve_comments(self, request, queryset):
         """Approve selected comments"""
         updated = queryset.update(is_approved=True)
+        # Update comment counts for affected movies
+        for comment in queryset:
+            comment.movie.update_comments_count()
         self.message_user(request, f"{updated} comments approved.")
     approve_comments.short_description = "Approve selected comments"
     
     def disapprove_comments(self, request, queryset):
         """Disapprove selected comments"""
         updated = queryset.update(is_approved=False)
+        # Update comment counts for affected movies
+        for comment in queryset:
+            comment.movie.update_comments_count()
         self.message_user(request, f"{updated} comments disapproved.")
     disapprove_comments.short_description = "Disapprove selected comments"
+
+
+@admin.register(Reply)
+class ReplyAdmin(admin.ModelAdmin):
+    list_display = ("comment", "user_name", "created_at", "is_approved")
+    search_fields = ("user__username", "text", "guest_name")
+    list_filter = ("is_approved", "created_at")
+    list_editable = ("is_approved",)
+    
+    def get_queryset(self, request):
+        """Optimize queryset with select_related"""
+        return super().get_queryset(request).select_related('user', 'comment__movie')
+    
+    def user_name(self, obj):
+        """Display username safely"""
+        if obj.user:
+            return obj.user.username
+        return obj.guest_name or "Anonymous"
+    user_name.short_description = "User Name"
+    
+    def save_model(self, request, obj, form, change):
+        """Update movie comment count when reply is saved"""
+        super().save_model(request, obj, form, change)
+        if obj.comment and obj.comment.movie:
+            obj.comment.movie.update_comments_count()
 
 
 @admin.register(WatchedMovie)
@@ -144,6 +202,10 @@ class WatchedMovieAdmin(admin.ModelAdmin):
     list_filter = ("watched_at",)
     search_fields = ("user__username", "movie__title")
     readonly_fields = ("watched_at",)
+    
+    def get_queryset(self, request):
+        """Optimize queryset with select_related"""
+        return super().get_queryset(request).select_related('user', 'movie')
 
 
 # ============================================
@@ -189,7 +251,7 @@ class MovieRatingAdmin(admin.ModelAdmin):
 @admin.register(WatchProgress)
 class WatchProgressAdmin(admin.ModelAdmin):
     list_display = ("user", "movie", "progress_percent", "last_watched")
-    list_filter = ("progress_percent", "last_watched")
+    list_filter = ("last_watched",)
     search_fields = ("user__username", "movie__title")
     readonly_fields = ("last_watched",)
     
@@ -243,4 +305,5 @@ class TeamMemberAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
+        """Optimize queryset with ordering"""
         return super().get_queryset(request).order_by('display_order', 'name')
