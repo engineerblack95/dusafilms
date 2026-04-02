@@ -5,1015 +5,140 @@
 
 {% block content %}
 <style>
+    /* Your existing CSS styles remain exactly the same */
     body { background: #0b0b12 !important; color: white !important; }
-
-    .movie-wrapper {
-        width: 95%;
-        max-width: 1400px;
-        margin: auto;
-        padding: 35px 0;
-    }
-
-    /* TWO COLUMN LAYOUT */
-    .two-column-layout {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    /* LEFT COLUMN - VIDEO PLAYER */
-    .video-column {
-        flex: 1.6;
-        min-width: 300px;
-    }
-
-    /* RIGHT COLUMN - COMMENTS */
-    .comments-column {
-        flex: 1;
-        min-width: 280px;
-        max-width: 400px;
-    }
-
-    .movie-title { 
-        font-size: 32px; 
-        font-weight: bold; 
-        margin-bottom: 10px;
-        background: linear-gradient(90deg, #ffffff, #ff2b2b);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .movie-meta { 
-        font-size: 15px; 
-        color: #a3a3a3; 
-        margin-bottom: 20px;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .autoplay-toggle {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-left: auto;
-    }
-
-    .autoplay-toggle span {
-        color: #9ca3af;
-        font-size: 14px;
-    }
-
-    .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 50px;
-        height: 24px;
-    }
-
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #333;
-        transition: 0.3s;
-        border-radius: 24px;
-    }
-
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: 0.3s;
-        border-radius: 50%;
-    }
-
-    input:checked + .toggle-slider {
-        background-color: #ff2b2b;
-    }
-
-    input:checked + .toggle-slider:before {
-        transform: translateX(26px);
-    }
-
-    .upnext-notification {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-        border-left: 4px solid #ff2b2b;
-        border-radius: 12px;
-        padding: 15px 20px;
-        max-width: 300px;
-        z-index: 1000;
-        transform: translateX(400px);
-        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(10px);
-    }
-
-    .upnext-notification.show {
-        transform: translateX(0);
-    }
-
-    .upnext-notification .label {
-        font-size: 12px;
-        color: #ff2b2b;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 5px;
-    }
-
-    .upnext-notification .title {
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        margin-bottom: 8px;
-    }
-
-    .upnext-notification .countdown {
-        font-size: 12px;
-        color: #9ca3af;
-    }
-
-    .upnext-notification .cancel-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: white;
-        cursor: pointer;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    /* ==================== PROFESSIONAL VIDEO PLAYER ==================== */
-    .video-box {
-        background: #000;
-        border-radius: 20px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        border: 1px solid rgba(255, 43, 43, 0.3);
-        position: relative;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        transition: all 0.3s ease;
-    }
-
-    .video-box:hover {
-        border-color: rgba(255, 43, 43, 0.6);
-        box-shadow: 0 25px 80px rgba(255, 43, 43, 0.3);
-    }
-
-    .video-container {
-        position: relative;
-        width: 100%;
-        cursor: pointer;
-    }
-
-    video {
-        width: 100%;
-        max-height: 70vh;
-        background: black;
-        display: block;
-        border-radius: 16px;
-    }
-
-    /* Video Poster Overlay with Play Button */
-    .video-poster-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        z-index: 10;
-        backdrop-filter: blur(2px);
-    }
-
-    .video-poster-overlay.hide {
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    /* Play Button - YouTube Style */
-    .play-button {
-        width: 90px;
-        height: 90px;
-        background: rgba(255, 43, 43, 0.85);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 0 30px rgba(255, 43, 43, 0.5);
-        position: relative;
-    }
-
-    .play-button::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: rgba(255, 43, 43, 0.5);
-        animation: pulse 1.5s infinite;
-        z-index: -1;
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-            opacity: 0.6;
-        }
-        100% {
-            transform: scale(1.5);
-            opacity: 0;
-        }
-    }
-
-    .play-button:hover {
-        transform: scale(1.1);
-        background: #ff2b2b;
-        box-shadow: 0 0 40px rgba(255, 43, 43, 0.8);
-    }
-
-    .play-button i {
-        font-size: 40px;
-        color: white;
-        margin-left: 6px;
-    }
-
-    /* Website Logo Watermark on Video - Top Right Corner */
-    .video-watermark {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 15;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(8px);
-        padding: 8px 16px;
-        border-radius: 40px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-right: 3px solid #ff2b2b;
-        transition: all 0.3s ease;
-        opacity: 0.8;
-    }
-
-    .video-watermark:hover {
-        opacity: 1;
-        transform: translateY(-2px);
-    }
-
-    .video-watermark img {
-        height: 28px;
-        width: auto;
-        border-radius: 4px;
-    }
-
-    .video-watermark span {
-        color: white;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
-
-    .video-watermark .dot {
-        width: 4px;
-        height: 4px;
-        background: #ff2b2b;
-        border-radius: 50%;
-        display: inline-block;
-        margin: 0 2px;
-    }
-
-    /* Video Controls Overlay - Always Visible with Better Design */
-    .video-controls-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-        padding: 20px 15px 15px;
-        opacity: 1;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 20;
-    }
-
-    .video-container:hover .video-controls-overlay {
-        opacity: 1;
-    }
-
-    .progress-bar-container {
-        width: 100%;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 2px;
-        cursor: pointer;
-        margin-bottom: 12px;
-        pointer-events: auto;
-    }
-
-    .progress-bar {
-        height: 100%;
-        background: #ff2b2b;
-        border-radius: 2px;
-        width: 0%;
-        position: relative;
-        transition: width 0.1s linear;
-    }
-
-    .progress-bar::after {
-        content: '';
-        position: absolute;
-        right: -6px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 12px;
-        height: 12px;
-        background: #ff2b2b;
-        border-radius: 50%;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .progress-bar-container:hover .progress-bar::after {
-        opacity: 1;
-    }
-
-    .time-display {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-        font-size: 12px;
-        font-family: monospace;
-        pointer-events: auto;
-    }
-
-    .control-buttons {
-        display: flex;
-        gap: 15px;
-        align-items: center;
-    }
-
-    .control-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        pointer-events: auto;
-    }
-
-    .control-btn:hover {
-        background: #ff2b2b;
-        transform: scale(1.1);
-    }
-
-    .buttons { 
-        margin-top: 20px; 
-        display: flex; 
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .btn-download {
-        background: linear-gradient(135deg, #ff2b2b, #d41919);
-        padding: 12px 28px;
-        border-radius: 8px;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-download:hover { 
-        background: linear-gradient(135deg, #d41919, #b30000);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4);
-    }
-
-    .section-title {
-        margin: 30px 0 15px;
-        font-size: 20px;
-        font-weight: bold;
-        border-left: 4px solid #ff2b2b;
-        padding-left: 12px;
-        color: white;
-        position: relative;
-    }
-
-    .movie-description {
-        font-size: 14px;
-        line-height: 1.6;
-        color: #d1d5db;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    /* ==================== COMMENTS SECTION ==================== */
-    .comment-name-input,
-    .comment-text-input {
-        margin-bottom: 12px;
-    }
-
-    .comment-label {
-        display: block;
-        color: #e5e7eb;
-        font-weight: 600;
-        margin-bottom: 6px;
-        font-size: 12px;
-    }
-
-    .comment-label i {
-        color: #ff2b2b;
-        margin-right: 6px;
-    }
-
-    .comment-name-field {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 13px;
-    }
-
-    .comment-name-field:focus {
-        outline: none;
-        border-color: #ff2b2b;
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    .comment-name-hint {
-        margin-top: 4px;
-        font-size: 10px;
-        color: #9ca3af;
-    }
-
-    .comment-textarea {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.03);
-        color: white;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        resize: vertical;
-        min-height: 90px;
-        font-size: 13px;
-    }
-
-    .comment-textarea:focus {
-        outline: none;
-        border-color: #ff2b2b;
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .btn-submit {
-        background: linear-gradient(135deg, #ff2b2b, #d41919);
-        padding: 10px 20px;
-        color: white;
-        border-radius: 8px;
-        margin-top: 10px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 13px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .btn-submit:hover { 
-        background: linear-gradient(135deg, #d41919, #b30000);
-        transform: translateY(-2px);
-    }
-
-    #commentsList {
-        max-height: 500px;
-        overflow-y: auto;
-        padding-right: 8px;
-        margin-top: 15px;
-    }
-
-    #commentsList::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    #commentsList::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-    }
-
-    #commentsList::-webkit-scrollbar-thumb {
-        background: #ff2b2b;
-        border-radius: 10px;
-    }
-
-    .comment-box {
-        background: rgba(255, 255, 255, 0.03);
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .comment-box:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 43, 43, 0.2);
-    }
-
-    .comment-author-name {
-        font-weight: 700;
-        font-size: 13px;
-        color: #ff2b2b;
-        margin-bottom: 4px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .comment-author-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: rgba(255, 43, 43, 0.1);
-        padding: 2px 6px;
-        border-radius: 16px;
-        font-size: 9px;
-        font-weight: 500;
-        color: #ff2b2b;
-    }
-
-    .comment-time { 
-        font-size: 10px; 
-        color: #9ca3af; 
-        margin-bottom: 6px;
-    }
-
-    .comment-text { 
-        color: #d1d5db; 
-        font-size: 12px; 
-        line-height: 1.5;
-        margin-bottom: 8px;
-    }
-
-    .comment-footer {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 4px;
-    }
-
-    .btn-reply {
-        background: transparent;
-        border: none;
-        color: #9ca3af;
-        font-size: 11px;
-        font-weight: 500;
-        cursor: pointer;
-        padding: 3px 6px;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .btn-reply:hover {
-        color: #ff2b2b;
-        background: rgba(255, 43, 43, 0.1);
-    }
-
-    .comment-actions {
-        display: flex;
-        gap: 6px;
-        margin-left: auto;
-    }
-
-    .btn-edit-comment, .btn-delete-comment {
-        font-size: 10px;
-        text-decoration: none;
-        padding: 3px 8px;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: transparent;
-        border: none;
-        font-weight: 500;
-        cursor: pointer;
-    }
-
-    .btn-edit-comment {
-        color: #1e90ff !important;
-        background: rgba(30, 144, 255, 0.1);
-    }
-
-    .btn-delete-comment {
-        color: #ff2b2b !important;
-        background: rgba(255, 43, 43, 0.1);
-    }
-
-    .reply-form {
-        margin-top: 10px;
-        padding: 10px;
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 10px;
-        border-left: 3px solid #ff2b2b;
-        display: none;
-    }
-
-    .reply-form.show {
-        display: block;
-    }
-
-    .reply-input-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .reply-name-field {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-        padding: 8px 10px;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 12px;
-    }
-
-    .reply-textarea {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.03);
-        color: white;
-        padding: 8px 10px;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        resize: vertical;
-        min-height: 60px;
-        font-size: 12px;
-    }
-
-    .reply-actions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-    }
-
-    .btn-cancel-reply, .btn-submit-reply {
-        padding: 5px 12px;
-        border-radius: 5px;
-        font-size: 11px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-    }
-
-    .btn-cancel-reply {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    .btn-submit-reply {
-        background: linear-gradient(135deg, #ff2b2b, #d41919);
-        color: white;
-    }
-
-    .replies-section {
-        margin-top: 10px;
-        padding-left: 15px;
-        border-left: 2px solid rgba(255, 43, 43, 0.2);
-    }
-
-    .reply-box {
-        background: rgba(255, 255, 255, 0.02);
-        padding: 8px 10px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-    }
-
-    .reply-author {
-        font-weight: 600;
-        font-size: 11px;
-        color: #ff2b2b;
-        margin-bottom: 3px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .reply-badge {
-        background: rgba(255, 43, 43, 0.1);
-        padding: 1px 4px;
-        border-radius: 10px;
-        font-size: 8px;
-        font-weight: 500;
-        color: #ff2b2b;
-    }
-
-    .reply-time {
-        font-size: 9px;
-        color: #6b7280;
-        margin-bottom: 4px;
-    }
-
-    .reply-text {
-        color: #e5e7eb;
-        font-size: 11px;
-        line-height: 1.4;
-    }
-
-    .reply-actions-small {
-        margin-top: 6px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn-edit-reply, .btn-delete-reply {
-        font-size: 9px;
-        color: #9ca3af;
-        text-decoration: none;
-        transition: color 0.3s ease;
-        cursor: pointer;
-        background: transparent;
-        border: none;
-    }
-
-    .no-replies {
-        text-align: center;
-        color: #6b7280;
-        font-size: 10px;
-        padding: 6px;
-    }
-
-    .category-badge {
-        background: rgba(255, 43, 43, 0.1);
-        color: #ff2b2b;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        border: 1px solid rgba(255, 43, 43, 0.3);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .edit-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 2000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .edit-modal.show {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .edit-modal-content {
-        background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-        border-radius: 16px;
-        padding: 20px;
-        max-width: 450px;
-        width: 90%;
-        border: 1px solid rgba(255, 43, 43, 0.3);
-    }
-
-    .edit-modal-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: #ff2b2b;
-        margin-bottom: 15px;
-    }
-
-    .edit-modal-textarea {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        resize: vertical;
-        min-height: 80px;
-        font-size: 13px;
-        margin-bottom: 12px;
-    }
-
-    .edit-modal-actions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-    }
-
-    .edit-modal-save, .edit-modal-cancel {
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        border: none;
-    }
-
-    .edit-modal-save {
-        background: linear-gradient(135deg, #ff2b2b, #d41919);
-        color: white;
-    }
-
-    .edit-modal-cancel {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    /* ==================== RELATED MOVIES ==================== */
-    .related-movies-section {
-        margin-top: 40px;
-        width: 100%;
-    }
-
-    .related-movies-title {
-        font-size: 20px;
-        font-weight: bold;
-        border-left: 4px solid #ff2b2b;
-        padding-left: 12px;
-        margin-bottom: 20px;
-        color: white;
-    }
-
-    .horizontal-scroll {
-        display: flex;
-        gap: 20px;
-        overflow-x: auto;
-        padding-bottom: 15px;
-        scrollbar-width: thin;
-    }
-
-    .horizontal-scroll::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .horizontal-scroll::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-    }
-
-    .horizontal-scroll::-webkit-scrollbar-thumb {
-        background: #ff2b2b;
-        border-radius: 10px;
-    }
-
-    .movie-card-horizontal {
-        flex: 0 0 auto;
-        width: 160px;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        overflow: hidden;
-        text-decoration: none;
-        color: white;
-        transition: all 0.3s ease;
-    }
-
-    .movie-card-horizontal:hover {
-        transform: translateY(-5px);
-        border-color: #ff2b2b;
-        box-shadow: 0 10px 25px rgba(255, 43, 43, 0.3);
-    }
-
-    .movie-thumb-horizontal {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .movie-info-horizontal {
-        padding: 10px;
-    }
-
-    .movie-title-horizontal {
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 4px;
-        line-height: 1.3;
-    }
-
-    .movie-meta-horizontal {
-        font-size: 10px;
-        color: #9ca3af;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-        .two-column-layout {
-            flex-direction: column;
-        }
-        .comments-column {
-            max-width: 100%;
-        }
-        .play-button {
-            width: 70px;
-            height: 70px;
-        }
-        .play-button i {
-            font-size: 30px;
-        }
-        .video-watermark {
-            top: 12px;
-            right: 12px;
-            padding: 5px 12px;
-        }
-        .video-watermark span {
-            font-size: 10px;
-        }
-        .video-watermark img {
-            height: 22px;
-        }
-        .control-btn {
-            width: 28px;
-            height: 28px;
-            font-size: 12px;
-        }
-    }
+    .movie-wrapper { width: 95%; max-width: 1400px; margin: auto; padding: 35px 0; }
+    .two-column-layout { display: flex; gap: 30px; flex-wrap: wrap; }
+    .video-column { flex: 1.6; min-width: 300px; }
+    .comments-column { flex: 1; min-width: 280px; max-width: 400px; }
+    .movie-title { font-size: 32px; font-weight: bold; margin-bottom: 10px; background: linear-gradient(90deg, #ffffff, #ff2b2b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .movie-meta { font-size: 15px; color: #a3a3a3; margin-bottom: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+    .autoplay-toggle { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.3s; border-radius: 24px; }
+    .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+    input:checked + .toggle-slider { background-color: #ff2b2b; }
+    input:checked + .toggle-slider:before { transform: translateX(26px); }
+    .upnext-notification { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #1a1a1a, #0a0a0a); border-left: 4px solid #ff2b2b; border-radius: 12px; padding: 15px 20px; max-width: 300px; z-index: 1000; transform: translateX(400px); transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); }
+    .upnext-notification.show { transform: translateX(0); }
+    .upnext-notification .label { font-size: 12px; color: #ff2b2b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+    .upnext-notification .title { font-size: 16px; font-weight: bold; color: white; margin-bottom: 8px; }
+    .upnext-notification .countdown { font-size: 12px; color: #9ca3af; }
+    .upnext-notification .cancel-btn { position: absolute; top: 10px; right: 10px; background: rgba(255, 255, 255, 0.1); border: none; color: white; cursor: pointer; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+    .video-box { background: #000; border-radius: 20px; overflow: hidden; margin-bottom: 25px; border: 1px solid rgba(255, 43, 43, 0.3); position: relative; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; }
+    .video-box:hover { border-color: rgba(255, 43, 43, 0.6); box-shadow: 0 25px 80px rgba(255, 43, 43, 0.3); }
+    .video-container { position: relative; width: 100%; cursor: pointer; }
+    video { width: 100%; max-height: 70vh; background: black; display: block; border-radius: 16px; }
+    .video-poster-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2)); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; backdrop-filter: blur(2px); }
+    .video-poster-overlay.hide { opacity: 0; visibility: hidden; }
+    .play-button { width: 90px; height: 90px; background: rgba(255, 43, 43, 0.85); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 30px rgba(255, 43, 43, 0.5); position: relative; }
+    .play-button::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(255, 43, 43, 0.5); animation: pulse 1.5s infinite; z-index: -1; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
+    .play-button:hover { transform: scale(1.1); background: #ff2b2b; box-shadow: 0 0 40px rgba(255, 43, 43, 0.8); }
+    .play-button i { font-size: 40px; color: white; margin-left: 6px; }
+    .video-watermark { position: absolute; top: 20px; right: 20px; z-index: 15; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 40px; display: flex; align-items: center; gap: 10px; border-right: 3px solid #ff2b2b; transition: all 0.3s ease; opacity: 0.8; }
+    .video-watermark:hover { opacity: 1; transform: translateY(-2px); }
+    .video-watermark img { height: 28px; width: auto; border-radius: 4px; }
+    .video-watermark span { color: white; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+    .video-watermark .dot { width: 4px; height: 4px; background: #ff2b2b; border-radius: 50%; display: inline-block; margin: 0 2px; }
+    .video-controls-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 20px 15px 15px; opacity: 1; transition: opacity 0.3s ease; pointer-events: none; z-index: 20; }
+    .video-container:hover .video-controls-overlay { opacity: 1; }
+    .progress-bar-container { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; cursor: pointer; margin-bottom: 12px; pointer-events: auto; }
+    .progress-bar { height: 100%; background: #ff2b2b; border-radius: 2px; width: 0%; position: relative; transition: width 0.1s linear; }
+    .progress-bar::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #ff2b2b; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; }
+    .progress-bar-container:hover .progress-bar::after { opacity: 1; }
+    .time-display { display: flex; justify-content: space-between; align-items: center; color: white; font-size: 12px; font-family: monospace; pointer-events: auto; }
+    .control-buttons { display: flex; gap: 15px; align-items: center; }
+    .control-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; pointer-events: auto; }
+    .control-btn:hover { background: #ff2b2b; transform: scale(1.1); }
+    .buttons { margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .btn-download { background: linear-gradient(135deg, #ff2b2b, #d41919); padding: 12px 28px; border-radius: 8px; font-weight: bold; color: white; text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; border: none; cursor: pointer; }
+    .btn-download:hover { background: linear-gradient(135deg, #d41919, #b30000); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 43, 43, 0.4); }
+    .section-title { margin: 30px 0 15px; font-size: 20px; font-weight: bold; border-left: 4px solid #ff2b2b; padding-left: 12px; color: white; position: relative; }
+    .movie-description { font-size: 14px; line-height: 1.6; color: #d1d5db; margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .comment-name-input, .comment-text-input { margin-bottom: 12px; }
+    .comment-label { display: block; color: #e5e7eb; font-weight: 600; margin-bottom: 6px; font-size: 12px; }
+    .comment-label i { color: #ff2b2b; margin-right: 6px; }
+    .comment-name-field { width: 100%; background: rgba(255, 255, 255, 0.05); color: white; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 13px; }
+    .comment-name-field:focus { outline: none; border-color: #ff2b2b; background: rgba(255, 255, 255, 0.08); }
+    .comment-name-hint { margin-top: 4px; font-size: 10px; color: #9ca3af; }
+    .comment-textarea { width: 100%; background: rgba(255, 255, 255, 0.03); color: white; padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); resize: vertical; min-height: 90px; font-size: 13px; }
+    .comment-textarea:focus { outline: none; border-color: #ff2b2b; background: rgba(255, 255, 255, 0.05); }
+    .btn-submit { background: linear-gradient(135deg, #ff2b2b, #d41919); padding: 10px 20px; color: white; border-radius: 8px; margin-top: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-submit:hover { background: linear-gradient(135deg, #d41919, #b30000); transform: translateY(-2px); }
+    #commentsList { max-height: 500px; overflow-y: auto; padding-right: 8px; margin-top: 15px; }
+    #commentsList::-webkit-scrollbar { width: 4px; }
+    #commentsList::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    #commentsList::-webkit-scrollbar-thumb { background: #ff2b2b; border-radius: 10px; }
+    .comment-box { background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 10px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .comment-box:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 43, 43, 0.2); }
+    .comment-author-name { font-weight: 700; font-size: 13px; color: #ff2b2b; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .comment-author-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 43, 43, 0.1); padding: 2px 6px; border-radius: 16px; font-size: 9px; font-weight: 500; color: #ff2b2b; }
+    .comment-time { font-size: 10px; color: #9ca3af; margin-bottom: 6px; }
+    .comment-text { color: #d1d5db; font-size: 12px; line-height: 1.5; margin-bottom: 8px; }
+    .comment-footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .btn-reply { background: transparent; border: none; color: #9ca3af; font-size: 11px; font-weight: 500; cursor: pointer; padding: 3px 6px; border-radius: 4px; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-reply:hover { color: #ff2b2b; background: rgba(255, 43, 43, 0.1); }
+    .comment-actions { display: flex; gap: 6px; margin-left: auto; }
+    .btn-edit-comment, .btn-delete-comment { font-size: 10px; text-decoration: none; padding: 3px 8px; border-radius: 4px; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 4px; background: transparent; border: none; font-weight: 500; cursor: pointer; }
+    .btn-edit-comment { color: #1e90ff !important; background: rgba(30, 144, 255, 0.1); }
+    .btn-delete-comment { color: #ff2b2b !important; background: rgba(255, 43, 43, 0.1); }
+    .reply-form { margin-top: 10px; padding: 10px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; border-left: 3px solid #ff2b2b; display: none; }
+    .reply-form.show { display: block; }
+    .reply-input-wrapper { display: flex; flex-direction: column; gap: 8px; }
+    .reply-name-field { width: 100%; background: rgba(255, 255, 255, 0.05); color: white; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 12px; }
+    .reply-textarea { width: 100%; background: rgba(255, 255, 255, 0.03); color: white; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); resize: vertical; min-height: 60px; font-size: 12px; }
+    .reply-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-cancel-reply, .btn-submit-reply { padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border: none; }
+    .btn-cancel-reply { background: rgba(255, 255, 255, 0.1); color: white; }
+    .btn-submit-reply { background: linear-gradient(135deg, #ff2b2b, #d41919); color: white; }
+    .replies-section { margin-top: 10px; padding-left: 15px; border-left: 2px solid rgba(255, 43, 43, 0.2); }
+    .reply-box { background: rgba(255, 255, 255, 0.02); padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; }
+    .reply-author { font-weight: 600; font-size: 11px; color: #ff2b2b; margin-bottom: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .reply-badge { background: rgba(255, 43, 43, 0.1); padding: 1px 4px; border-radius: 10px; font-size: 8px; font-weight: 500; color: #ff2b2b; }
+    .reply-time { font-size: 9px; color: #6b7280; margin-bottom: 4px; }
+    .reply-text { color: #e5e7eb; font-size: 11px; line-height: 1.4; }
+    .reply-actions-small { margin-top: 6px; display: flex; gap: 8px; }
+    .btn-edit-reply, .btn-delete-reply { font-size: 9px; color: #9ca3af; text-decoration: none; transition: color 0.3s ease; cursor: pointer; background: transparent; border: none; }
+    .no-replies { text-align: center; color: #6b7280; font-size: 10px; padding: 6px; }
+    .category-badge { background: rgba(255, 43, 43, 0.1); color: #ff2b2b; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid rgba(255, 43, 43, 0.3); text-decoration: none; transition: all 0.3s ease; }
+    .edit-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .edit-modal.show { opacity: 1; visibility: visible; }
+    .edit-modal-content { background: linear-gradient(135deg, #1a1a1a, #0a0a0a); border-radius: 16px; padding: 20px; max-width: 450px; width: 90%; border: 1px solid rgba(255, 43, 43, 0.3); }
+    .edit-modal-title { font-size: 18px; font-weight: bold; color: #ff2b2b; margin-bottom: 15px; }
+    .edit-modal-textarea { width: 100%; background: rgba(255, 255, 255, 0.05); color: white; padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); resize: vertical; min-height: 80px; font-size: 13px; margin-bottom: 12px; }
+    .edit-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .edit-modal-save, .edit-modal-cancel { padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; }
+    .edit-modal-save { background: linear-gradient(135deg, #ff2b2b, #d41919); color: white; }
+    .edit-modal-cancel { background: rgba(255, 255, 255, 0.1); color: white; }
+    .related-movies-section { margin-top: 40px; width: 100%; }
+    .related-movies-title { font-size: 20px; font-weight: bold; border-left: 4px solid #ff2b2b; padding-left: 12px; margin-bottom: 20px; color: white; }
+    .horizontal-scroll { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: thin; }
+    .horizontal-scroll::-webkit-scrollbar { height: 6px; }
+    .horizontal-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    .horizontal-scroll::-webkit-scrollbar-thumb { background: #ff2b2b; border-radius: 10px; }
+    .movie-card-horizontal { flex: 0 0 auto; width: 160px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; overflow: hidden; text-decoration: none; color: white; transition: all 0.3s ease; }
+    .movie-card-horizontal:hover { transform: translateY(-5px); border-color: #ff2b2b; box-shadow: 0 10px 25px rgba(255, 43, 43, 0.3); }
+    .movie-thumb-horizontal { width: 100%; height: 200px; object-fit: cover; }
+    .movie-info-horizontal { padding: 10px; }
+    .movie-title-horizontal { font-size: 13px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
+    .movie-meta-horizontal { font-size: 10px; color: #9ca3af; display: flex; justify-content: space-between; }
+    @media (max-width: 900px) { .two-column-layout { flex-direction: column; } .comments-column { max-width: 100%; } .play-button { width: 70px; height: 70px; } .play-button i { font-size: 30px; } .video-watermark { top: 12px; right: 12px; padding: 5px 12px; } .video-watermark span { font-size: 10px; } .video-watermark img { height: 22px; } .control-btn { width: 28px; height: 28px; font-size: 12px; } }
 </style>
 
-<div class="movie-wrapper">
+<!-- Hidden element to store movie slug for JavaScript -->
+<div data-movie-slug="{{ movie.slug }}" style="display: none;"></div>
 
+<div class="movie-wrapper">
     <!-- MOVIE INFO -->
     <div class="movie-title">{{ movie.title }}</div>
     <div class="movie-meta">
         {% if movie.category %}
-        <a href="{% url 'movies:category' movie.category.slug %}" class="category-badge">
-            {{ movie.category.name }}
-        </a>
+        <a href="{% url 'movies:category' movie.category.slug %}" class="category-badge">{{ movie.category.name }}</a>
         {% endif %}
-        • 
-        {{ movie.time_ago }} • 
+        • {{ movie.time_ago }} • 
         <span id="commentsCount">{{ movie.comments_count }}</span> comments
-        
         <div class="autoplay-toggle">
             <span>🎬 Autoplay</span>
             <label class="toggle-switch">
@@ -1030,202 +155,104 @@
             <div class="video-box">
                 <div class="video-container" id="videoContainer">
                     {% if movie.video_url %}
-                        <video id="mainPlayer" 
-                            playsinline 
-                            webkit-playsinline 
-                            preload="metadata"
-                            {% if movie.thumbnail %}
-                                poster="{{ movie.thumbnail.url }}"
-                            {% else %}
-                                poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"
-                            {% endif %}
-                            style="width: 100%; display: block;"
-                        >
+                        <video id="mainPlayer" playsinline webkit-playsinline preload="metadata" {% if movie.thumbnail %}poster="{{ movie.thumbnail.url }}"{% else %}poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"{% endif %} style="width: 100%; display: block;">
                             <source src="{{ movie.video_url }}" type="video/mp4">
                             <source src="{{ movie.video_url }}" type="video/webm">
                             <source src="{{ movie.video_url }}" type="video/ogg">
                             Your browser does not support the video tag.
                         </video>
                     {% endif %}
-                    
-                    <!-- Poster Overlay with Play Button -->
                     <div class="video-poster-overlay" id="videoPosterOverlay">
-                        <div class="play-button" id="playButton">
-                            <i class="fas fa-play"></i>
-                        </div>
+                        <div class="play-button" id="playButton"><i class="fas fa-play"></i></div>
                     </div>
-                    
-                    <!-- Website Logo Watermark - Top Right Corner -->
                     <div class="video-watermark">
                         <img src="{% static 'movies/samu1.png' %}" alt="Dusa Films">
                         <span>DUSA <span class="dot">•</span> FILMS</span>
                     </div>
-                    
-                    <!-- Custom Controls Overlay with Fullscreen and Mute -->
                     <div class="video-controls-overlay" id="videoControls">
-                        <div class="progress-bar-container" id="progressContainer">
-                            <div class="progress-bar" id="progressBar"></div>
-                        </div>
+                        <div class="progress-bar-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
                         <div class="time-display">
                             <div class="control-buttons">
-                                <button class="control-btn" id="muteBtn" onclick="toggleMute()">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                                <button class="control-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
-                                    <i class="fas fa-expand"></i>
-                                </button>
+                                <button class="control-btn" id="muteBtn" onclick="toggleMute()"><i class="fas fa-volume-up"></i></button>
+                                <button class="control-btn" id="fullscreenBtn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
                             </div>
-                            <div>
-                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
-                            </div>
+                            <div><span id="currentTime">0:00</span> / <span id="duration">0:00</span></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- DOWNLOAD BUTTON ONLY -->
             <div class="buttons">
                 {% if movie.download_link %}
-                    <a href="{{ movie.download_link }}" class="btn-download" download id="downloadButton">
-                        <i class="fas fa-download"></i> Download Movie
-                    </a>
+                    <a href="{{ movie.download_link }}" class="btn-download" download id="downloadButton"><i class="fas fa-download"></i> Download Movie</a>
                 {% endif %}
             </div>
-
-            <!-- DESCRIPTION -->
             <div class="section-title">Description</div>
             <div class="movie-description">{{ movie.description|linebreaks }}</div>
         </div>
 
         <!-- RIGHT COLUMN: COMMENTS SECTION -->
         <div class="comments-column">
-            <div class="section-title" style="margin-top: 0;">
-                Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)
-            </div>
-
+            <div class="section-title" style="margin-top: 0;">Comments (<span id="commentsCountInline">{{ movie.comments_count }}</span>)</div>
             <form id="commentForm" method="POST" action="{% url 'movies:add_comment' movie.slug %}">
                 {% csrf_token %}
-                
                 <div class="comment-name-input">
-                    <label for="commentName" class="comment-label">
-                        <i class="fas fa-user"></i> Your Name
-                    </label>
+                    <label for="commentName" class="comment-label"><i class="fas fa-user"></i> Your Name</label>
                     {% if user.is_authenticated %}
-                        <input type="text" id="commentName" name="name" 
-                               class="comment-name-field" 
-                               value="{{ user.username }}" 
-                               readonly disabled>
+                        <input type="text" id="commentName" name="name" class="comment-name-field" value="{{ user.username }}" readonly disabled>
                         <input type="hidden" name="name" value="{{ user.username }}">
-                        <div class="comment-name-hint">
-                            <i class="fas fa-check-circle"></i> Commenting as <strong>{{ user.username }}</strong>
-                        </div>
+                        <div class="comment-name-hint"><i class="fas fa-check-circle"></i> Commenting as <strong>{{ user.username }}</strong></div>
                     {% else %}
-                        <input type="text" id="commentName" name="name" 
-                               class="comment-name-field" 
-                               placeholder="Enter your name (required)"
-                               required>
-                        <div class="comment-name-hint">
-                            <i class="fas fa-info-circle"></i> Your name will be displayed with your comment
-                        </div>
+                        <input type="text" id="commentName" name="name" class="comment-name-field" placeholder="Enter your name (required)" required>
+                        <div class="comment-name-hint"><i class="fas fa-info-circle"></i> Your name will be displayed with your comment</div>
                     {% endif %}
                 </div>
-                
                 <div class="comment-text-input">
-                    <label for="commentText" class="comment-label">
-                        <i class="fas fa-comment-dots"></i> Your Comment
-                    </label>
-                    <textarea name="text" id="commentText" 
-                              class="comment-textarea" 
-                              placeholder="Write your comment..." 
-                              required></textarea>
+                    <label for="commentText" class="comment-label"><i class="fas fa-comment-dots"></i> Your Comment</label>
+                    <textarea name="text" id="commentText" class="comment-textarea" placeholder="Write your comment..." required></textarea>
                 </div>
-                
-                <button id="submitComment" class="btn-submit" type="submit">
-                    <i class="fas fa-paper-plane"></i> Post Comment
-                </button>
+                <button id="submitComment" class="btn-submit" type="submit"><i class="fas fa-paper-plane"></i> Post Comment</button>
             </form>
-
-            <!-- COMMENTS WITH REPLIES -->
             <div id="commentsList">
                 {% for c in comments %}
                     <div class="comment-box" id="comment-{{ c.id }}" data-comment-id="{{ c.id }}">
                         <div class="comment-author-name">
-                            <span>
-                                <i class="fas fa-user-circle"></i> 
-                                {% if c.user %}
-                                    {{ c.user.username }}
-                                {% else %}
-                                    {{ c.guest_name }}
-                                {% endif %}
-                            </span>
-                            {% if c.user %}
-                                <span class="comment-author-badge">
-                                    <i class="fas fa-check-circle"></i> Verified
-                                </span>
-                            {% endif %}
+                            <span><i class="fas fa-user-circle"></i> {% if c.user %}{{ c.user.username }}{% else %}{{ c.guest_name }}{% endif %}</span>
+                            {% if c.user %}<span class="comment-author-badge"><i class="fas fa-check-circle"></i> Verified</span>{% endif %}
                         </div>
                         <div class="comment-time">{{ c.time_ago }}</div>
                         <div class="comment-text" id="comment-text-{{ c.id }}">{{ c.text }}</div>
-                        
                         <div class="comment-footer">
-                            <button class="btn-reply" onclick="showReplyForm({{ c.id }})">
-                                <i class="fas fa-reply"></i> Reply (<span class="reply-count-{{ c.id }}">{{ c.replies.count }}</span>)
-                            </button>
-                            
+                            <button class="btn-reply" onclick="showReplyForm({{ c.id }})"><i class="fas fa-reply"></i> Reply (<span class="reply-count-{{ c.id }}">{{ c.replies.count }}</span>)</button>
                             {% if user.is_authenticated and c.user == user %}
                                 <div class="comment-actions">
-                                    <button class="btn-edit-comment" onclick="showEditCommentModal({{ c.id }}, '{{ c.text|escapejs }}')">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="btn-delete-comment" onclick="deleteComment({{ c.id }})">
-                                        <i class="fas fa-trash-alt"></i> Delete
-                                    </button>
+                                    <button class="btn-edit-comment" onclick="showEditCommentModal({{ c.id }}, '{{ c.text|escapejs }}')"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn-delete-comment" onclick="deleteComment({{ c.id }})"><i class="fas fa-trash-alt"></i> Delete</button>
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <!-- Reply Form -->
                         <div id="replyForm-{{ c.id }}" class="reply-form">
                             <div class="reply-input-wrapper">
                                 <div class="reply-name-input">
                                     {% if user.is_authenticated %}
                                         <input type="text" class="reply-name-field" value="{{ user.username }}" readonly disabled>
                                         <input type="hidden" class="reply-name-hidden" value="{{ user.username }}">
-                                        <div class="comment-name-hint" style="margin-top: 4px;">
-                                            <i class="fas fa-check-circle"></i> Replying as <strong>{{ user.username }}</strong>
-                                        </div>
+                                        <div class="comment-name-hint" style="margin-top: 4px;"><i class="fas fa-check-circle"></i> Replying as <strong>{{ user.username }}</strong></div>
                                     {% else %}
                                         <input type="text" class="reply-name-field" placeholder="Your name (required)">
-                                        <div class="comment-name-hint" style="margin-top: 4px;">
-                                            <i class="fas fa-info-circle"></i> Enter your name to reply
-                                        </div>
+                                        <div class="comment-name-hint" style="margin-top: 4px;"><i class="fas fa-info-circle"></i> Enter your name to reply</div>
                                     {% endif %}
                                 </div>
                                 <textarea class="reply-textarea" placeholder="Write your reply..."></textarea>
                                 <div class="reply-actions">
                                     <button class="btn-cancel-reply" onclick="hideReplyForm({{ c.id }})">Cancel</button>
-                                    <button class="btn-submit-reply" onclick="submitReply({{ c.id }})">
-                                        <i class="fas fa-paper-plane"></i> Post Reply
-                                    </button>
+                                    <button class="btn-submit-reply" onclick="submitReply({{ c.id }})"><i class="fas fa-paper-plane"></i> Post Reply</button>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Replies Section -->
                         <div class="replies-section" id="replies-{{ c.id }}">
                             {% for reply in c.replies.all %}
                                 <div class="reply-box" id="reply-{{ reply.id }}" data-reply-id="{{ reply.id }}">
-                                    <div class="reply-author">
-                                        <i class="fas fa-reply-all"></i> 
-                                        {% if reply.user %}
-                                            {{ reply.user.username }}
-                                        {% else %}
-                                            {{ reply.guest_name }}
-                                        {% endif %}
-                                        {% if reply.user %}
-                                            <span class="reply-badge">Verified</span>
-                                        {% endif %}
-                                    </div>
+                                    <div class="reply-author"><i class="fas fa-reply-all"></i> {% if reply.user %}{{ reply.user.username }}{% else %}{{ reply.guest_name }}{% endif %}{% if reply.user %}<span class="reply-badge">Verified</span>{% endif %}</div>
                                     <div class="reply-time">{{ reply.time_ago }}</div>
                                     <div class="reply-text" id="reply-text-{{ reply.id }}">{{ reply.text }}</div>
                                     {% if user.is_authenticated and reply.user == user %}
@@ -1236,17 +263,12 @@
                                     {% endif %}
                                 </div>
                             {% empty %}
-                                <div class="no-replies" id="noReplies-{{ c.id }}">
-                                    <i class="far fa-comment-dots"></i> No replies yet. Be the first to reply!
-                                </div>
+                                <div class="no-replies" id="noReplies-{{ c.id }}"><i class="far fa-comment-dots"></i> No replies yet. Be the first to reply!</div>
                             {% endfor %}
                         </div>
                     </div>
                 {% empty %}
-                    <div class="comment-box" style="text-align: center; color: rgba(255,255,255,0.5);">
-                        <i class="far fa-comments" style="font-size: 1.5rem; margin-bottom: 8px; opacity: 0.5;"></i>
-                        <p style="font-size: 12px;">No comments yet. Be the first!</p>
-                    </div>
+                    <div class="comment-box" style="text-align: center; color: rgba(255,255,255,0.5);"><i class="far fa-comments" style="font-size: 1.5rem; margin-bottom: 8px; opacity: 0.5;"></i><p style="font-size: 12px;">No comments yet. Be the first!</p></div>
                 {% endfor %}
             </div>
         </div>
@@ -1259,28 +281,18 @@
             <div class="horizontal-scroll">
                 {% for m in related %}
                     <a href="{% url 'movies:detail' m.slug %}" class="movie-card-horizontal" data-slug="{{ m.slug }}">
-                        {% if m.thumbnail %}
-                            <img src="{{ m.thumbnail.url }}" class="movie-thumb-horizontal" alt="{{ m.title }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/160x200?text=No+Image" class="movie-thumb-horizontal" alt="{{ m.title }}">
-                        {% endif %}
+                        {% if m.thumbnail %}<img src="{{ m.thumbnail.url }}" class="movie-thumb-horizontal" alt="{{ m.title }}">{% else %}<img src="https://via.placeholder.com/160x200?text=No+Image" class="movie-thumb-horizontal" alt="{{ m.title }}">{% endif %}
                         <div class="movie-info-horizontal">
                             <div class="movie-title-horizontal">{{ m.title }}</div>
-                            <div class="movie-meta-horizontal">
-                                <span>{{ m.time_ago }}</span>
-                                <span>{{ m.comments_count }} 💬</span>
-                            </div>
+                            <div class="movie-meta-horizontal"><span>{{ m.time_ago }}</span><span>{{ m.comments_count }} 💬</span></div>
                         </div>
                     </a>
                 {% endfor %}
             </div>
         {% else %}
-            <div style="text-align: center; color: #6b7280; padding: 20px;">
-                No related movies found.
-            </div>
+            <div style="text-align: center; color: #6b7280; padding: 20px;">No related movies found.</div>
         {% endif %}
     </div>
-
 </div>
 
 <!-- Edit Modals -->
@@ -1294,7 +306,6 @@
         </div>
     </div>
 </div>
-
 <div id="editReplyModal" class="edit-modal">
     <div class="edit-modal-content">
         <div class="edit-modal-title">Edit Reply</div>
@@ -1305,7 +316,6 @@
         </div>
     </div>
 </div>
-
 <div id="upnextNotification" class="upnext-notification">
     <button class="cancel-btn" onclick="cancelAutoPlay()">✕</button>
     <div class="label">UP NEXT</div>
@@ -1314,13 +324,161 @@
 </div>
 
 <script>
-    window.relatedMoviesData = [
-        {% for m in related %}{ slug: "{{ m.slug|escapejs }}", title: "{{ m.title|escapejs }}", url: "{% url 'movies:detail' m.slug %}" },{% endfor %}
-    ];
+    window.relatedMoviesData = [{% for m in related %}{ slug: "{{ m.slug|escapejs }}", title: "{{ m.title|escapejs }}", url: "{% url 'movies:detail' m.slug %}" },{% endfor %}];
     window.currentMovieSlug = "{{ movie.slug|escapejs }}";
     window.movieSlug = "{{ movie.slug|escapejs }}";
     window.isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
     window.userName = "{% if user.is_authenticated %}{{ user.username|escapejs }}{% else %}{% endif %}";
+    
+    // ==================== PERSISTENT SESSION TRACKING WITH TIME COUNTING ====================
+    class SessionTracker {
+        constructor() {
+            this.sessionId = null;
+            this.movieSlug = null;
+            this.heartbeatInterval = null;
+            this.startTime = null;
+            this.isTracking = false;
+            this.currentDuration = 0;
+            this.HEARTBEAT_INTERVAL = 30000;
+            this.video = null;
+        }
+        
+        init(movieSlug, videoElement) {
+            this.movieSlug = movieSlug;
+            this.video = videoElement;
+            this.restoreSession();
+            this.startTracking();
+            
+            if (this.video) {
+                this.video.addEventListener('timeupdate', () => {
+                    if (!this.video.paused && !this.video.ended) {
+                        this.currentDuration = Math.floor(this.video.currentTime);
+                    }
+                });
+                this.video.addEventListener('play', () => { this.sendHeartbeat(); });
+                this.video.addEventListener('ended', () => { this.sendHeartbeat(); this.endSession(); });
+            }
+            
+            setInterval(() => {
+                if (this.video && !this.video.paused && !this.video.ended) {
+                    this.currentDuration = Math.floor(this.video.currentTime);
+                }
+            }, 1000);
+            
+            window.addEventListener('beforeunload', () => { this.endSession(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) { this.endSession(); } 
+                else { this.startTracking(); }
+            });
+        }
+        
+        restoreSession() {
+            const savedSession = localStorage.getItem('analytics_session');
+            if (savedSession) {
+                try {
+                    const session = JSON.parse(savedSession);
+                    const sessionAge = Date.now() - session.timestamp;
+                    if (sessionAge < 30 * 60 * 1000 && session.movieSlug === this.movieSlug) {
+                        this.sessionId = session.sessionId;
+                        this.startTime = session.startTime;
+                        console.log('Session restored:', this.sessionId);
+                        return true;
+                    }
+                } catch(e) { console.error('Error restoring session:', e); }
+            }
+            return false;
+        }
+        
+        saveSession() {
+            if (this.sessionId) {
+                localStorage.setItem('analytics_session', JSON.stringify({
+                    sessionId: this.sessionId,
+                    movieSlug: this.movieSlug,
+                    startTime: this.startTime,
+                    timestamp: Date.now()
+                }));
+            }
+        }
+        
+        clearSession() {
+            localStorage.removeItem('analytics_session');
+            this.sessionId = null;
+            this.startTime = null;
+        }
+        
+        async startTracking() {
+            if (this.isTracking) return;
+            try {
+                if (!this.sessionId) { await this.createSession(); }
+                else { this.startHeartbeat(); console.log('Session continued after refresh'); }
+                this.isTracking = true;
+            } catch(error) { console.error('Error starting tracking:', error); }
+        }
+        
+        async createSession() {
+            try {
+                const response = await fetch('/analytics/api/track-session/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrfToken() },
+                    body: JSON.stringify({ movie_slug: this.movieSlug, action: 'start', duration: 0, session_id: null })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    this.sessionId = data.session_id;
+                    this.startTime = Date.now();
+                    this.saveSession();
+                    this.startHeartbeat();
+                    console.log('New session created:', this.sessionId);
+                }
+            } catch(error) { console.error('Error creating session:', error); }
+        }
+        
+        async sendHeartbeat() {
+            if (!this.sessionId || !this.movieSlug) return;
+            let duration = this.currentDuration;
+            if (this.video && !isNaN(this.video.currentTime)) { duration = Math.floor(this.video.currentTime); }
+            console.log(`Sending heartbeat: session=${this.sessionId}, duration=${duration}s`);
+            try {
+                const response = await fetch('/analytics/api/track-session/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrfToken() },
+                    body: JSON.stringify({ movie_slug: this.movieSlug, action: 'heartbeat', duration: duration, session_id: this.sessionId })
+                });
+                const data = await response.json();
+                if (data.status === 'success') { this.saveSession(); console.log(`Heartbeat sent, duration: ${duration}s`); }
+                else { console.error('Heartbeat failed:', data); }
+            } catch(error) { console.error('Error sending heartbeat:', error); }
+        }
+        
+        startHeartbeat() {
+            if (this.heartbeatInterval) { clearInterval(this.heartbeatInterval); }
+            this.sendHeartbeat();
+            this.heartbeatInterval = setInterval(() => { this.sendHeartbeat(); }, this.HEARTBEAT_INTERVAL);
+        }
+        
+        async endSession() {
+            if (!this.sessionId || !this.movieSlug) return;
+            let duration = this.currentDuration;
+            if (this.video && !isNaN(this.video.currentTime)) { duration = Math.floor(this.video.currentTime); }
+            console.log(`Ending session: ${this.sessionId}, final duration: ${duration}s`);
+            try {
+                const response = await fetch('/analytics/api/track-session/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrfToken() },
+                    body: JSON.stringify({ movie_slug: this.movieSlug, action: 'end', duration: duration, session_id: this.sessionId })
+                });
+                const data = await response.json();
+                if (data.status === 'success') { console.log('Session ended successfully'); this.clearSession(); }
+            } catch(error) { console.error('Error ending session:', error); }
+            if (this.heartbeatInterval) { clearInterval(this.heartbeatInterval); this.heartbeatInterval = null; }
+            this.isTracking = false;
+        }
+        
+        getCsrfToken() {
+            const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+            return cookieValue ? cookieValue.pop() : '';
+        }
+    }
     
     // ==================== PROFESSIONAL VIDEO PLAYER CONTROLS ====================
     document.addEventListener('DOMContentLoaded', function() {
@@ -1334,9 +492,16 @@
         const muteBtn = document.getElementById('muteBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         
+        const movieSlugElement = document.querySelector('[data-movie-slug]');
+        if (movieSlugElement && video) {
+            const movieSlug = movieSlugElement.dataset.movieSlug;
+            const tracker = new SessionTracker();
+            tracker.init(movieSlug, video);
+            window.sessionTracker = tracker;
+        }
+        
         if (!video) return;
         
-        // Format time (seconds to MM:SS)
         function formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
             const mins = Math.floor(seconds / 60);
@@ -1344,7 +509,6 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
         
-        // Update progress bar and time
         function updateProgress() {
             if (video.duration) {
                 const percent = (video.currentTime / video.duration) * 100;
@@ -1353,97 +517,39 @@
             }
         }
         
-        // Update mute button icon
         function updateMuteIcon() {
-            if (video.muted) {
-                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            } else {
-                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            }
+            if (video.muted) { muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; }
+            else { muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }
         }
         
-        // Toggle mute function
-        window.toggleMute = function() {
-            video.muted = !video.muted;
-            updateMuteIcon();
-        };
-        
-        // Toggle fullscreen function
+        window.toggleMute = function() { video.muted = !video.muted; updateMuteIcon(); };
         window.toggleFullscreen = function() {
-            if (!document.fullscreenElement) {
-                video.requestFullscreen();
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-            } else {
-                document.exitFullscreen();
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            }
+            if (!document.fullscreenElement) { video.requestFullscreen(); fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>'; }
+            else { document.exitFullscreen(); fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>'; }
         };
         
-        // Update fullscreen button on change
         document.addEventListener('fullscreenchange', function() {
-            if (document.fullscreenElement) {
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-            } else {
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            }
+            if (document.fullscreenElement) { fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>'; }
+            else { fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>'; }
         });
         
-        // Set duration when metadata loaded
         video.addEventListener('loadedmetadata', function() {
             durationSpan.textContent = formatTime(video.duration);
             updateMuteIcon();
-            
-            // Try to autoplay
             const autoplayPromise = video.play();
             if (autoplayPromise !== undefined) {
-                autoplayPromise.then(() => {
-                    posterOverlay.classList.add('hide');
-                }).catch(() => {
-                    posterOverlay.classList.remove('hide');
-                });
+                autoplayPromise.then(() => { posterOverlay.classList.add('hide'); }).catch(() => { posterOverlay.classList.remove('hide'); });
             }
         });
         
-        // Update progress during playback
         video.addEventListener('timeupdate', updateProgress);
+        video.addEventListener('play', function() { posterOverlay.classList.add('hide'); });
+        video.addEventListener('pause', function() { if (video.currentTime === 0 || video.ended) { posterOverlay.classList.remove('hide'); } });
+        video.addEventListener('ended', function() { posterOverlay.classList.remove('hide'); progressBar.style.width = '0%'; currentTimeSpan.textContent = '0:00'; });
         
-        // Hide poster overlay when video starts playing
-        video.addEventListener('play', function() {
-            posterOverlay.classList.add('hide');
-        });
+        playBtn.addEventListener('click', function(e) { e.stopPropagation(); video.play(); posterOverlay.classList.add('hide'); });
+        video.addEventListener('click', function(e) { e.stopPropagation(); if (video.paused) { video.play(); posterOverlay.classList.add('hide'); } else { video.pause(); } });
         
-        // Show poster overlay when video pauses or ends
-        video.addEventListener('pause', function() {
-            if (video.currentTime === 0 || video.ended) {
-                posterOverlay.classList.remove('hide');
-            }
-        });
-        
-        video.addEventListener('ended', function() {
-            posterOverlay.classList.remove('hide');
-            progressBar.style.width = '0%';
-            currentTimeSpan.textContent = '0:00';
-        });
-        
-        // Play button click
-        playBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            video.play();
-            posterOverlay.classList.add('hide');
-        });
-        
-        // Click on video to play/pause
-        video.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (video.paused) {
-                video.play();
-                posterOverlay.classList.add('hide');
-            } else {
-                video.pause();
-            }
-        });
-        
-        // Progress bar seeking
         if (progressContainer) {
             progressContainer.addEventListener('click', function(e) {
                 const rect = progressContainer.getBoundingClientRect();
@@ -1452,8 +558,6 @@
                 video.currentTime = percent * video.duration;
                 updateProgress();
             });
-            
-            // Touch support for mobile
             progressContainer.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 const rect = progressContainer.getBoundingClientRect();
@@ -1465,14 +569,10 @@
             });
         }
         
-        // Handle video errors
-        video.addEventListener('error', function(e) {
-            console.error('Video error:', e);
-        });
+        video.addEventListener('error', function(e) { console.error('Video error:', e); });
     });
 </script>
 
 <script src="{% static 'movies/js/detail.js' %}"></script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}

@@ -1,9 +1,9 @@
-{% extends "admin/base_site.html" %}
+{% extends "movies/base.html" %}
 {% load static %}
 
-{% block title %}Analytics Dashboard • Dusa Films Admin{% endblock %}
+{% block title %}Analytics Dashboard • Dusa Films{% endblock %}
 
-{% block extrastyle %}
+{% block extra_css %}
 <style>
     /* ==================== GLOBAL STYLES ==================== */
     :root {
@@ -45,6 +45,12 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 10px;
+    }
+    
+    .dashboard-title i {
+        background: none;
+        -webkit-text-fill-color: var(--primary-red);
+        margin-right: 10px;
     }
     
     .dashboard-subtitle {
@@ -125,6 +131,7 @@
         display: flex;
         align-items: center;
         gap: 5px;
+        flex-wrap: wrap;
     }
     
     .trend-up { color: var(--success); }
@@ -186,6 +193,15 @@
         color: white;
     }
     
+    .platform-stats {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+    
+    .platform-stats i {
+        margin-right: 4px;
+    }
+    
     .viewers-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -228,6 +244,10 @@
         font-weight: 600;
         color: white;
         margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
     }
     
     .viewer-movie {
@@ -250,6 +270,11 @@
         gap: 10px;
         border-left: 4px solid var(--primary-red);
         padding-left: 15px;
+        color: white;
+    }
+    
+    .section-title i {
+        color: var(--primary-red);
     }
     
     /* ==================== TABLES ==================== */
@@ -258,6 +283,7 @@
         border-radius: 16px;
         overflow: hidden;
         border: 1px solid var(--border-color);
+        margin-bottom: 30px;
     }
     
     .analytics-table table {
@@ -284,6 +310,16 @@
     
     .analytics-table tr:hover {
         background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .analytics-table a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .analytics-table a:hover {
+        color: var(--primary-red);
     }
     
     .rank-badge {
@@ -337,6 +373,13 @@
         font-weight: 600;
         margin-bottom: 20px;
         color: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .chart-title i {
+        color: var(--primary-red);
     }
     
     canvas {
@@ -344,10 +387,36 @@
         width: 100%;
     }
     
+    /* ==================== REFRESH BUTTON ==================== */
+    .refresh-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(255, 43, 43, 0.3);
+        z-index: 100;
+    }
+    
+    .refresh-btn:hover {
+        transform: rotate(180deg) scale(1.1);
+        box-shadow: 0 10px 30px rgba(255, 43, 43, 0.5);
+    }
+    
     /* ==================== RESPONSIVE ==================== */
     @media (max-width: 768px) {
         .analytics-container {
-            padding: 10px;
+            padding: 15px;
         }
         
         .stats-grid {
@@ -368,6 +437,22 @@
         
         .analytics-table table {
             min-width: 600px;
+        }
+        
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+        }
+        
+        .refresh-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            font-size: 1rem;
         }
     }
     
@@ -397,6 +482,20 @@
         font-size: 3rem;
         margin-bottom: 15px;
         opacity: 0.5;
+    }
+    
+    /* Auto-refresh indicator */
+    .auto-refresh-indicator {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        z-index: 100;
     }
 </style>
 
@@ -555,7 +654,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="{% url 'analytics:movie_details' movie.movie.id %}" style="color: white; text-decoration: none;">
+                        <a href="{% url 'analytics:movie_details' movie.movie.id %}">
                             {{ movie.movie.title }}
                         </a>
                     </td>
@@ -597,7 +696,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="{% url 'analytics:user_details' user.user.id %}" style="color: white; text-decoration: none;">
+                        <a href="{% url 'analytics:user_details' user.user.id %}">
                             {{ user.user.username }}
                         </a>
                     </td>
@@ -719,6 +818,15 @@
     
 </div>
 
+<!-- Refresh Button -->
+<button class="refresh-btn" onclick="location.reload()" title="Refresh Data">
+    <i class="fas fa-sync-alt"></i>
+</button>
+
+<div class="auto-refresh-indicator">
+    <i class="fas fa-sync-alt"></i> Auto-refresh every 30s
+</div>
+
 <!-- Chart.js Initialization -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -803,9 +911,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Auto-refresh every 30 seconds (optional)
-setTimeout(function() {
+// Auto-refresh every 30 seconds
+let refreshInterval = setInterval(function() {
     location.reload();
 }, 30000);
+
+// Optional: Stop auto-refresh when user interacts with the page
+document.addEventListener('click', function() {
+    // Reset timer on user interaction
+    clearInterval(refreshInterval);
+    refreshInterval = setInterval(function() {
+        location.reload();
+    }, 30000);
+});
 </script>
 {% endblock %}

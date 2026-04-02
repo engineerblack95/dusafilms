@@ -23,21 +23,23 @@ def analytics_dashboard(request):
     """Professional analytics dashboard for admins"""
     
     # ==================== REAL-TIME ACTIVE VIEWERS ====================
-    active_threshold = timezone.now() - timedelta(seconds=30)
+    active_threshold = timezone.now() - timedelta(seconds=60)
     active_sessions = WatchSession.objects.filter(
         is_active=True,
         last_heartbeat__gte=active_threshold
-    ).select_related('user', 'movie')
+    ).select_related('user', 'movie').order_by('-last_heartbeat')
     
     active_viewers = []
     for session in active_sessions:
+        watch_duration_minutes = round(session.watch_duration / 60, 1) if session.watch_duration else 0
+        
         active_viewers.append({
             'username': session.user.username if session.user else 'Guest',
-            'movie_title': session.movie.title,
-            'movie_slug': session.movie.slug,
+            'movie_title': session.movie.title if session.movie else 'Unknown',
+            'movie_slug': session.movie.slug if session.movie else '',
             'started_at': session.started_at,
-            'duration_minutes': round(session.watch_duration / 60, 1),
-            'device_type': session.device_type,
+            'duration_minutes': watch_duration_minutes,
+            'device_type': session.device_type or 'unknown',
             'session_id': session.session_id,
             'last_heartbeat': session.last_heartbeat,
         })
@@ -45,19 +47,22 @@ def analytics_dashboard(request):
     # ==================== TODAY'S STATISTICS ====================
     today = timezone.now().date()
     
-    # Watch sessions today
     sessions_today = WatchSession.objects.filter(started_at__date=today)
     watch_time_today = sessions_today.aggregate(total=Sum('watch_duration'))['total'] or 0
     unique_viewers_today = sessions_today.values('user').distinct().count()
     
-    # Downloads today
     downloads_today = DownloadTracking.objects.filter(download_started__date=today)
     total_downloads_today = downloads_today.count()
     completed_downloads_today = downloads_today.filter(status='completed').count()
     failed_downloads_today = downloads_today.filter(status='failed').count()
-    in_progress_downloads = downloads_today.filter(status='in_progress').count()
+    in_progress_downloads_today = downloads_today.filter(status='in_progress').count()
+    interrupted_downloads_today = downloads_today.filter(status='interrupted').count()
+    pending_downloads_today = downloads_today.filter(status='pending').count()
     
-    # ==================== TOP MOVIES BY WATCH TIME ====================
+    completed_or_failed = completed_downloads_today + failed_downloads_today
+    download_success_rate_today = round((completed_downloads_today / completed_or_failed * 100), 1) if completed_or_failed > 0 else 0
+    
+    # ==================== TOP MOVIES ====================
     top_movies = MovieAnalytics.objects.filter(
         total_watch_time__gt=0
     ).select_related('movie').order_by('-total_watch_time')[:10]
@@ -74,7 +79,7 @@ def analytics_dashboard(request):
             'average_watch_minutes': round(m.average_watch_duration / 60, 1) if m.average_watch_duration else 0,
         })
     
-    # ==================== TOP USERS BY WATCH TIME ====================
+    # ==================== TOP USERS ====================
     top_users = UserEngagementStats.objects.filter(
         total_watch_time__gt=0
     ).select_related('user').order_by('-total_watch_time')[:10]
@@ -85,22 +90,25 @@ def analytics_dashboard(request):
             'rank': idx,
             'user': u.user,
             'watch_hours': round(u.total_watch_time / 3600, 1),
-            'downloads': u.total_downloads,
             'movies_watched': u.movies_watched,
-            'last_active': u.last_active,
+            'total_downloads': u.total_downloads,
+            'comments': u.comments_count,
+            'success_rate': u.download_success_rate(),
         })
     
     # ==================== TOP DOWNLOADERS ====================
     top_downloaders = UserEngagementStats.objects.filter(
-        total_downloads__gt=0
-    ).select_related('user').order_by('-total_downloads')[:10]
+        completed_downloads__gt=0
+    ).select_related('user').order_by('-completed_downloads')[:10]
     
     top_downloaders_list = []
     for idx, d in enumerate(top_downloaders, 1):
         top_downloaders_list.append({
             'rank': idx,
             'user': d.user,
-            'downloads': d.total_downloads,
+            'downloads': d.completed_downloads,
+            'failed_downloads': d.failed_downloads,
+            'success_rate': d.download_success_rate(),
             'watch_hours': round(d.total_watch_time / 3600, 1),
         })
     
@@ -113,7 +121,7 @@ def analytics_dashboard(request):
         'registered_sessions': WatchSession.objects.filter(user__isnull=False).count(),
     }
     
-    # ==================== LAST 7 DAYS ENGAGEMENT ====================
+    # ==================== LAST 7 DAYS ====================
     last_7_days = []
     for i in range(6, -1, -1):
         date = timezone.now().date() - timedelta(days=i)
@@ -137,7 +145,7 @@ def analytics_dashboard(request):
             'unique_viewers': unique_viewers,
         })
     
-    # ==================== LAST 24 HOURS ENGAGEMENT ====================
+    # ==================== LAST 24 HOURS ====================
     last_24_hours = []
     for hour in range(23, -1, -1):
         hour_time = timezone.now() - timedelta(hours=hour)
@@ -187,8 +195,8 @@ def analytics_dashboard(request):
         'total_downloads_today': total_downloads_today,
         'completed_downloads_today': completed_downloads_today,
         'failed_downloads_today': failed_downloads_today,
-        'in_progress_downloads': in_progress_downloads,
-        'download_success_rate_today': round((completed_downloads_today / total_downloads_today * 100), 1) if total_downloads_today > 0 else 0,
+        'in_progress_downloads': in_progress_downloads_today,
+        'download_success_rate_today': download_success_rate_today,
         'top_movies': top_movies_list,
         'top_users': top_users_list,
         'top_downloaders': top_downloaders_list,
@@ -206,6 +214,7 @@ def analytics_dashboard(request):
     return render(request, 'analytics/dashboard.html', context)
 
 
+# ==================== CRITICAL FIX: CORRECTED track_watch_session ====================
 @login_required
 @require_POST
 def track_watch_session(request):
@@ -215,41 +224,103 @@ def track_watch_session(request):
         movie_slug = data.get('movie_slug')
         action = data.get('action')
         watch_duration = data.get('duration', 0)
+        client_session_id = data.get('session_id')  # IMPORTANT: Get session_id from client
         
-        # Get or create session ID
-        session_id = request.session.get('analytics_session_id')
-        if not session_id:
+        logger.info(f"Track session request: action={action}, client_session_id={client_session_id}, movie={movie_slug}")
+        
+        # PRIORITIZE client session ID over server session
+        session_id = client_session_id
+        
+        # If no client session ID and this is a start action, create new one
+        if not session_id and action == 'start':
             session_id = str(uuid.uuid4())
             request.session['analytics_session_id'] = session_id
+            logger.info(f"Created new session ID: {session_id}")
+        
+        if not session_id:
+            return JsonResponse({'status': 'error', 'message': 'No session ID provided'}, status=400)
         
         movie = get_object_or_404(Movie, slug=movie_slug)
         
+        # Detect device type from user agent
+        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+        device_type = 'desktop'
+        if 'mobile' in user_agent or 'android' in user_agent or 'iphone' in user_agent:
+            device_type = 'mobile'
+        elif 'tablet' in user_agent or 'ipad' in user_agent:
+            device_type = 'tablet'
+        
         if action == 'start':
-            # Create new watch session
-            session = WatchSession.objects.create(
-                user=request.user if request.user.is_authenticated else None,
-                movie=movie,
+            # Check if session already exists (for page refresh case)
+            existing_session = WatchSession.objects.filter(
                 session_id=session_id,
-                ip_address=request.META.get('REMOTE_ADDR'),
-                user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
-                is_active=True,
-                watch_duration=0
-            )
-            return JsonResponse({'status': 'success', 'session_id': session_id})
+                movie=movie
+            ).first()
+            
+            if existing_session:
+                # Reactivate existing session
+                existing_session.is_active = True
+                existing_session.last_heartbeat = timezone.now()
+                existing_session.ended_at = None
+                existing_session.watch_duration = watch_duration
+                existing_session.user = request.user if request.user.is_authenticated else None
+                existing_session.device_type = device_type
+                existing_session.save()
+                logger.info(f"Session REACTIVATED: {session_id} for {movie.title}")
+                return JsonResponse({
+                    'status': 'success', 
+                    'session_id': session_id,
+                    'reactivated': True
+                })
+            else:
+                # Create new session
+                session = WatchSession.objects.create(
+                    user=request.user if request.user.is_authenticated else None,
+                    movie=movie,
+                    session_id=session_id,
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
+                    device_type=device_type,
+                    is_active=True,
+                    watch_duration=0
+                )
+                request.session['analytics_session_id'] = session_id
+                logger.info(f"New session CREATED: {session_id} for {movie.title}")
+                return JsonResponse({
+                    'status': 'success', 
+                    'session_id': session_id,
+                    'reactivated': False
+                })
         
         elif action == 'heartbeat':
-            # Update existing session
-            session = WatchSession.objects.filter(session_id=session_id, is_active=True).first()
+            # Find existing session (active or inactive)
+            session = WatchSession.objects.filter(
+                session_id=session_id,
+                movie=movie
+            ).first()
+            
             if session:
+                # Update session
                 session.watch_duration = watch_duration
                 session.last_heartbeat = timezone.now()
+                if not session.is_active:
+                    session.is_active = True
+                    session.ended_at = None
+                    logger.info(f"Session REACTIVATED via heartbeat: {session_id}")
                 session.save()
                 return JsonResponse({'status': 'success'})
+            
+            logger.warning(f"Heartbeat failed - session not found: {session_id}")
             return JsonResponse({'status': 'error', 'message': 'Session not found'}, status=404)
         
         elif action == 'end':
-            # End session and update stats
-            session = WatchSession.objects.filter(session_id=session_id, is_active=True).first()
+            # End session
+            session = WatchSession.objects.filter(
+                session_id=session_id,
+                movie=movie,
+                is_active=True
+            ).first()
+            
             if session:
                 session.watch_duration = watch_duration
                 session.ended_at = timezone.now()
@@ -274,14 +345,15 @@ def track_watch_session(request):
                     movie=movie
                 ).values('user').distinct().count()
                 
-                # Calculate average watch duration
                 all_sessions = WatchSession.objects.filter(movie=movie)
                 avg_duration = all_sessions.aggregate(avg=Avg('watch_duration'))['avg'] or 0
                 movie_stats.average_watch_duration = int(avg_duration)
                 movie_stats.last_watched = timezone.now()
                 movie_stats.save()
                 
+                logger.info(f"Session ended: {session_id} for {movie.title}, duration: {watch_duration}s")
                 return JsonResponse({'status': 'success'})
+            
             return JsonResponse({'status': 'error', 'message': 'Session not found'}, status=404)
         
         return JsonResponse({'status': 'error', 'message': 'Invalid action'}, status=400)
@@ -307,35 +379,33 @@ def track_download(request):
         
         movie = get_object_or_404(Movie, slug=movie_slug)
         
-        # Get or create session ID
         session_id = request.session.get('analytics_session_id')
         if not session_id:
             session_id = str(uuid.uuid4())
             request.session['analytics_session_id'] = session_id
         
-        # Create download tracking record
+        download_id = str(uuid.uuid4())
+        
         download = DownloadTracking.objects.create(
             user=request.user if request.user.is_authenticated else None,
             movie=movie,
-            session_id=session_id,
+            download_id=download_id,
             ip_address=request.META.get('REMOTE_ADDR'),
             user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
             status='in_progress'
         )
         
-        # Update user engagement stats
         if request.user.is_authenticated:
             stats, created = UserEngagementStats.objects.get_or_create(user=request.user)
             stats.total_downloads += 1
             stats.last_active = timezone.now()
             stats.save()
         
-        # Update movie analytics
         movie_stats, created = MovieAnalytics.objects.get_or_create(movie=movie)
         movie_stats.total_downloads += 1
         movie_stats.save()
         
-        logger.info(f"Download tracked: {download.id} for {movie.title}")
+        logger.info(f"Download tracked: {download_id} for {movie.title}")
         
         return JsonResponse({
             'status': 'success',
@@ -351,11 +421,11 @@ def track_download(request):
 @csrf_exempt
 @require_POST
 def update_download_status(request):
-    """API endpoint to update download status (completed/failed)"""
+    """API endpoint to update download status"""
     try:
         data = json.loads(request.body)
         download_id = data.get('download_id')
-        status = data.get('status')  # 'completed' or 'failed'
+        status = data.get('status')
         error_message = data.get('error_message', '')
         
         if not download_id or not status:
@@ -364,14 +434,12 @@ def update_download_status(request):
                 'message': 'download_id and status are required'
             }, status=400)
         
-        # Valid statuses
         if status not in ['completed', 'failed']:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Invalid status. Must be completed or failed'
             }, status=400)
         
-        # Get the download record
         try:
             download = DownloadTracking.objects.get(id=download_id)
         except DownloadTracking.DoesNotExist:
@@ -380,7 +448,6 @@ def update_download_status(request):
                 'message': f'Download with ID {download_id} not found'
             }, status=404)
         
-        # Update the download record
         download.status = status
         download.error_message = error_message[:500] if error_message else ''
         
@@ -388,14 +455,12 @@ def update_download_status(request):
             download.download_completed = timezone.now()
             download.download_duration = (download.download_completed - download.download_started).total_seconds()
             
-            # Update user stats for completed download
             if download.user:
                 stats, created = UserEngagementStats.objects.get_or_create(user=download.user)
                 stats.completed_downloads += 1
                 stats.save()
                 
         elif status == 'failed':
-            # Update user stats for failed download
             if download.user:
                 stats, created = UserEngagementStats.objects.get_or_create(user=download.user)
                 stats.failed_downloads += 1
@@ -403,7 +468,6 @@ def update_download_status(request):
         
         download.save()
         
-        # Update movie analytics
         movie_stats, created = MovieAnalytics.objects.get_or_create(movie=download.movie)
         if status == 'completed':
             movie_stats.completed_downloads += 1
@@ -462,7 +526,6 @@ def user_analytics(request, user_id):
         session_count=Count('id')
     ).order_by('-total_time')[:10]
     
-    # Calculate success rate safely
     total_downloads = stats.completed_downloads + stats.failed_downloads
     success_rate = round((stats.completed_downloads / total_downloads * 100), 1) if total_downloads > 0 else 0
     
