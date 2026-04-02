@@ -597,8 +597,6 @@ def list_users_debug(request):
     return HttpResponse("<br>".join(output))
 
 # ----------------------------
-# Direct Admin Login (Bypasses OTP)
-# ----------------------------
 def admin_direct_login(request):
     """Direct admin login bypassing OTP - Use this for admin access"""
     
@@ -610,8 +608,16 @@ def admin_direct_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
+        # DEBUG: Print to Render logs
+        print(f"DEBUG: Username received: {username}")
+        print(f"DEBUG: Password received: {'*' * len(password) if password else 'None'}")
+        print(f"DEBUG: Request POST data: {request.POST}")
+        
         # Try to authenticate
+        from django.contrib.auth import authenticate
         user = authenticate(request, username=username, password=password)
+        
+        print(f"DEBUG: Authentication result: {user}")
         
         if user is not None and user.is_staff:
             login(request, user)
