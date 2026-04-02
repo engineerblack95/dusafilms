@@ -601,16 +601,25 @@ def list_users_debug(request):
 # ----------------------------
 def admin_direct_login(request):
     """Direct admin login bypassing OTP - Use this for admin access"""
+    
+    # If already logged in and is staff, go to admin
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('/admin/')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
+        # Try to authenticate
         user = authenticate(request, username=username, password=password)
-        if user and user.is_staff:
+        
+        if user is not None and user.is_staff:
             login(request, user)
+            messages.success(request, f"Welcome {user.username}!")
             return redirect('/admin/')
         else:
-            messages.error(request, "Invalid admin credentials")
-            return render(request, 'accounts/admin_direct_login.html')
+            messages.error(request, "Invalid username or password. Please try again.")
+            return render(request, 'accounts/admin_direct_login.html', {'error': True})
     
-    # GET request - show custom login page
+    # GET request - show login page
     return render(request, 'accounts/admin_direct_login.html')

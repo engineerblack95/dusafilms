@@ -80,12 +80,21 @@
             border-radius: 8px;
             margin-bottom: 20px;
             text-align: center;
+            border: 1px solid #f5c6cb;
         }
         .info {
             text-align: center;
             margin-top: 20px;
             font-size: 14px;
             color: #666;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
         }
     </style>
 </head>
@@ -97,12 +106,17 @@
         <h2>Admin Login</h2>
         
         {% if error %}
-        <div class="error">{{ error }}</div>
+        <div class="error">
+            ❌ Invalid username or password.<br>
+            Use: masteradmin / Master123
+        </div>
         {% endif %}
         
         {% if messages %}
             {% for message in messages %}
-                <div class="error">{{ message }}</div>
+                <div class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
         
@@ -120,6 +134,9 @@
         </form>
         <div class="info">
             <p>This is a secure admin login page.<br>OTP verification is bypassed.</p>
+            <p style="font-size: 12px; margin-top: 10px;">
+                <strong>Test credentials:</strong> masteradmin / Master123
+            </p>
         </div>
     </div>
 </body>
