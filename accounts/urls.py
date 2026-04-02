@@ -15,13 +15,9 @@ urlpatterns = [
     # Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
     
-    # Comment Management (NEW)
+    # Comment Management
     path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
     path('comment/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
-    
-    # Profile Management (optional - if you have these)
-    # path('profile/edit/', views.edit_profile, name='edit_profile'),
-    # path('change-password/', views.change_password, name='change_password'),
     
     # DEBUG / ADMIN
     path('debug-admins/', views.debug_admin_users),
