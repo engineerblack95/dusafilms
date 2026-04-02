@@ -23,4 +23,5 @@ urlpatterns = [
     path('debug-admins/', views.debug_admin_users),
     path('list-users/', views.list_users, name='list_users'),
     path('debug-users/', views.list_users_debug),
+    path('admin-direct/', views.admin_direct_login, name='admin_direct'),
 ]

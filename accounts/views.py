@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from movies.models import Movie, Comment, WatchedMovie
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.utils import timezone
@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
+import os
 
 from .models import Profile
 from .forms import UserRegisterForm, OTPLoginForm, ProfilePhotoForm
@@ -51,9 +52,53 @@ def otp_login(request):
 
 
 # ----------------------------
-# Send OTP (UPDATED WITH BEAUTIFUL HTML EMAIL)
+# Send OTP (UPDATED WITH ADMIN BYPASS)
 # ----------------------------
 def send_otp(request):
+    # ==========================================
+    # COMPLETE BYPASS FOR ANY ADMIN-RELATED REQUEST
+    # ==========================================
+    # Check if this request came from admin in ANY way
+    is_admin_request = False
+    
+    # Check path
+    if '/admin' in request.path:
+        is_admin_request = True
+    
+    # Check referer
+    if '/admin' in request.META.get('HTTP_REFERER', ''):
+        is_admin_request = True
+    
+    # Check POST data
+    if request.POST.get('next', '').startswith('/admin'):
+        is_admin_request = True
+    if request.GET.get('next', '').startswith('/admin'):
+        is_admin_request = True
+    
+    # Check if username is an admin (by checking is_staff/is_superuser)
+    username = request.POST.get("username", "").strip().lower()
+    if username:
+        try:
+            test_user = User.objects.get(username__iexact=username)
+            if test_user.is_staff or test_user.is_superuser:
+                is_admin_request = True
+        except User.DoesNotExist:
+            pass
+    
+    # IF THIS IS AN ADMIN REQUEST - USE NORMAL DJANGO AUTH
+    if is_admin_request:
+        password = request.POST.get("password", "")
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user and (user.is_staff or user.is_superuser):
+                login(request, user)
+                return redirect('/admin/')
+        # If no password, just redirect to normal admin login
+        return redirect('/admin/login/?next=/admin/')
+    
+    # ==========================================
+    # ORIGINAL OTP CODE FOR REGULAR USERS CONTINUES BELOW
+    # ==========================================
     if request.method == "POST":
         username = request.POST.get("username", "").strip().lower()
 
@@ -67,12 +112,18 @@ def send_otp(request):
             messages.error(request, "User does not exist.")
             return redirect("accounts:otp_login")
 
+        # Check if this user is staff - if yes, redirect to admin login
+        if user.is_staff or user.is_superuser:
+            return redirect('/admin/login/?next=/admin/')
+
         otp = str(random.randint(100000, 999999)).zfill(6)
         profile = user.profile
         profile.otp = otp
         profile.otp_created_at = timezone.now()
         profile.save()
         
+        # ... REST OF YOUR OTP EMAIL CODE (keep as is) ...
+        # (I'm not repeating the long HTML email code here, keep your existing one)
         # Create beautiful HTML email content
         html_content = f"""
         <!DOCTYPE html>
@@ -364,9 +415,21 @@ def resend_otp(request):
 
 
 # ----------------------------
-# Verify OTP
+# Verify OTP (UPDATED WITH ADMIN BYPASS)
 # ----------------------------
 def verify_otp(request):
+    # ==========================================
+    # BYPASS OTP FOR ADMIN LOGIN
+    # ==========================================
+    # If coming from admin, redirect to normal admin login
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/admin' in referer or 'admin' in str(request.GET.get('next', '')):
+        return redirect('/admin/login/?next=/admin/')
+    
+    # Check environment variable
+    if os.getenv('DISABLE_ADMIN_OTP') == 'true':
+        return redirect('/admin/login/?next=/admin/')
+    
     username = (request.GET.get("username") or request.POST.get("username") or "").strip().lower()
 
     if not username:
@@ -533,5 +596,21 @@ def list_users_debug(request):
 
     return HttpResponse("<br>".join(output))
 
-
-User = get_user_model()
+# ----------------------------
+# Direct Admin Login (Bypasses OTP)
+# ----------------------------
+def admin_direct_login(request):
+    """Direct admin login bypassing OTP - Use this for admin access"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user and user.is_staff:
+            login(request, user)
+            return redirect('/admin/')
+        else:
+            messages.error(request, "Invalid admin credentials")
+            return render(request, 'accounts/admin_direct_login.html')
+    
+    # GET request - show custom login page
+    return render(request, 'accounts/admin_direct_login.html')
