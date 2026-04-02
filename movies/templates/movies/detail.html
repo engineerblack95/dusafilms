@@ -29,21 +29,22 @@
     .video-box { background: #000; border-radius: 20px; overflow: hidden; margin-bottom: 25px; border: 1px solid rgba(255, 43, 43, 0.3); position: relative; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; }
     .video-box:hover { border-color: rgba(255, 43, 43, 0.6); box-shadow: 0 25px 80px rgba(255, 43, 43, 0.3); }
     .video-container { position: relative; width: 100%; cursor: pointer; }
-    video { width: 100%; max-height: 70vh; background: black; display: block; border-radius: 16px; }
-    .video-poster-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2)); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; backdrop-filter: blur(2px); }
-    .video-poster-overlay.hide { opacity: 0; visibility: hidden; }
-    .play-button { width: 90px; height: 90px; background: rgba(255, 43, 43, 0.85); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 30px rgba(255, 43, 43, 0.5); position: relative; }
+    video { width: 100%; max-height: 70vh; background: black; display: block; border-radius: 16px; cursor: pointer; }
+    .video-poster-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3)); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; backdrop-filter: blur(2px); cursor: pointer; }
+    .video-poster-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    .play-button { width: 90px; height: 90px; background: rgba(255, 43, 43, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 30px rgba(255, 43, 43, 0.5); position: relative; }
     .play-button::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(255, 43, 43, 0.5); animation: pulse 1.5s infinite; z-index: -1; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
     .play-button:hover { transform: scale(1.1); background: #ff2b2b; box-shadow: 0 0 40px rgba(255, 43, 43, 0.8); }
     .play-button i { font-size: 40px; color: white; margin-left: 6px; }
-    .video-watermark { position: absolute; top: 20px; right: 20px; z-index: 15; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 40px; display: flex; align-items: center; gap: 10px; border-right: 3px solid #ff2b2b; transition: all 0.3s ease; opacity: 0.8; }
-    .video-watermark:hover { opacity: 1; transform: translateY(-2px); }
+    .video-watermark { position: absolute; top: 20px; right: 20px; z-index: 15; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 40px; display: flex; align-items: center; gap: 10px; border-right: 3px solid #ff2b2b; transition: all 0.3s ease; opacity: 0.8; pointer-events: none; }
+    .video-watermark:hover { opacity: 1; }
     .video-watermark img { height: 28px; width: auto; border-radius: 4px; }
     .video-watermark span { color: white; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
     .video-watermark .dot { width: 4px; height: 4px; background: #ff2b2b; border-radius: 50%; display: inline-block; margin: 0 2px; }
-    .video-controls-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 20px 15px 15px; opacity: 1; transition: opacity 0.3s ease; pointer-events: none; z-index: 20; }
+    .video-controls-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 20px 15px 15px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 20; }
     .video-container:hover .video-controls-overlay { opacity: 1; }
+    .video-container:active .video-controls-overlay { opacity: 1; }
     .progress-bar-container { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; cursor: pointer; margin-bottom: 12px; pointer-events: auto; }
     .progress-bar { height: 100%; background: #ff2b2b; border-radius: 2px; width: 0%; position: relative; transition: width 0.1s linear; }
     .progress-bar::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #ff2b2b; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; }
@@ -125,6 +126,7 @@
     .movie-title-horizontal { font-size: 13px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
     .movie-meta-horizontal { font-size: 10px; color: #9ca3af; display: flex; justify-content: space-between; }
     @media (max-width: 900px) { .two-column-layout { flex-direction: column; } .comments-column { max-width: 100%; } .play-button { width: 70px; height: 70px; } .play-button i { font-size: 30px; } .video-watermark { top: 12px; right: 12px; padding: 5px 12px; } .video-watermark span { font-size: 10px; } .video-watermark img { height: 22px; } .control-btn { width: 28px; height: 28px; font-size: 12px; } }
+    @media (max-width: 600px) { .play-button { width: 55px; height: 55px; } .play-button i { font-size: 22px; } }
 </style>
 
 <!-- Hidden element to store movie slug for JavaScript -->
@@ -155,7 +157,13 @@
             <div class="video-box">
                 <div class="video-container" id="videoContainer">
                     {% if movie.video_url %}
-                        <video id="mainPlayer" playsinline webkit-playsinline preload="metadata" {% if movie.thumbnail %}poster="{{ movie.thumbnail.url }}"{% else %}poster="https://via.placeholder.com/1280x720?text=No+Thumbnail"{% endif %} style="width: 100%; display: block;">
+                        <video id="mainPlayer" 
+                            playsinline 
+                            webkit-playsinline 
+                            autoplay="autoplay"
+                            preload="auto"
+                            {% if movie.thumbnail %}poster="{{ movie.thumbnail.url }}"{% endif %}
+                            style="width: 100%; display: block;">
                             <source src="{{ movie.video_url }}" type="video/mp4">
                             <source src="{{ movie.video_url }}" type="video/webm">
                             <source src="{{ movie.video_url }}" type="video/ogg">
@@ -502,6 +510,9 @@
         
         if (!video) return;
         
+        // Force video to have sound enabled
+        video.muted = false;
+        
         function formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
             const mins = Math.floor(seconds / 60);
@@ -522,10 +533,21 @@
             else { muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }
         }
         
-        window.toggleMute = function() { video.muted = !video.muted; updateMuteIcon(); };
+        window.toggleMute = function() { 
+            video.muted = !video.muted; 
+            updateMuteIcon(); 
+        };
+        
         window.toggleFullscreen = function() {
-            if (!document.fullscreenElement) { video.requestFullscreen(); fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>'; }
-            else { document.exitFullscreen(); fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>'; }
+            if (!document.fullscreenElement) {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                }
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
         };
         
         document.addEventListener('fullscreenchange', function() {
@@ -536,20 +558,69 @@
         video.addEventListener('loadedmetadata', function() {
             durationSpan.textContent = formatTime(video.duration);
             updateMuteIcon();
-            const autoplayPromise = video.play();
-            if (autoplayPromise !== undefined) {
-                autoplayPromise.then(() => { posterOverlay.classList.add('hide'); }).catch(() => { posterOverlay.classList.remove('hide'); });
+            
+            // Try to play with sound
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    posterOverlay.classList.add('hide');
+                    console.log('Video playing with sound');
+                }).catch(error => {
+                    console.log('Autoplay prevented:', error);
+                    posterOverlay.classList.remove('hide');
+                    // Show play button overlay
+                });
             }
         });
         
         video.addEventListener('timeupdate', updateProgress);
-        video.addEventListener('play', function() { posterOverlay.classList.add('hide'); });
-        video.addEventListener('pause', function() { if (video.currentTime === 0 || video.ended) { posterOverlay.classList.remove('hide'); } });
-        video.addEventListener('ended', function() { posterOverlay.classList.remove('hide'); progressBar.style.width = '0%'; currentTimeSpan.textContent = '0:00'; });
         
-        playBtn.addEventListener('click', function(e) { e.stopPropagation(); video.play(); posterOverlay.classList.add('hide'); });
-        video.addEventListener('click', function(e) { e.stopPropagation(); if (video.paused) { video.play(); posterOverlay.classList.add('hide'); } else { video.pause(); } });
+        video.addEventListener('play', function() { 
+            posterOverlay.classList.add('hide'); 
+            console.log('Video playing');
+        });
         
+        video.addEventListener('pause', function() { 
+            if (video.currentTime === 0 || video.ended) { 
+                posterOverlay.classList.remove('hide'); 
+            } 
+        });
+        
+        video.addEventListener('ended', function() { 
+            posterOverlay.classList.remove('hide'); 
+            progressBar.style.width = '0%'; 
+            currentTimeSpan.textContent = '0:00'; 
+        });
+        
+        // Play button click - direct play with sound
+        playBtn.addEventListener('click', function(e) { 
+            e.stopPropagation(); 
+            video.muted = false;
+            video.play().then(() => {
+                posterOverlay.classList.add('hide');
+                updateMuteIcon();
+            }).catch(error => {
+                console.error('Play failed:', error);
+            });
+        });
+        
+        // Click on video to play/pause
+        video.addEventListener('click', function(e) { 
+            e.stopPropagation(); 
+            if (video.paused) { 
+                video.muted = false;
+                video.play().then(() => {
+                    posterOverlay.classList.add('hide');
+                    updateMuteIcon();
+                }).catch(error => {
+                    console.error('Play failed:', error);
+                });
+            } else { 
+                video.pause(); 
+            } 
+        });
+        
+        // Progress bar seeking
         if (progressContainer) {
             progressContainer.addEventListener('click', function(e) {
                 const rect = progressContainer.getBoundingClientRect();
@@ -558,6 +629,7 @@
                 video.currentTime = percent * video.duration;
                 updateProgress();
             });
+            
             progressContainer.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 const rect = progressContainer.getBoundingClientRect();
@@ -569,7 +641,22 @@
             });
         }
         
-        video.addEventListener('error', function(e) { console.error('Video error:', e); });
+        video.addEventListener('error', function(e) { 
+            console.error('Video error:', e);
+            console.error('Video error code:', video.error ? video.error.code : 'unknown');
+            console.error('Video error message:', video.error ? video.error.message : 'unknown');
+        });
+        
+        // Add touchstart event for mobile to enable audio
+        document.body.addEventListener('touchstart', function() {
+            if (video && video.paused && video.currentTime === 0) {
+                video.muted = false;
+                video.play().then(() => {
+                    posterOverlay.classList.add('hide');
+                    updateMuteIcon();
+                }).catch(() => {});
+            }
+        }, { once: true });
     });
 </script>
 
